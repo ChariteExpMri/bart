@@ -1,0 +1,4357 @@
+Parallel pool using the 'local' profile is shutting down.
+
+ans =
+
+     1
+
+
+ans =
+
+     1
+
+
+ans =
+
+     1
+
+
+ans =
+
+     1
+
+
+ans =
+
+     1
+
+
+ans =
+
+     1
+
+
+ans =
+
+     1
+
+
+ans =
+
+     1
+
+
+ans =
+
+     1
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+executing: [f_selectslice]  
+total time (over cases): 2.1635min
+executing: [f_selectslice]  
+get(gcf)
+Operation terminated by user during uiwait (line 81)
+
+
+In f_selectslice (line 23)
+        drawnow;uiwait(gcf);
+
+In bart>runfcn (line 214)
+    feval(funs{i},1,w2);
+ 
+Interrupt while evaluating UIControl Callback.
+
+                 Alphamap: [1×64 double]
+             BeingDeleted: off
+               BusyAction: 'queue'
+            ButtonDownFcn: ''
+                 Children: [13×1 Graphics]
+                 Clipping: on
+          CloseRequestFcn: 'closereq'
+                    Color: [1 1 1]
+                 Colormap: [256×3 double]
+              ContextMenu: [0×0 GraphicsPlaceholder]
+                CreateFcn: ''
+              CurrentAxes: [1×1 Axes]
+         CurrentCharacter: 'o'
+            CurrentObject: [1×1 UIControl]
+             CurrentPoint: [0.3354 0.5655]
+                DeleteFcn: ''
+             DockControls: on
+                 FileName: ''
+        GraphicsSmoothing: on
+         HandleVisibility: 'on'
+                     Icon: ''
+            InnerPosition: [0.2500 0.2267 0.5549 0.6100]
+            IntegerHandle: on
+            Interruptible: on
+           InvertHardcopy: on
+              KeyPressFcn: @imoverlay/keypress1
+            KeyReleaseFcn: ''
+                  MenuBar: 'figure'
+                     Name: 'selectSlice'
+                 NextPlot: 'add'
+                   Number: 2
+              NumberTitle: off
+            OuterPosition: [0.2455 0.2194 0.5639 0.7011]
+         PaperOrientation: 'portrait'
+            PaperPosition: [-0.0708 7.5872 21.1417 14.5256]
+        PaperPositionMode: 'auto'
+                PaperSize: [21.0000 29.7000]
+                PaperType: 'A4'
+               PaperUnits: 'centimeters'
+                   Parent: [1×1 Root]
+                  Pointer: 'arrow'
+        PointerShapeCData: [16×16 double]
+      PointerShapeHotSpot: [1 1]
+                 Position: [0.2500 0.2267 0.5549 0.6100]
+                 Renderer: 'opengl'
+             RendererMode: 'auto'
+                   Resize: on
+               Scrollable: off
+            SelectionType: 'normal'
+           SizeChangedFcn: ''
+                      Tag: 'selectbest'
+                  ToolBar: 'auto'
+                     Type: 'figure'
+                    Units: 'normalized'
+                 UserData: [1×1 struct]
+                  Visible: on
+      WindowButtonDownFcn: @clickdown
+    WindowButtonMotionFcn: ''
+        WindowButtonUpFcn: @clickup
+        WindowKeyPressFcn: ''
+      WindowKeyReleaseFcn: ''
+     WindowScrollWheelFcn: ''
+              WindowState: 'normal'
+              WindowStyle: 'normal'
+
+executing: [f_selectslice]  
+
+e2 = 
+
+  KeyData with properties:
+
+    Character: 'e'
+     Modifier: {1×0 cell}
+          Key: 'e'
+       Source: [1×1 Figure]
+    EventName: 'WindowKeyPress'
+
+
+e2 = 
+
+  KeyData with properties:
+
+    Character: 'e'
+     Modifier: {1×0 cell}
+          Key: 'e'
+       Source: [1×1 Figure]
+    EventName: 'WindowKeyPress'
+
+
+e2 = 
+
+  KeyData with properties:
+
+    Character: 'w'
+     Modifier: {1×0 cell}
+          Key: 'w'
+       Source: [1×1 Figure]
+    EventName: 'WindowKeyPress'
+
+
+e2 = 
+
+  KeyData with properties:
+
+    Character: 'w'
+     Modifier: {1×0 cell}
+          Key: 'w'
+       Source: [1×1 Figure]
+    EventName: 'WindowKeyPress'
+
+
+e2 = 
+
+  KeyData with properties:
+
+    Character: 'w'
+     Modifier: {1×0 cell}
+          Key: 'w'
+       Source: [1×1 Figure]
+    EventName: 'WindowKeyPress'
+
+
+e2 = 
+
+  KeyData with properties:
+
+    Character: 'e'
+     Modifier: {1×0 cell}
+          Key: 'e'
+       Source: [1×1 Figure]
+    EventName: 'WindowKeyPress'
+
+
+e2 = 
+
+  KeyData with properties:
+
+    Character: 'd'
+     Modifier: {1×0 cell}
+          Key: 'd'
+       Source: [1×1 Figure]
+    EventName: 'WindowKeyPress'
+
+
+e2 = 
+
+  KeyData with properties:
+
+    Character: 'o'
+     Modifier: {1×0 cell}
+          Key: 'o'
+       Source: [1×1 Figure]
+    EventName: 'WindowKeyPress'
+
+
+e2 = 
+
+  KeyData with properties:
+
+    Character: 'o'
+     Modifier: {1×0 cell}
+          Key: 'o'
+       Source: [1×1 Figure]
+    EventName: 'WindowKeyPress'
+
+
+e2 = 
+
+  KeyData with properties:
+
+    Character: 'i'
+     Modifier: {1×0 cell}
+          Key: 'i'
+       Source: [1×1 Figure]
+    EventName: 'WindowKeyPress'
+
+
+e2 = 
+
+  KeyData with properties:
+
+    Character: 'o'
+     Modifier: {1×0 cell}
+          Key: 'o'
+       Source: [1×1 Figure]
+    EventName: 'WindowKeyPress'
+
+
+e2 = 
+
+  KeyData with properties:
+
+    Character: 'o'
+     Modifier: {1×0 cell}
+          Key: 'o'
+       Source: [1×1 Figure]
+    EventName: 'WindowKeyPress'
+
+
+e2 = 
+
+  KeyData with properties:
+
+    Character: 'k'
+     Modifier: {1×0 cell}
+          Key: 'k'
+       Source: [1×1 Figure]
+    EventName: 'WindowKeyPress'
+
+
+e2 = 
+
+  KeyData with properties:
+
+    Character: 'o'
+     Modifier: {1×0 cell}
+          Key: 'o'
+       Source: [1×1 Figure]
+    EventName: 'WindowKeyPress'
+
+
+e2 = 
+
+  KeyData with properties:
+
+    Character: 'o'
+     Modifier: {1×0 cell}
+          Key: 'o'
+       Source: [1×1 Figure]
+    EventName: 'WindowKeyPress'
+
+
+e2 = 
+
+  KeyData with properties:
+
+    Character: 'o'
+     Modifier: {1×0 cell}
+          Key: 'o'
+       Source: [1×1 Figure]
+    EventName: 'WindowKeyPress'
+
+
+Operation terminated by user during uiwait (line 81)
+
+
+In f_selectslice (line 23)
+        drawnow;uiwait(gcf);
+
+In bart>runfcn (line 214)
+    feval(funs{i},1,w2);
+ 
+Interrupt while evaluating UIControl Callback.
+
+
+Unrecognized method, property, or field 'Key' for class
+'matlab.ui.Figure'.
+
+Error in selectslice>keys (line 220)
+if strcmp(e.Key,'o')
+ 
+Error while evaluating Figure WindowKeyPressFcn.
+
+
+ans =
+
+    'a'
+
+findobj(gcf,'tag','dooverlay')
+
+ans = 
+
+  UIControl (dooverlay) with properties:
+
+              Style: 'radiobutton'
+             String: 'overlay'
+    BackgroundColor: [1 1 1]
+           Callback: @dooverlay
+              Value: 0
+           Position: [0.8500 0.9632 0.0700 0.0289]
+              Units: 'normalized'
+
+  Show all properties
+
+hr=findobj(gcf,'tag','dooverlay')
+
+hr = 
+
+  UIControl (dooverlay) with properties:
+
+              Style: 'radiobutton'
+             String: 'overlay'
+    BackgroundColor: [1 1 1]
+           Callback: @dooverlay
+              Value: 0
+           Position: [0.8500 0.9632 0.0700 0.0289]
+              Units: 'normalized'
+
+  Show all properties
+
+hr=findobj(gcf,'tag','dooverlay')
+    set(hr,'value',~get(hr,'value'))
+
+hr = 
+
+  UIControl (dooverlay) with properties:
+
+              Style: 'radiobutton'
+             String: 'overlay'
+    BackgroundColor: [1 1 1]
+           Callback: @dooverlay
+              Value: 0
+           Position: [0.8500 0.9632 0.0700 0.0289]
+              Units: 'normalized'
+
+  Show all properties
+
+hr=findobj(gcf,'tag','dooverlay')
+    set(hr,'value',~get(hr,'value'))
+
+hr = 
+
+  UIControl (dooverlay) with properties:
+
+              Style: 'radiobutton'
+             String: 'overlay'
+    BackgroundColor: [1 1 1]
+           Callback: @dooverlay
+              Value: 1
+           Position: [0.8500 0.9632 0.0700 0.0289]
+              Units: 'normalized'
+
+  Show all properties
+
+hgfeval()
+
+hr = 
+
+  UIControl (dooverlay) with properties:
+
+              Style: 'radiobutton'
+             String: 'overlay'
+    BackgroundColor: [1 1 1]
+           Callback: @dooverlay
+              Value: 0
+           Position: [0.8500 0.9632 0.0700 0.0289]
+              Units: 'normalized'
+
+  Show all properties
+
+
+hr = 
+
+  UIControl (dooverlay) with properties:
+
+              Style: 'radiobutton'
+             String: 'overlay'
+    BackgroundColor: [1 1 1]
+           Callback: @dooverlay
+              Value: 1
+           Position: [0.8500 0.9632 0.0700 0.0289]
+              Units: 'normalized'
+
+  Show all properties
+
+Error using matlab.graphics.primitive.Image/set
+Invalid or deleted object.
+
+Error in imoverlay/keypress1 (line 223)
+            set(us.hF,'AlphaData',us.alphadata);%'O'
+ 
+Error while evaluating Figure KeyPressFcn.
+
+
+hr = 
+
+  UIControl (dooverlay) with properties:
+
+              Style: 'radiobutton'
+             String: 'overlay'
+    BackgroundColor: [1 1 1]
+           Callback: @dooverlay
+              Value: 0
+           Position: [0.8500 0.9632 0.0700 0.0289]
+              Units: 'normalized'
+
+  Show all properties
+
+
+hr = 
+
+  UIControl (dooverlay) with properties:
+
+              Style: 'radiobutton'
+             String: 'overlay'
+    BackgroundColor: [1 1 1]
+           Callback: @dooverlay
+              Value: 1
+           Position: [0.8500 0.9632 0.0700 0.0289]
+              Units: 'normalized'
+
+  Show all properties
+
+Error using matlab.graphics.primitive.Image/set
+Invalid or deleted object.
+
+Error in imoverlay/keypress1 (line 223)
+            set(us.hF,'AlphaData',us.alphadata);%'O'
+ 
+Error while evaluating Figure KeyPressFcn.
+
+
+hr = 
+
+  UIControl (dooverlay) with properties:
+
+              Style: 'radiobutton'
+             String: 'overlay'
+    BackgroundColor: [1 1 1]
+           Callback: @dooverlay
+              Value: 0
+           Position: [0.8500 0.9632 0.0700 0.0289]
+              Units: 'normalized'
+
+  Show all properties
+
+
+hr = 
+
+  UIControl (dooverlay) with properties:
+
+              Style: 'radiobutton'
+             String: 'overlay'
+    BackgroundColor: [1 1 1]
+           Callback: @dooverlay
+              Value: 1
+           Position: [0.8500 0.9632 0.0700 0.0289]
+              Units: 'normalized'
+
+  Show all properties
+
+Error using matlab.graphics.primitive.Image/set
+Invalid or deleted object.
+
+Error in imoverlay/keypress1 (line 223)
+            set(us.hF,'AlphaData',us.alphadata);%'O'
+ 
+Error while evaluating Figure KeyPressFcn.
+
+
+
+
+
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+92      xlim([1 size(b,2)]);    ylim([1 size(b,1)]);
+1:50:size(b,1)
+
+ans =
+
+     1    51   101   151   201
+
+lin= 1:linstp:size(b,1)
+Unrecognized function or variable 'linstp'.
+ 
+Did you mean:
+linstp=30;
+    lin= 1:linstp:size(b,1)
+
+lin =
+
+     1    31    61    91   121   151   181   211
+
+lin= 1:linstp:size(b,1);
+    hl=hline(lin,'color','r')
+
+hl = 
+
+  1×8 Line array:
+
+    Line    Line    Line    Line    Line    Line    Line    Line
+
+uisetcolor
+
+ans =
+
+    1.0000    1.0000    0.0667
+
+set(hl,'color',[1.0000    1.0000    0.0667])
+set(hl,'color',[0 .5 0])
+set(hl,'color',[0 .5 1])
+set(hl,'color',[0 0 1])
+set(hl,'color',[0 .5 1])
+set(hl,'color',[0 .8 1])
+delete(hl)
+hl=hline(lin,'color',[0 0 1])
+
+hl = 
+
+  1×8 Line array:
+
+    Line    Line    Line    Line    Line    Line    Line    Line
+
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+executing: [f_estimateSlice]  
+ estimate slice orientation... 
+*** using plan: 
+   200     0     0
+    80     0     0
+   400     0     0
+
+
+optimizer =
+
+    'interior-point'
+
+  optimizer  : interior-point
+Starting parallel pool (parpool) using the 'local' profile ...
+Connected to the parallel pool (number of workers: 3).
+HOG:12.3521 ...200,0,0 T(s): 1.1436
+HOG:12.3521 ...200,0,0 T(s): 0.35804
+HOG:12.3521 ...200,1.4901e-08,0 T(s): 0.39732
+HOG:12.3521 ...200,0,1.4901e-08 T(s): 0.36615
+
+MultiStart encountered failures in the user provided functions.
+
+All 100 local solver runs failed in a user supplied function.
+BEST: [] 
+  ..dT: 0.77 min
+Index exceeds the number of array elements (0).
+
+Error in plotslice (line 8)
+slicenum=xx(1);
+
+Error in estimateSlice (line 178)
+    plotslice(xx1,fvel1,cv, s.img,{p.file ['PLAN-1']});
+
+Error in f_estimateSlice (line 122)
+    estimateSlice(z2);
+
+Error in bart>runfcn (line 214)
+    feval(funs{i},1,w2);
+ 
+Error while evaluating UIControl Callback.
+
+executing: [f_estimateSlice]  
+ estimate slice orientation... 
+*** using plan: 
+   200     0     0
+    80     0     0
+   400     0     0
+
+
+optimizer =
+
+    'interior-point'
+
+  optimizer  : interior-point
+HOG:12.3521 ...200,0,0 T(s): 0.38479
+HOG:12.3521 ...200,0,0 T(s): 0.3536
+HOG:12.3521 ...200,1.4901e-08,0 T(s): 0.33454
+HOG:12.3521 ...200,0,1.4901e-08 T(s): 0.33871
+
+ans =
+
+    'fehler'
+
+
+ans =
+
+    'fehler'
+
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tpc509c403_d42a_48a9_8dfb_f6c383473cc6rp1416\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tp71d448b9_df2f_48ae_a669_c095d50eb9d5rp1028\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tpff602607_14d4_4570_877e_9e3465483d1crp9980\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tpff602607_14d4_4570_877e_9e3465483d1crp9980\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tpc509c403_d42a_48a9_8dfb_f6c383473cc6rp1416\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tp71d448b9_df2f_48ae_a669_c095d50eb9d5rp1028\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tpc509c403_d42a_48a9_8dfb_f6c383473cc6rp1416\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tpc509c403_d42a_48a9_8dfb_f6c383473cc6rp1416\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tpff602607_14d4_4570_877e_9e3465483d1crp9980\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tpff602607_14d4_4570_877e_9e3465483d1crp9980\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tp71d448b9_df2f_48ae_a669_c095d50eb9d5rp1028\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tp71d448b9_df2f_48ae_a669_c095d50eb9d5rp1028\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tpc509c403_d42a_48a9_8dfb_f6c383473cc6rp1416\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tp71d448b9_df2f_48ae_a669_c095d50eb9d5rp1028\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tpff602607_14d4_4570_877e_9e3465483d1crp9980\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tpc509c403_d42a_48a9_8dfb_f6c383473cc6rp1416\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tpc509c403_d42a_48a9_8dfb_f6c383473cc6rp1416\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tpff602607_14d4_4570_877e_9e3465483d1crp9980\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tpff602607_14d4_4570_877e_9e3465483d1crp9980\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tpc509c403_d42a_48a9_8dfb_f6c383473cc6rp1416\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tp71d448b9_df2f_48ae_a669_c095d50eb9d5rp1028\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tp71d448b9_df2f_48ae_a669_c095d50eb9d5rp1028\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tp71d448b9_df2f_48ae_a669_c095d50eb9d5rp1028\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tpff602607_14d4_4570_877e_9e3465483d1crp9980\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tpc509c403_d42a_48a9_8dfb_f6c383473cc6rp1416\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tp71d448b9_df2f_48ae_a669_c095d50eb9d5rp1028\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tpff602607_14d4_4570_877e_9e3465483d1crp9980\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tpc509c403_d42a_48a9_8dfb_f6c383473cc6rp1416\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tpc509c403_d42a_48a9_8dfb_f6c383473cc6rp1416\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tp71d448b9_df2f_48ae_a669_c095d50eb9d5rp1028\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tp71d448b9_df2f_48ae_a669_c095d50eb9d5rp1028\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tpff602607_14d4_4570_877e_9e3465483d1crp9980\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tpff602607_14d4_4570_877e_9e3465483d1crp9980\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tpc509c403_d42a_48a9_8dfb_f6c383473cc6rp1416\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tpc509c403_d42a_48a9_8dfb_f6c383473cc6rp1416\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tp71d448b9_df2f_48ae_a669_c095d50eb9d5rp1028\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tp71d448b9_df2f_48ae_a669_c095d50eb9d5rp1028\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tpff602607_14d4_4570_877e_9e3465483d1crp9980\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tpff602607_14d4_4570_877e_9e3465483d1crp9980\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tpc509c403_d42a_48a9_8dfb_f6c383473cc6rp1416\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tpc509c403_d42a_48a9_8dfb_f6c383473cc6rp1416\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tpc509c403_d42a_48a9_8dfb_f6c383473cc6rp1416\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tpc509c403_d42a_48a9_8dfb_f6c383473cc6rp1416\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tp71d448b9_df2f_48ae_a669_c095d50eb9d5rp1028\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tp71d448b9_df2f_48ae_a669_c095d50eb9d5rp1028\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tpff602607_14d4_4570_877e_9e3465483d1crp9980\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tpff602607_14d4_4570_877e_9e3465483d1crp9980\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tp71d448b9_df2f_48ae_a669_c095d50eb9d5rp1028\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tp71d448b9_df2f_48ae_a669_c095d50eb9d5rp1028\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tpff602607_14d4_4570_877e_9e3465483d1crp9980\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tpff602607_14d4_4570_877e_9e3465483d1crp9980\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tpc509c403_d42a_48a9_8dfb_f6c383473cc6rp1416\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tpc509c403_d42a_48a9_8dfb_f6c383473cc6rp1416\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tp71d448b9_df2f_48ae_a669_c095d50eb9d5rp1028\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tp71d448b9_df2f_48ae_a669_c095d50eb9d5rp1028\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tpff602607_14d4_4570_877e_9e3465483d1crp9980\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tpff602607_14d4_4570_877e_9e3465483d1crp9980\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tpc509c403_d42a_48a9_8dfb_f6c383473cc6rp1416\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tpc509c403_d42a_48a9_8dfb_f6c383473cc6rp1416\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tpff602607_14d4_4570_877e_9e3465483d1crp9980\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tpff602607_14d4_4570_877e_9e3465483d1crp9980\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tp71d448b9_df2f_48ae_a669_c095d50eb9d5rp1028\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tp71d448b9_df2f_48ae_a669_c095d50eb9d5rp1028\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tpc509c403_d42a_48a9_8dfb_f6c383473cc6rp1416\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tpc509c403_d42a_48a9_8dfb_f6c383473cc6rp1416\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tpff602607_14d4_4570_877e_9e3465483d1crp9980\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tpff602607_14d4_4570_877e_9e3465483d1crp9980\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tpc509c403_d42a_48a9_8dfb_f6c383473cc6rp1416\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tp71d448b9_df2f_48ae_a669_c095d50eb9d5rp1028\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tp71d448b9_df2f_48ae_a669_c095d50eb9d5rp1028\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tpff602607_14d4_4570_877e_9e3465483d1crp9980\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tpc509c403_d42a_48a9_8dfb_f6c383473cc6rp1416\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tp71d448b9_df2f_48ae_a669_c095d50eb9d5rp1028\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tp71d448b9_df2f_48ae_a669_c095d50eb9d5rp1028\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tpc509c403_d42a_48a9_8dfb_f6c383473cc6rp1416\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tpc509c403_d42a_48a9_8dfb_f6c383473cc6rp1416\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tp71d448b9_df2f_48ae_a669_c095d50eb9d5rp1028\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tp71d448b9_df2f_48ae_a669_c095d50eb9d5rp1028\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tpff602607_14d4_4570_877e_9e3465483d1crp9980\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tpff602607_14d4_4570_877e_9e3465483d1crp9980\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tpc509c403_d42a_48a9_8dfb_f6c383473cc6rp1416\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tpc509c403_d42a_48a9_8dfb_f6c383473cc6rp1416\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tpff602607_14d4_4570_877e_9e3465483d1crp9980\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tpff602607_14d4_4570_877e_9e3465483d1crp9980\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tp71d448b9_df2f_48ae_a669_c095d50eb9d5rp1028\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tp71d448b9_df2f_48ae_a669_c095d50eb9d5rp1028\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tpc509c403_d42a_48a9_8dfb_f6c383473cc6rp1416\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tpc509c403_d42a_48a9_8dfb_f6c383473cc6rp1416\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tp71d448b9_df2f_48ae_a669_c095d50eb9d5rp1028\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tpff602607_14d4_4570_877e_9e3465483d1crp9980\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tpff602607_14d4_4570_877e_9e3465483d1crp9980\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tpc509c403_d42a_48a9_8dfb_f6c383473cc6rp1416\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tpc509c403_d42a_48a9_8dfb_f6c383473cc6rp1416\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tpff602607_14d4_4570_877e_9e3465483d1crp9980\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tpff602607_14d4_4570_877e_9e3465483d1crp9980\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tp71d448b9_df2f_48ae_a669_c095d50eb9d5rp1028\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tp71d448b9_df2f_48ae_a669_c095d50eb9d5rp1028\a\tp66bf9feb_0bec_48c4_a254_4426bbc09865\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Operation terminated by user during
+distcomp.remoteparfor/getCompleteIntervals (line 379)
+
+
+In parallel_function>distributed_execution (line 741)
+        [tags, out] = P.getCompleteIntervals(chunkSize);
+
+In parallel_function (line 573)
+    R = distributed_execution(...
+
+In fmultistart
+
+In MultiStart/run (line 257)
+               fmultistart(problem,startPointSets,msoptions);
+
+In func_call_angles5 (line 176)
+[xx,fvel,exitflag,output,solutions]=run(ms, problem,p.numStartpoints);
+%20
+
+In estimateSlice (line 171)
+[xx1,fvel1,flag1,outp1,solx1]=func_call_angles5(s, cv,plan1,  p2 );
+
+In f_estimateSlice (line 122)
+    estimateSlice(z2);
+
+In bart>runfcn (line 214)
+    feval(funs{i},1,w2);
+ 
+Interrupt while evaluating UIControl Callback.
+
+Parallel pool using the 'local' profile is shutting down.
+doc gcp
+delete(gcp('nocreate'))
+poolobj = gcp;
+Starting parallel pool (parpool) using the 'local' profile ...
+Connected to the parallel pool (number of workers: 3).
+delete(gcp('nocreate'))
+Parallel pool using the 'local' profile is shutting down.
+executing: [f_estimateSlice]  
+ estimate slice orientation... 
+*** using plan: 
+   200     0     0
+    80     0     0
+   400     0     0
+
+
+optimizer =
+
+    'interior-point'
+
+  optimizer  : interior-point
+Starting parallel pool (parpool) using the 'local' profile ...
+
+Connected to the parallel pool (number of workers: 3).
+
+p = 
+
+  struct with fields:
+
+          cellsize: 16
+             doflt: 1
+    numStartpoints: 1
+          parallel: 1
+              plot: 0
+        plotresult: 0
+
+179 [xx,fvel,exitflag,output,solutions]=run(ms, problem,p.numStartpoints); %20
+p
+
+p = 
+
+  struct with fields:
+
+          cellsize: 16
+             doflt: 1
+    numStartpoints: 1
+          parallel: 1
+              plot: 0
+        plotresult: 0
+
+[xx,fvel,exitflag,output,solutions]=run(ms, problem,p.numStartpoints); %20
+HOG:12.3521 ...200,0,0 T(s): 0.59225
+HOG:12.3521 ...200,0,0 T(s): 0.61936
+HOG:12.3521 ...200,1.4901e-08,0 T(s): 0.54462
+HOG:12.3521 ...200,0,1.4901e-08 T(s): 0.53857
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tp811bae3c_cbdf_4f07_ac5a_d400c365534brp3868\a\tpc7a78d38_996c_4911_81e4_c7670fd166d7\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tp811bae3c_cbdf_4f07_ac5a_d400c365534brp3868\a\tpc7a78d38_996c_4911_81e4_c7670fd166d7\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tp811bae3c_cbdf_4f07_ac5a_d400c365534brp3868\a\tpc7a78d38_996c_4911_81e4_c7670fd166d7\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tp811bae3c_cbdf_4f07_ac5a_d400c365534brp3868\a\tpc7a78d38_996c_4911_81e4_c7670fd166d7\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+MultiStart completed the runs from all start points.
+
+The local solver ran once and converged with a positive local solver exit flag.
+addAttachedFiles(poolobj,{'vl_hog.mexw64',which('vl_hog'), [mfilename '.m']});%,'elastix.m'
+[xx,fvel,exitflag,output,solutions]=run(ms, problem,p.numStartpoints); %20
+HOG:12.3521 ...200,0,0 T(s): 0.36684
+HOG:12.3521 ...200,0,0 T(s): 0.46363
+HOG:12.3521 ...200,1.4901e-08,0 T(s): 0.41
+HOG:12.3521 ...200,0,1.4901e-08 T(s): 0.39686
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tp811bae3c_cbdf_4f07_ac5a_d400c365534brp3868\a\tpc7a78d38_996c_4911_81e4_c7670fd166d7\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tp811bae3c_cbdf_4f07_ac5a_d400c365534brp3868\a\tpc7a78d38_996c_4911_81e4_c7670fd166d7\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tp811bae3c_cbdf_4f07_ac5a_d400c365534brp3868\a\tpc7a78d38_996c_4911_81e4_c7670fd166d7\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tp811bae3c_cbdf_4f07_ac5a_d400c365534brp3868\a\tpc7a78d38_996c_4911_81e4_c7670fd166d7\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+MultiStart completed the runs from all start points.
+
+The local solver ran once and converged with a positive local solver exit flag.
+delete(gcp('nocreate'));
+Parallel pool using the 'local' profile is shutting down.
+delete(gcp('nocreate'));
+poolobj = gcp;
+addAttachedFiles(poolobj,{'vl_hog.mexw64',which('vl_hog'), [mfilename '.m']});%,'elastix.m'
+Starting parallel pool (parpool) using the 'local' profile ...
+Connected to the parallel pool (number of workers: 3).
+[xx,fvel,exitflag,output,solutions]=run(ms, problem,p.numStartpoints); %20
+HOG:12.3521 ...200,0,0 T(s): 0.37914
+HOG:12.3521 ...200,0,0 T(s): 0.39838
+HOG:12.3521 ...200,1.4901e-08,0 T(s): 0.42418
+HOG:12.3521 ...200,0,1.4901e-08 T(s): 0.42532
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tpde8bda01_605f_4049_8cfe_2df430ccb13arp10136\a\tp4c0599f1_2365_4740_ad02_342647168cbe\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tpde8bda01_605f_4049_8cfe_2df430ccb13arp10136\a\tp4c0599f1_2365_4740_ad02_342647168cbe\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tpde8bda01_605f_4049_8cfe_2df430ccb13arp10136\a\tp4c0599f1_2365_4740_ad02_342647168cbe\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tpde8bda01_605f_4049_8cfe_2df430ccb13arp10136\a\tp4c0599f1_2365_4740_ad02_342647168cbe\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+MultiStart completed the runs from all start points.
+
+The local solver ran once and converged with a positive local solver exit flag.
+[xx,fvel,exitflag,output,solutions]=run(ms, problem,p.numStartpoints); %20
+HOG:12.3521 ...200,0,0 T(s): 0.3888
+HOG:12.3521 ...200,0,0 T(s): 0.4829
+HOG:12.3521 ...200,1.4901e-08,0 T(s): 0.4223
+HOG:12.3521 ...200,0,1.4901e-08 T(s): 0.38958
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tpde8bda01_605f_4049_8cfe_2df430ccb13arp10136\a\tp4c0599f1_2365_4740_ad02_342647168cbe\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tpde8bda01_605f_4049_8cfe_2df430ccb13arp10136\a\tp4c0599f1_2365_4740_ad02_342647168cbe\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tpde8bda01_605f_4049_8cfe_2df430ccb13arp10136\a\tp4c0599f1_2365_4740_ad02_342647168cbe\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tpde8bda01_605f_4049_8cfe_2df430ccb13arp10136\a\tp4c0599f1_2365_4740_ad02_342647168cbe\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+MultiStart completed the runs from all start points.
+
+The local solver ran once and converged with a positive local solver exit flag.
+delete(gcp('nocreate'));
+Parallel pool using the 'local' profile is shutting down.
+delete(gcp('nocreate'));
+poolobj = gcp;
+addAttachedFiles(poolobj,{'vl_hog.mexw64',which('vl_hog'), [mfilename '.m']});%,'elastix.m'
+Starting parallel pool (parpool) using the 'local' profile ...
+Connected to the parallel pool (number of workers: 3).
+[xx,fvel,exitflag,output,solutions]=run(ms, problem,p.numStartpoints); %20
+HOG:12.3521 ...200,0,0 T(s): 0.37328
+HOG:12.3521 ...200,0,0 T(s): 0.3918
+HOG:12.3521 ...200,1.4901e-08,0 T(s): 0.36737
+HOG:12.3521 ...200,0,1.4901e-08 T(s): 0.37637
+
+MultiStart completed the runs from all start points.
+
+The local solver ran once and converged with a positive local solver exit flag.
+delete(gcp('nocreate'));
+Parallel pool using the 'local' profile is shutting down.
+delete(gcp('nocreate'));
+poolobj = gcp;
+addAttachedFiles(poolobj,{'vl_hog.mexw64',which('vl_hog'), [mfilename '.m']});%,'elastix.m'
+Starting parallel pool (parpool) using the 'local' profile ...
+Connected to the parallel pool (number of workers: 3).
+[xx,fvel,exitflag,output,solutions]=run(ms, problem,p.numStartpoints); %20
+HOG:12.3521 ...200,0,0 T(s): 0.37495
+HOG:12.3521 ...200,0,0 T(s): 0.41466
+HOG:12.3521 ...200,1.4901e-08,0 T(s): 0.38294
+HOG:12.3521 ...200,0,1.4901e-08 T(s): 0.40491
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tpbe9c4938_ee2b_43be_b9ca_df72aea3d394rp3860\a\tp83d7f37f_0b3f_4013_b3b2_de59f675b587\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tpbe9c4938_ee2b_43be_b9ca_df72aea3d394rp3860\a\tp83d7f37f_0b3f_4013_b3b2_de59f675b587\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tpbe9c4938_ee2b_43be_b9ca_df72aea3d394rp3860\a\tp83d7f37f_0b3f_4013_b3b2_de59f675b587\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+ans =
+
+    'fehler'
+
+Invalid MEX-file 'C:\Users\skoch\AppData\Local\Temp\tpbe9c4938_ee2b_43be_b9ca_df72aea3d394rp3860\a\tp83d7f37f_0b3f_4013_b3b2_de59f675b587\vl_hog.mexw64': Das angegebene Modul wurde nicht gefunden.
+
+MultiStart completed the runs from all start points.
+
+The local solver ran once and converged with a positive local solver exit flag.
+doc addAttachedFiles
+doc addAttachedFiles
+which('vl_hog')
+F:\data3\histo2\bart\vlfeat-0.9.21\toolbox\mex\mexw64\vl_hog.mexw64
+fileparts(which('vl_hog'))
+
+ans =
+
+    'F:\data3\histo2\bart\vlfeat-0.9.21\toolbox\mex\mexw64'
+
+delete(gcp('nocreate'));
+Parallel pool using the 'local' profile is shutting down.
+delete(gcp('nocreate'));
+poolobj = gcp;
+% addAttachedFiles(poolobj,{'vl_hog.mexw64',which('vl_hog'), [mfilename '.m']});%,'elastix.m'
+
+addAttachedFiles(poolobj,{fileparts(which('vl_hog'))})
+Starting parallel pool (parpool) using the 'local' profile ...
+Connected to the parallel pool (number of workers: 3).
+[xx,fvel,exitflag,output,solutions]=run(ms, problem,p.numStartpoints); %20
+HOG:12.3521 ...200,0,0 T(s): 0.38008
+HOG:12.3521 ...200,0,0 T(s): 0.45602
+HOG:12.3521 ...200,1.4901e-08,0 T(s): 0.4081
+HOG:12.3521 ...200,0,1.4901e-08 T(s): 0.46619
+
+MultiStart completed the runs from all start points.
+
+The local solver ran once and converged with a positive local solver exit flag.
+delete(gcp('nocreate'));
+Parallel pool using the 'local' profile is shutting down.
+poolobj = gcp;
+Starting parallel pool (parpool) using the 'local' profile ...
+addAttachedFiles(poolobj,{fileparts(which('vl_hog'))});
+updateAttachedFiles(poolobj);
+Connected to the parallel pool (number of workers: 3).
+[xx,fvel,exitflag,output,solutions]=run(ms, problem,p.numStartpoints); %20
+HOG:12.3521 ...200,0,0 T(s): 0.39654
+HOG:12.3521 ...200,0,0 T(s): 0.41878
+HOG:12.3521 ...200,1.4901e-08,0 T(s): 0.35926
+HOG:12.3521 ...200,0,1.4901e-08 T(s): 0.38791
+
+MultiStart completed the runs from all start points.
+
+The local solver ran once and converged with a positive local solver exit flag.
+executing: [f_estimateSlice]  
+ estimate slice orientation... 
+*** using plan: 
+   200     0     0
+    80     0     0
+   400     0     0
+
+
+optimizer =
+
+    'interior-point'
+
+  optimizer  : interior-point
+HOG:12.3521 ...200,0,0 T(s): 0.34169
+HOG:12.3521 ...200,0,0 T(s): 0.35498
+HOG:12.3521 ...200,1.4901e-08,0 T(s): 0.33934
+HOG:12.3521 ...200,0,1.4901e-08 T(s): 0.34051
+Operation terminated by user during
+distcomp.remoteparfor/getCompleteIntervals (line 379)
+
+
+In parallel_function>distributed_execution (line 741)
+        [tags, out] = P.getCompleteIntervals(chunkSize);
+
+In parallel_function (line 573)
+    R = distributed_execution(...
+
+In fmultistart
+
+In MultiStart/run (line 257)
+               fmultistart(problem,startPointSets,msoptions);
+
+In func_call_angles5 (line 180)
+[xx,fvel,exitflag,output,solutions]=run(ms, problem,p.numStartpoints);
+%20
+
+In estimateSlice (line 171)
+[xx1,fvel1,flag1,outp1,solx1]=func_call_angles5(s, cv,plan1,  p2 );
+
+In f_estimateSlice (line 122)
+    estimateSlice(z2);
+
+In bart>runfcn (line 214)
+    feval(funs{i},1,w2);
+ 
+Interrupt while evaluating UIControl Callback.
+
+
+
+Parallel pool using the 'local' profile is shutting down.
+
+
+ 
+
+
+
+executing: [f_estimateSlice]  
+ estimate slice orientation... 
+*** using plan: 
+   200     0     0
+    80     0     0
+   400     0     0
+
+
+optimizer =
+
+    'interior-point'
+
+  optimizer  : interior-point
+Starting parallel pool (parpool) using the 'local' profile ...
+Connected to the parallel pool (number of workers: 3).
+HOG:12.3521 ...200,0,0 T(s): 0.35613
+HOG:12.3521 ...200,0,0 T(s): 0.40572
+HOG:12.3521 ...200,1.4901e-08,0 T(s): 0.33802
+HOG:12.3521 ...200,0,1.4901e-08 T(s): 0.38266
+
+MultiStart completed the runs from all start points.
+
+All 100 local solver runs converged with a positive local solver exit flag.
+BEST: [8.8581] 336.1018 0 0
+  ..dT: 2.40 min
+ TIME_PLAN-1 (min): [2.4205]  
+*** using plan: 
+  336.1018         0         0
+  296.1018  -25.0000   -5.0000
+  376.1018   25.0000    5.0000
+
+
+optimizer =
+
+    'interior-point'
+
+  optimizer  : interior-point
+HOG:9.9956 ...336.1018,0,0 T(s): 0.32262
+HOG:9.9956 ...336.1018,0,0 T(s): 0.35678
+HOG:9.9956 ...336.1018,1.4901e-08,0 T(s): 0.35547
+HOG:9.9956 ...336.1018,0,1.4901e-08 T(s): 0.32943
+
+MultiStart completed the runs from all start points.
+
+All 100 local solver runs converged with a positive local solver exit flag.
+BEST: [9.8265] 311.9482 17.3137 3.003174
+  ..dT: 5.88 min
+ TIME_PLAN-2 (min): [5.9108]  
+..storing solution(s) ["optim_002.mat"]
+ TIME_total (min): [8.5397]  
+ DONE
+*** using plan: 
+   200     0     0
+    80     0     0
+   400     0     0
+
+
+optimizer =
+
+    'interior-point'
+
+  optimizer  : interior-point
+HOG:13.5702 ...200,0,0 T(s): 0.49727
+HOG:13.5702 ...200,0,0 T(s): 0.42958
+HOG:13.5702 ...200,1.4901e-08,0 T(s): 0.40467
+HOG:13.5702 ...200,0,1.4901e-08 T(s): 0.3599
+
+MultiStart completed the runs from all start points.
+
+All 100 local solver runs converged with a positive local solver exit flag.
+BEST: [9.6112] 336.1018 0 0
+  ..dT: 1.54 min
+ TIME_PLAN-1 (min): [1.552]  
+*** using plan: 
+  336.1018         0         0
+  296.1018  -25.0000   -5.0000
+  376.1018   25.0000    5.0000
+
+
+optimizer =
+
+    'interior-point'
+
+  optimizer  : interior-point
+HOG:11.1373 ...336.1018,0,0 T(s): 0.39841
+HOG:11.1373 ...336.1018,0,0 T(s): 0.41189
+HOG:11.1373 ...336.1018,1.4901e-08,0 T(s): 0.41572
+HOG:11.1373 ...336.1018,0,1.4901e-08 T(s): 0.38443
+
+MultiStart completed the runs from all start points.
+
+All 100 local solver runs converged with a positive local solver exit flag.
+BEST: [10.7964] 310.3346 19.84935 -0.6970745
+  ..dT: 7.57 min
+ TIME_PLAN-2 (min): [7.6786]  
+..storing solution(s) ["optim_003.mat"]
+ TIME_total (min): [9.3742]  
+ DONE
+*** using plan: 
+   200     0     0
+    80     0     0
+   400     0     0
+
+
+optimizer =
+
+    'interior-point'
+
+  optimizer  : interior-point
+HOG:14.801 ...200,0,0 T(s): 0.35894
+HOG:14.801 ...200,0,0 T(s): 0.34094
+HOG:14.801 ...200,1.4901e-08,0 T(s): 0.32439
+HOG:14.801 ...200,0,1.4901e-08 T(s): 0.38151
+
+MultiStart completed the runs from all start points.
+
+All 100 local solver runs converged with a positive local solver exit flag.
+BEST: [12.2066] 260.962 0 0
+  ..dT: 1.35 min
+ TIME_PLAN-1 (min): [1.3618]  
+*** using plan: 
+  260.9620         0         0
+  220.9620  -25.0000   -5.0000
+  300.9620   25.0000    5.0000
+
+
+optimizer =
+
+    'interior-point'
+
+  optimizer  : interior-point
+HOG:13.6399 ...260.962,0,0 T(s): 0.30922
+HOG:13.6399 ...260.962,0,0 T(s): 0.31068
+HOG:13.6399 ...260.962,1.4901e-08,0 T(s): 0.31359
+HOG:13.6399 ...260.962,0,1.4901e-08 T(s): 0.31669
+
+MultiStart completed the runs from all start points.
+
+All 100 local solver runs converged with a positive local solver exit flag.
+BEST: [13.5138] 268.0685 -17.03363 -0.3791936
+  ..dT: 8.94 min
+ TIME_PLAN-2 (min): [8.9692]  
+..storing solution(s) ["optim_004.mat"]
+ TIME_total (min): [10.4244]  
+ DONE
+*** using plan: 
+   200     0     0
+    80     0     0
+   400     0     0
+
+
+optimizer =
+
+    'interior-point'
+
+  optimizer  : interior-point
+HOG:12.2828 ...200,0,0 T(s): 0.37675
+HOG:12.2828 ...200,0,0 T(s): 0.33651
+HOG:12.2828 ...200,1.4901e-08,0 T(s): 0.32
+HOG:12.2828 ...200,0,1.4901e-08 T(s): 0.31235
+
+MultiStart completed the runs from all start points.
+
+All 100 local solver runs converged with a positive local solver exit flag.
+BEST: [10.9663] 218.1586 0 0
+  ..dT: 1.53 min
+ TIME_PLAN-1 (min): [1.5414]  
+*** using plan: 
+  218.1586         0         0
+  178.1586  -25.0000   -5.0000
+  258.1586   25.0000    5.0000
+
+
+optimizer =
+
+    'interior-point'
+
+  optimizer  : interior-point
+HOG:12.3357 ...218.1586,0,0 T(s): 0.40108
+HOG:12.3357 ...218.1586,0,0 T(s): 0.41442
+HOG:12.3357 ...218.1586,1.4901e-08,0 T(s): 0.3491
+HOG:12.3357 ...218.1586,0,1.4901e-08 T(s): 0.34311
+
+MultiStart completed the runs from all start points.
+
+All 100 local solver runs converged with a positive local solver exit flag.
+BEST: [12.1259] 219.6591 -7.664357 2.516319
+  ..dT: 8.84 min
+ TIME_PLAN-2 (min): [8.8727]  
+..storing solution(s) ["optim_005.mat"]
+ TIME_total (min): [10.5111]  
+ DONE
+total time (over cases): 38.903min
+cf
+executing: [f_warpestSlices]  
+ warp estimated slices... 
+...getting template
+  ..dT-prereq: 0.11 min
+..warping...
+  ..dT-warping: 8.63 min
+  ..dt-total  : 8.79 min
+27 89 74 metric-solution-Idx	
+saving results: ["warp.mat"]
+..storing warped-solution(s) ["warp_002.mat"]
+...getting template
+  ..dT-prereq: 0.09 min
+..warping...
+  ..dT-warping: 8.94 min
+  ..dt-total  : 9.09 min
+9 10 11 metric-solution-Id
+saving results: ["warp.mat"]
+..storing warped-solution(s) ["warp_003.mat"]
+...getting template
+  ..dT-prereq: 0.08 min
+..warping...
+  ..dT-warping: 8.64 min
+  ..dt-total  : 8.77 min
+19 28 50 metric-solution-Idx	
+saving results: ["warp.mat"]
+..storing warped-solution(s) ["warp_004.mat"]
+...getting template
+  ..dT-prereq: 0.12 min
+..warping...
+  ..dT-warping: 8.86 min
+  ..dt-total  : 9.04 min
+6 4 6 metric-solution-Idx
+saving results: ["warp.mat"]
+..storing warped-solution(s) ["warp_005.mat"]
+total time (over cases): 36.8516min
+
+cf
+executing: [f_selectslice]  
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+Best-Slice : [79] 364.10 6.01 0.21 
+..saving: F:\data3\histo2\josefine\dat\Wildlinge_36_000000000001EADD\bestslice_002.mat
+..make gif: bestslice_002.gif
+image written
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     1
+
+
+ans =
+
+     1
+
+
+ans =
+
+     1
+
+
+ans =
+
+     1
+
+
+ans =
+
+     1
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     1
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     1
+
+
+ans =
+
+     1
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+Best-Slice : [35] 324.17 -10.47 2.83 
+..saving: F:\data3\histo2\josefine\dat\Wildlinge_36_000000000001EADD\bestslice_003.mat
+..make gif: bestslice_003.gif
+image written
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+Best-Slice : [29] 264.69 -1.57 -3.66 
+..saving: F:\data3\histo2\josefine\dat\Wildlinge_36_000000000001EADD\bestslice_004.mat
+..make gif: bestslice_004.gif
+image written
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     1
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+
+Best-Slice : [58] 220.71 9.89 3.20 
+..saving: F:\data3\histo2\josefine\dat\Wildlinge_36_000000000001EADD\bestslice_005.mat
+..make gif: bestslice_005.gif
+image written
+total time (over cases): 30.1334min
+executing: [f_warp2histo]  
+ warp estimated slices... 
+  [warp2histo]: processing "[a1_002]" of "F:\data3\histo2\josefine\dat\Wildlinge_36_000000000001EADD"
+..get reference Image...Done.
+..warping...Done. (t_registration: 51.12s)
+transforming non-linear:(1) "AVGT.nii"; (2) "AVGThemi.nii"; (3) "ANO.nii"; Done. (t_transformImages: 3.80s)
+transforming affine:(1) "AVGT.nii"; (2) "AVGThemi.nii"; (3) "ANO.nii"; Done. (t_transformImages: 2.27s)
+...load orig. tiff.. Done.
+saving(nonlinear): (1) "s002_AVGT.mat"; (2) "s002_AVGThemi.mat"; (3) "s002_ANO.mat"; saving(noaffine): (1) "s002_AVGT_affine.mat"; (2) "s002_AVGThemi_affine.mat"; (3) "s002_ANO_affine.mat"; (4) "s002_HISTO.mat"; Done.
+  ..t_savingIMGs: 14.76 s
+...create image "res_002.gif"...image written.
+Done.
+final image [s002_result.gif]: Explorer or open
+  [warp2histo] DONE.  (dT: 1.87min)
+  [warp2histo]: processing "[a1_003]" of "F:\data3\histo2\josefine\dat\Wildlinge_36_000000000001EADD"
+..get reference Image...Done.
+..warping...Done. (t_registration: 55.60s)
+transforming non-linear:(1) "AVGT.nii"; (2) "AVGThemi.nii"; (3) "ANO.nii"; Done. (t_transformImages: 2.66s)
+transforming affine:(1) "AVGT.nii"; (2) "AVGThemi.nii"; (3) "ANO.nii"; Done. (t_transformImages: 2.32s)
+...load orig. tiff.. Done.
+saving(nonlinear): (1) "s003_AVGT.mat"; (2) "s003_AVGThemi.mat"; (3) "s003_ANO.mat"; saving(noaffine): (1) "s003_AVGT_affine.mat"; (2) "s003_AVGThemi_affine.mat"; (3) "s003_ANO_affine.mat"; (4) "s003_HISTO.mat"; Done.
+  ..t_savingIMGs: 16.44 s
+...create image "res_003.gif"...image written.
+Done.
+final image [s003_result.gif]: Explorer or open
+  [warp2histo] DONE.  (dT: 1.92min)
+  [warp2histo]: processing "[a1_004]" of "F:\data3\histo2\josefine\dat\Wildlinge_36_000000000001EADD"
+..get reference Image...Done.
+..warping...Done. (t_registration: 52.64s)
+transforming non-linear:(1) "AVGT.nii"; (2) "AVGThemi.nii"; (3) "ANO.nii"; Done. (t_transformImages: 2.12s)
+transforming affine:(1) "AVGT.nii"; (2) "AVGThemi.nii"; (3) "ANO.nii"; Done. (t_transformImages: 2.00s)
+...load orig. tiff.. Done.
+saving(nonlinear): (1) "s004_AVGT.mat"; (2) "s004_AVGThemi.mat"; (3) "s004_ANO.mat"; saving(noaffine): (1) "s004_AVGT_affine.mat"; (2) "s004_AVGThemi_affine.mat"; (3) "s004_ANO_affine.mat"; (4) "s004_HISTO.mat"; Done.
+  ..t_savingIMGs: 17.05 s
+...create image "res_004.gif"...image written.
+Done.
+final image [s004_result.gif]: Explorer or open
+  [warp2histo] DONE.  (dT: 1.87min)
+  [warp2histo]: processing "[a1_005]" of "F:\data3\histo2\josefine\dat\Wildlinge_36_000000000001EADD"
+..get reference Image...Done.
+..warping...Done. (t_registration: 52.12s)
+transforming non-linear:(1) "AVGT.nii"; (2) "AVGThemi.nii"; (3) "ANO.nii"; Done. (t_transformImages: 2.83s)
+transforming affine:(1) "AVGT.nii"; (2) "AVGThemi.nii"; (3) "ANO.nii"; Done. (t_transformImages: 2.00s)
+...load orig. tiff.. Done.
+saving(nonlinear): (1) "s005_AVGT.mat"; (2) "s005_AVGThemi.mat"; (3) "s005_ANO.mat"; saving(noaffine): (1) "s005_AVGT_affine.mat"; (2) "s005_AVGThemi_affine.mat"; (3) "s005_ANO_affine.mat"; (4) "s005_HISTO.mat"; Done.
+  ..t_savingIMGs: 17.15 s
+...create image "res_005.gif"...image written.
+Done.
+final image [s005_result.gif]: Explorer or open
+  [warp2histo] DONE.  (dT: 1.85min)
+total time (over cases): 7.6402min
+        
