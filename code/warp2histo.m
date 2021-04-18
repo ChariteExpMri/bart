@@ -12,10 +12,14 @@ timeTot=tic;
 warning off
 
 
+
 % ==============================================
 %%   MANDATORY FILES TO TRANSFORM
 % ===============================================
-pa_template=strrep(which('bart.m'),'bart.m','templates');
+% pa_template=strrep(which('bart.m'),'bart.m','templates');
+global ak
+pa_template=ak.template;
+
 tb0={...%Name__________INterpol
     'AVGT.nii'          '1'
     'AVGThemi.nii'      '0'

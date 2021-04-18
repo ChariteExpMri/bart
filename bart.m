@@ -81,7 +81,9 @@ m2 = uimenu(m,'Text','import Tiffs','callback', @importTiffs);
 m2 = uimenu(m,'Text','close','callback', @closebart);
 
 m  = uimenu('Text','Extras');
-m2 = uimenu(m,'Text','check updates','callback', @check_updates);
+m2 = uimenu(m,'Text','check updates','callback', {@check_updates,1});
+m2 = uimenu(m,'Text','force updates','callback', {@check_updates,2};
+
 
 % ==============================================
 %%   MENU
@@ -98,7 +100,7 @@ function closebart(e,e2)
 % delete(findobj(0,'tag','bart'));
 bartcb('close');
 
-function check_updates(e,e2)
+function check_updates(e,e2,task)
 
 if strcmp(which('bart.m'), 'F:\data3\histo2\bart\bart.m')
    msgbox('This is the original version...can''t be updated');
@@ -108,7 +110,11 @@ else
     % ==============================================
     %%   update without deleting new folder
     % ===============================================
-    git reset --hard HEAD;git pull;
+    if task==1
+        git reset --hard HEAD;git pull;
+    elseif task==2
+        
+    end
 end
 
 
