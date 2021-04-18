@@ -6,6 +6,7 @@ if isempty(which('@dummy.m')) %set paths
     pabart=fileparts(which('bart.m'));
     addpath(pabart);
     addpath(genpath(fullfile(pabart,'code')));
+    addpath(genpath(fullfile(pabart,'slicedetection')));
 end
 
 if 0

@@ -40,8 +40,9 @@ p=catstruct(p,p0);
 % file='F:\data3\histo2\josefine\dat\Phagoptose_79c_000000000001EADB\a1_002.tif'
 
 file       =  p.file;
-pa_template=  strrep(which('bart.m'),'bart.m','templates');
-
+% pa_template=  strrep(which('bart.m'),'bart.m','templates');
+global ak
+pa_template=ak.template;
 
 totTime=tic; %TIMER
 

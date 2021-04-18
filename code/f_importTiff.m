@@ -34,9 +34,10 @@ templateDir=fullfile(fileparts(which('bart.m')),'templates');
 para={...
     'inf98'      '*** import tifs                '                         '' ''   %    'inf1'      '% PARAMETER         '                                    ''  ''
     'inf100'     '==================================='                          '' ''
-    'files'                  ''                   'select tiff files'  'mf'
-    'format'                'ndpi'                'select tiff files'  {'ndpi','tiff' }
+    'files'                  ''               'select tiff files'  'mf'
+    'format'                'ndpi'            'select tiff files'  {'ndpi','tiff' }
     'isparallel'             0                'use parallel computing (0,1)'  'b'
+    'deleteFiles'           '_x40;.ndpi'      'delete files '   {'none' ,'_x40' '_x40;.ndpi'}
 %     'template'             templateDir       'select main template folder <required to fill>'  'd'
 %     'keepSubdirStructure'   1          '[0,1]: [0] flattened hierarchy (no subdirs), [1] the destination path contains the subfolders  '    'b'
 %     'animalsubdirs'         1          '[0,1]: [1] preserve SUBFOLDERS WITHIN ANIMAL FOLDERS in either output name or folder hierarchy or [0] do not preserve' 'b'

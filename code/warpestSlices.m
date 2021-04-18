@@ -44,7 +44,9 @@ timex0=tic;
 % ==============================================
 %%   add paths
 % ===============================================
-pa_template=strrep(which('bart.m'),'bart.m','templates');
+% pa_template=strrep(which('bart.m'),'bart.m','templates');
+global ak
+pa_template=ak.template;
 if isempty(which('@slicedetection.m')) %set paths
     pabart=fileparts(which('bart.m'));
     addpath(pabart);

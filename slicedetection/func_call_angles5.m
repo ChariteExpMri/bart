@@ -38,7 +38,9 @@ end
 
 
 if exist('vl_hog')~=3
-    run('vlfeat-0.9.21/toolbox/vl_setup.m')
+    %run('vlfeat-0.9.21/toolbox/vl_setup.m')
+    run(fullfile(fileparts(which('bart.m')), 'vlfeat-0.9.21/toolbox/vl_setup.m' ));
+
 end
 
 

@@ -25,3 +25,17 @@ if strcmp(ext, '.ndpi')
     eval(['! ' which('ndpisplit.exe') ' "' fiout '"']);
 end
 
+% keyboard
+
+% ==============================================
+%%   delete files
+% ===============================================
+delfi=cellstr(s.deleteFiles);
+  if ~isempty(delfi{1})
+      if strcmp(delfi{1},'none')==0
+        deltag=strsplit(delfi{1},';');
+        for i=1:length(deltag)
+            try; delete(fullfile(fpoutDir,['*' deltag{i} '*'])); end
+        end
+    end
+end
