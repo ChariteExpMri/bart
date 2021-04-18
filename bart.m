@@ -82,7 +82,7 @@ m2 = uimenu(m,'Text','close','callback', @closebart);
 
 m  = uimenu('Text','Extras');
 m2 = uimenu(m,'Text','check updates','callback', {@check_updates,1});
-m2 = uimenu(m,'Text','force updates','callback', {@check_updates,2};
+m2 = uimenu(m,'Text','force updates','callback', {@check_updates,2});
 
 
 % ==============================================
