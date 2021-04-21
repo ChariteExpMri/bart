@@ -141,6 +141,8 @@ fi2=cellfun(@(a,b) {[a filesep b  '.mat']},  pa ,regexprep(fi, { 'a1_'},{'a2_'})
 fi2=fi2(existn(fi2)==2); %check existence
 prunegui(fi2);
 
+bartcb('update');
+
 % convert to 'a2_001.mat''
 
 % ==============================================

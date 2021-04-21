@@ -97,7 +97,7 @@ newfile=li{va};
 img=[];
 is_Loadmodfile =get(hx,'value');
 if is_Loadmodfile==1
-    [pa name ext]   =fileparts(u.file);
+    [pa name ext]   =fileparts(newfile);
     modfile=fullfile(pa,[ name 'mod.tif' ]);
     if exist(modfile)==2
         img=imread(modfile);
@@ -1138,6 +1138,14 @@ end
 showinfo2('saved modified image',fout);
 
 set(e,'backgroundcolor',[ 1 1 0]);
+% ==============================================
+%%   
+% ===============================================
+u.imb=d;
+u.stepnum=1;
+set(gcf,'userdata',u);
+changeINfo();
+
 
 
 
