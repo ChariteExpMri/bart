@@ -65,7 +65,7 @@ para={...
     'files'                  ''                'select tiff files'                   'mf'
     'fileswcard'             '_x10'                'alternative select wildcard string'   {'_x10' ''}
     'transpose'               1                'transpose image {0,1}'               'b'
-    'verbose'                 1                  'passes extra info  {0,1}'          'b'
+%     'verbose'                 1                  'passes extra info  {0,1}'          'b'
     'outdir'                'up1'      'out-put directory: {explicit path, same" "up1"}'  {'up1' 'same'}
     'verb'                   1                  'verbose,passes extra info  {0,1}'               'b'
     'thumbnail'              1                'save thumbnail image (jpg) {0,1}'          'b'

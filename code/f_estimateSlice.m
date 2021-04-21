@@ -36,12 +36,15 @@ para={...
     'numStartpoints'       100      'number of starting points (recom: 100) of Multistart-optimization' ''
     'doflt'                  1      'Gauss filt altas slice after extraction from 3dvol {0,1}'  'b'
     % -------------------
+    '' '' '' ''
+    'useHistVol'            1     'TEMPLATE to use: (0) AVGT or (1) HISTOVOL'  'b'
+    % -------------------
     'plot'                   1       'plot update for each iteration (slow)' 'b'
     'plotresult'             1       'plot result best "solution" (image)'   'b'
     % ----------
     'plan1_x0'              [200   0   0  ]  'PLAN1: best guess (slice, pitch, yaw)'        ''
     'plan1_LB'              [80    0   0  ]  'PLAN1: lower boundaries (slice, pitch, yaw)' ''''
-    'plan1_UB'              [400   0   0  ]  'PLAN1: upper boundaries (slice, pitch, yaw)'  ''
+    'plan1_UB'              [450   0   0  ]  'PLAN1: upper boundaries (slice, pitch, yaw)'  ''
     %-----------
     'plan2_tol'             40                  'PLAN2 +/-slice-tolerance'                    ''
     'plan2_x0'               [nan    0    0   ] 'PLAN2: best guess (slice, pitch, yaw)'      ''

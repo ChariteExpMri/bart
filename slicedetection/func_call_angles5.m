@@ -146,10 +146,11 @@ if 0
     %     problem = createOptimProblem('fmincon','x0',x0,...
     %     'objective',@func_y_opim,'lb',LB,'ub',UB,'options',opts);%,...
     opts = optimoptions('surrogateopt','Display','final','PlotFcn',[],...%''surrogateoptplot',...);
-        'UseParallel',true,'PlotFcn','surrogateoptplot','MaxFunctionEvaluations',400);
+        'UseParallel',true,'PlotFcn','surrogateoptplot','MaxFunctionEvaluations',100);
     tic
     doPlot=0;
-    [xsur,fsur,flgsur,osur] = surrogateopt(@func_y_opim,[80 -20 -5],[400 20 5],[1 2 3],opts)
+   [xsur,fsur,flgsur,osur,trials] = surrogateopt(@func_y_opim,[80 -20 -5],[400 20 5],[1 2 3],opts)
+   %  [xsur,fsur,flgsur,osur,trials] = surrogateopt(@func_y_opim,[80 -1 -1],[400 1 1],[1 2 3],opts)
     xsur
     toc
     
@@ -159,7 +160,7 @@ end
 poolobj = gcp;
 % addAttachedFiles(poolobj,{'vl_hog.mexw64',which('vl_hog'), [mfilename '.m']});%,'elastix.m'
 
-addAttachedFiles(poolobj,{fileparts(which('vl_hog'))});
+addAttachedFiles(poolobj,{fileparts(which('vl_hog')), 'compute_hog_single_v4.m'  });
 updateAttachedFiles(poolobj);
 % ==============================================
 %%   start
@@ -247,11 +248,19 @@ end
             tatlas=imgaussfilt(tatlas,1);
         end
         
+        fib=uint8(obliqueslice(p0.fb, vol_center, [Y -X 90]));
+%         disp('fib');
+        
         %tatlas=imadjust(uint8(dat),[0 .25],[0 1]);
         % ==============================================
         %%   hog diff
         % ===============================================
-        [hogval ]=compute_hog_single_v3(experimental_file,maskfile,tatlas,cellsize);
+        if p0.planno==1
+          [hogval ]=compute_hog_single_v3(experimental_file,maskfile,tatlas,cellsize); 
+        else
+           [hogval ]=compute_hog_single_v4(experimental_file,maskfile,tatlas,fib,cellsize);  
+        end
+       
         %         hogval=compute_hog_single(cellsize,experimental_file,tatlas,experimental_thickness,...
         %             thick_thresh,maskfile,expresolution);
         hogval=double(hogval);

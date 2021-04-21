@@ -53,6 +53,22 @@ disp([' ..resizing img']);
 p1=imread(file);
 p1=p1(:,:,p.chan);
 p2=imresize(p1, p.resize);
+
+%———————————————————————————————————————————————
+%%  remove vertical stripe in Background
+%———————————————————————————————————————————————
+ncol=4;
+ps=mean(   p2(:,[1:ncol end-ncol+1])   ,2);
+imaxbord=find(ps==255);
+% p2(imaxbord,:)=mean(ps);
+
+ME_bg=median(ps);
+sb=(double(p2)-repmat(ps,[1   size(p2,2) ])) +ME_bg  ; %subtract background
+p2=uint8(round(sb));
+
+%———————————————————————————————————————————————
+%%   
+%———————————————————————————————————————————————
 % ms=imcomplement(otsu(p2,4)==4);
 % ms=imcomplement(otsu(p2,4)==4);
 ms=imcomplement(otsu(p2,7)==7);
@@ -188,7 +204,9 @@ q2=round(255*mat2im(mat2gray(s.mask),gray));
 bm=[[q0 q1]; [q2 fus]];
 % txt=(text2im(fi));
 % txt=(text2im(file));
-txt=(text2im([file file]));
+
+[~,mouse]=fileparts(pa);
+txt=(text2im([fullfile( mouse, [fi ext]) ]));
  txt=imcomplement(txt);
 resfac=round((size(bm,2).*.9)./size(txt,2));
 txt=round(mat2gray(imresize(txt,[resfac]))*255);

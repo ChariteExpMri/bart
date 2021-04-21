@@ -1,4 +1,4 @@
-function [hogdiff2 ]=compute_hog_single_v2(experimental_file,maskfile,tatlas,cellsize)
+function [hogdiff2 ]=compute_hog_single_v3(experimental_file,maskfile,tatlas,cellsize)
 
 % try
 %     % prevVers: compute_hog_single_

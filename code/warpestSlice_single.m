@@ -59,17 +59,17 @@ end
 % ==============================================
 %%   get ATLAS and mask by Atlasmask
 % ===============================================
-if exist('cv')~=1
-    disp('...getting template');
-    if 1
-        [ cv]=p_getHIstvol(fullfile(pa_template, 'HISTOVOL.nii' ),1) ;
-    end
-    if 0
-        [ cv    ]=p_getHIstvol(fullfile(pa_template, 'AVGT.nii' ),0) ;
-        [ cvmask]=p_getfromHistvolspace(fullfile(pa_template, 'AVGTmask.nii' )) ;
-        cv=cv.*uint8(cvmask);
-    end
-end
+% if exist('cv')~=1
+%     disp('...getting template');
+%     if 1
+%         [ cv]=p_getHIstvol(fullfile(pa_template, 'HISTOVOL.nii' ),1) ;
+%     end
+%     if 0
+%         [ cv    ]=p_getHIstvol(fullfile(pa_template, 'AVGT.nii' ),0) ;
+%         [ cvmask]=p_getfromHistvolspace(fullfile(pa_template, 'AVGTmask.nii' )) ;
+%         cv=cv.*uint8(cvmask);
+%     end
+% end
 % ==============================================
 %%   elastix -setting
 % ===============================================

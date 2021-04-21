@@ -7,6 +7,7 @@ if 0
     bartcb('load')
     bartcb('load','F:\data3\histo2\data_Josephine\proj.m')
     bartcb('getsel')
+    bartcb('updateListboxinfo');
 end
 
 if nargin==0; return; end
@@ -21,6 +22,8 @@ elseif strcmp(varargin{1},'load')
     loadproject(varargin)
 elseif strcmp(varargin{1},'getsel')
     [varargout{1} varargout{2}]=getsel(varargin);
+elseif strcmp(varargin{1}, 'updateListboxinfo')
+   updateListboxinfo();
 end
 
 function [ fpdirs dirs] =getsel(arg)
@@ -30,6 +33,9 @@ global ak
  fpdirs=ak.list1(hb.Value,:);
  dirs=[];
 
+ 
+ 
+ 
 %  currstr=hb.String(hb.Value);
 %  dirs=regexprep(currstr,{'#.*' '<html>' '\s+' '&nbsp;'},'') ;
 % if ~isempty(dirs)
@@ -108,6 +114,29 @@ end
 clear global ak;
 
 
+function updateListboxinfo()
+try
+    hf=findobj(0,'tag','bart');
+    hb=findobj(hf,'tag','lb1');
+    global ak;
+    ndirs   =sum(strcmp(ak.list1(:,2),'dir'));
+    nfiles =sum(strcmp(ak.list1(:,2),'file'));
+    
+    
+    [sel]=bartcb('getsel');
+    if isempty(sel);
+        ndirsSel  =0;
+        nfilesSel =0;
+    else
+        ndirsSel  =sum(strcmp(sel(:,2),'dir'));
+        nfilesSel =sum(strcmp(sel(:,2),'file'));
+    end
+    
+    hl=findobj(hf,'tag','listboxinfo');
+    m=[ num2str(ndirsSel) '/' num2str(ndirs) ' dirs; ' num2str(nfilesSel)  '/' num2str(nfiles) ' files'];
+    set(hl,'string',m);
+end
+
 
 function update(var)
 drawnow;
@@ -137,7 +166,7 @@ try
     
 %     [slices fpslices]=getslices(fpdirs);
 
-   set(hb,'string',ms,'fontname','courier','fontsize',6);
+   set(hb,'string',ms,'fontname','courier');%,'fontsize',6);
   %    set(hb,'string',fpslices,'fontname','courier','fontsize',6);
     set(hb,'value',[]);
     ak.list1Html=ms;
@@ -152,6 +181,7 @@ end
 
 tooltip=html_dirs();
 set(hb,'tooltipstring',['<html>' strjoin(tooltip,'<br>') ]);
+updateListboxinfo;
 drawnow;
 
 %% ===============================================

@@ -174,6 +174,14 @@ set(hb,'value',1);
 hb=uicontrol('style','pushbutton','units','norm','tag','findslice_manually');
 set(hb,'position',[0.0113    0.1557    0.0793    0.0388]);
 set(hb,'string','find manually','callback', @findslice_manually);
+
+
+%AVGT-temlpate
+hb=uicontrol('style','radio','units','norm','tag','isAVGT');
+set(hb,'position', [0.010012 0.12472 0.07 0.0289]);
+set(hb,'string','AVGT','fontsize',6,'backgroundcolor','w');
+set(hb,'value',0);
+
 %% get slicing parameter(from manal)
 hb=uicontrol('style','pushbutton','units','norm','tag','getslice_paramter_manually');
 set(hb,'position',[0.0939    0.1557    0.1000    0.0388]);
@@ -394,14 +402,39 @@ global bf
 hb=findobj(gcf,'tag','lb1');
 cord=bf.tb(hb.Value,[2:4]);
 %  cv=getappdata(gcf,'cv');
- global cv
-if isempty(cv)
-    disp('...loading 3d-template..');
-    pa_template=strrep(which('bart.m'),'bart.m','templates');
-   [ cv]=p_getHIstvol(fullfile(pa_template, 'HISTOVOL.nii' ),1) ;
-%    setappdata(gcf,'cv',cv);
+
+hx=findobj(gcf,'tag','isAVGT');
+isAVGT=get(hx,'value');
+if isAVGT==0
+    global cv
+    if isempty(cv)
+        disp('...loading 3d-template..');
+        global ak
+        pa_template=ak.template;
+        [ cv]=p_getHIstvol(fullfile(pa_template, 'HISTOVOL.nii' ),1) ;
+    end
+    histview(cv,cord);
+elseif isAVGT==1
+    global cv2
+    if isempty(cv2)
+        disp('...loading 3d-template..');
+        global ak
+        pa_template=ak.template;
+        %[ cv]=p_getHIstvol(fullfile(pa_template, 'HISTOVOL.nii' ),1) ;
+        [ cv2    ]=p_getHIstvol(fullfile(pa_template, 'AVGT.nii' ),0) ;
+        %         [ cvmask]=p_getfromHistvolspace(fullfile(pa_template, 'AVGTmask.nii' )) ;
+        %         cv=cv.*uint8(cvmask);
+    end
+    histview(cv2,cord);
 end
-histview(cv,cord);
+ 
+    
+
+
+
+
+
+
 
 
 
@@ -412,10 +445,21 @@ par=str2num(he.String);
 if isempty(par); msgbox('no parameter in edit-field found'); end
 
 p.parameter=par; %[266.7753 32.4534 -33.36408]
+hx=findobj(gcf,'tag','isAVGT');
+
+
 global bf;
 ss=bf.ss;
-global cv
-[s2 ]=warpestSlice_single(p,ss,cv);
+isAVGT=get(hx,'value');
+if isAVGT==0
+    global cv
+    [s2 ]=warpestSlice_single(p,ss,cv);
+elseif isAVGT==1
+    global cv2
+    [s2 ]=warpestSlice_single(p,ss,cv2);
+end
+
+
 
 
 % ==============================================

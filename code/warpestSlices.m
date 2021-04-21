@@ -193,8 +193,9 @@ fix=uint8(fix);
 %%   warp
 % ===============================================
 poolobj = gcp;
- addAttachedFiles(poolobj,{'readWholeTextFile.m' ,'elastix2.m', [mfilename '.m'],'mhd_read.m'});%,'elastix.m'
+ addAttachedFiles(poolobj,{'mhd_read_header.m','readWholeTextFile.m' ,'elastix2.m', [mfilename '.m'],'mhd_read.m'});%,'elastix.m'
 timexWarp=tic;
+% cd(pa_el);
 parfor i=1:n%10
     xx=ss.s(i,:)
     slicenum=xx(1);   X=xx(2);  Y=xx(3);

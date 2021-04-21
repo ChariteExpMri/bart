@@ -7,6 +7,7 @@ if isempty(which('@dummy.m')) %set paths
     addpath(pabart);
     addpath(genpath(fullfile(pabart,'code')));
     addpath(genpath(fullfile(pabart,'slicedetection')));
+    addpath(genpath(fullfile(pabart,'vlfeat-0.9.21\mex')));
 end
 
 if 0
@@ -31,11 +32,13 @@ delete(findobj(0,'tag','bart'))
 fg
 set(gcf,'menubar','figure','tag','bart','name','Bart','NumberTitle','off',...
     'units','norm','CloseRequestFcn',[],'menubar','none');
+set(gcf,'WindowKeyPressFcn',@keys);
+
 
 
 hb=uicontrol('style','listbox','units','norm','tag','lb1','tooltipstring','slices');
 set(hb,'position',[0 0 .5 .8],'max',1000,'fontsize',7,'fontname','courier');
-% set(hb,'string',{'1' '2' '3' '4'})
+set(hb,'callback',@lb1_cb)
 lb1_defineContext(hb)
 
 hb=uicontrol('style','listbox','units','norm','tag','lb2','tooltipstring','functions');
@@ -63,6 +66,13 @@ set(hb,'string','update','tag','update','tooltipstring','update cases');
 set(hb,'position',[ 0.0125    0.8012    0.0804    0.0464],'callback',@update);
 
 % ==============================================
+%%   listbox-info
+% ===============================================
+hb=uicontrol('style','text','units','norm');
+set(hb,'string','0/0 dirs; 0/0 files','tag','listboxinfo');
+set(hb,'position',[0.2 0.80119 0.25 0.03],'fontsize',6);
+set(hb,'backgroundcolor','w');
+% ==============================================
 %%   useparallel
 % ===============================================
 hb=uicontrol('style','radio','units','norm');
@@ -76,10 +86,11 @@ set(hb,'position',[ 0.2054    0.9202    0.1204    0.0464],'backgroundcolor','w')
 m = uimenu('Text','File');
 m2 = uimenu(m,'Text','new Project','callback', @newProject);
 m2 = uimenu(m,'Text','import Tiffs','callback', @importTiffs);
-
-
 m2 = uimenu(m,'Text','close','callback', @closebart);
-
+% ---------------------
+m = uimenu('Text','Tools');
+m2 = uimenu(m,'Text','prune tiffs','callback', @cb_pruneTiff);
+% ---------------------
 m  = uimenu('Text','Extras');
 m2 = uimenu(m,'Text','check updates','callback', {@check_updates,1});
 m2 = uimenu(m,'Text','force updates','callback', {@check_updates,2});
@@ -88,6 +99,8 @@ m2 = uimenu(m,'Text','force updates','callback', {@check_updates,2});
 % ==============================================
 %%   MENU
 % ===============================================
+function lb1_cb(e,e2)
+bartcb('updateListboxinfo');
 
 function newProject(e,e2)
 f_newproject();
@@ -117,8 +130,18 @@ else
     end
 end
 
+function cb_pruneTiff(e,e2)
 
 
+[sel]=bartcb('getsel');
+if isempty(sel); return; end
+fis=sel((strcmp(sel(:,2),'file')),1);
+[pa fi ext]=fileparts2(fis);
+fi2=cellfun(@(a,b) {[a filesep b  '.mat']},  pa ,regexprep(fi, { 'a1_'},{'a2_'}));
+fi2=fi2(existn(fi2)==2); %check existence
+prunegui(fi2);
+
+% convert to 'a2_001.mat''
 
 % ==============================================
 %%   update Listbox
@@ -149,6 +172,7 @@ function lb1_defineContext(hb)
 cmenu = uicontextmenu;
 set(hb, 'UIContextMenu', cmenu);
 uimenu(cmenu, 'Label', '<html><b><font color =green> opden DIR', 'Callback', {@lb1_context, 'opdenDIR'});
+uimenu(cmenu, 'Label', '<html><b><font color =blue> show cutting Image', 'Callback', {@lb1_context, 'showCuttingImage'},'separator','on');
 uimenu(cmenu, 'Label', '<html><b><font color =blue> show resized Tif', 'Callback', {@lb1_context, 'showresizedTif'},'separator','on');
 uimenu(cmenu, 'Label', '<html><b><font color =blue> show Tif and Mask', 'Callback', {@lb1_context, 'showTifandMask'});
 uimenu(cmenu, 'Label', '<html><b><font color =blue> show warped BestSlice', 'Callback', {@lb1_context, 'showWarpedBestSlice'});
@@ -167,9 +191,26 @@ files =sel(strcmp(sel(:,2),'file'),1);
 dirs  =sel(strcmp(sel(:,2),'dir'),1);   
    
 if strcmp(task,'opdenDIR')
-    for i=1:length(files)
-       explorer(fileparts(files{i})) ;
+    mix=[dirs; files]
+    for i=1:length(mix)
+        if isdir(mix{i})
+           explorer((mix{i})) ; 
+        else
+            explorer(fileparts(mix{i})) ;
+        end
+        
     end 
+ elseif strcmp(task,'showCuttingImage')   
+    for i=1:length(dirs)
+        fi=fullfile(dirs{i},'a0_cut.jpg');
+        if exist(fi)==2
+            web(fi,'-new');
+       else
+           disp(['could not open: ' fi]);
+       end
+    end
+    
+    
 elseif strcmp(task,'showresizedTif')
     for i=1:length(files)
        fi=regexprep(files{i},{[filesep filesep 'a1_'], '.tif$'},{[filesep filesep 'a1_'],'.jpg'});
@@ -318,7 +359,18 @@ cprintf([0 .5 0],['total time (over cases): ' num2str(toc(timeTot)/60) 'min\n'])
 bartcb('update');
 
 
-
+function keys(e,e2)
+% e2
+if strcmp(e2.Character,'+')
+hl=findobj(gcf,'tag','lb1');
+fs=get(hl,'fontsize');
+set(hl,'fontsize',fs+1);
+elseif strcmp(e2.Character,'-')
+    hl=findobj(gcf,'tag','lb1');
+    fs=get(hl,'fontsize');
+    if fs<2; return; end
+    set(hl,'fontsize',fs-1);
+end
 
 
 

@@ -28,7 +28,9 @@ end
 % ==============================================
 %%   predefined images
 % ===============================================
-pa_template=strrep(which('bart.m'),'bart.m','templates');
+global ak
+pa_template=ak.template;
+% pa_template=strrep(which('bart.m'),'bart.m','templates');
 tb0={...%Name__________INterpol
     'AVGT.nii'          '1'
     'AVGThemi.nii'      '0'

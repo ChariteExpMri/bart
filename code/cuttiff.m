@@ -97,8 +97,7 @@ ws(imx)=borderValue;
 % samevec=zeros(size(ws));
 % samevec(isame)=1;
 
-wsflt=movmean(ws,[11]);
-
+wsflt=movmean(ws,[1000]);%previous:11
 % ot=otsu(wsflt,2)-1; %outside is '1'
 ot=wsflt>220;
 % ot=otsu(wsflt,10)==10;
@@ -106,6 +105,8 @@ mask   = logical(ot(:).')==0;    %(:).' to force row vector
 starts = strfind([false, mask], [0 1]);
 stops = strfind([mask, false], [1 0]);
 t=[strfind([false, mask], [0 1])' strfind([mask, false], [1 0])'];
+% t(find(t(:,2)-t(:,1)<500),:)=[];%minSuperior-anterior-size
+
 numObj=size(t,1);
 disp(['number of objects found: ' num2str(numObj)]);
 
@@ -136,6 +137,7 @@ maxadd=maxsi.*.15;
 si=round(maxsi+maxadd);
 chan=1:3;
 slicefiles={};
+ut2=[]; %all thumbs
 for i=1:size(t,1)
     tx=t(i,:);
     add=si-(tx(2)-tx(1));
@@ -183,15 +185,42 @@ for i=1:size(t,1)
          imwrite(u2, fiout, 'tif','Compression','none');
          slicefiles{i,1}=fiout;
          
+         ut=  imresize(u2,[1000 1000]);
+         
          if x.thumbnail==1
-           ut=  imresize(u2,[1000 1000]);
+           
            fioutThump=fullfile(x.outpath,[x.outstr pnum(i,3) '.jpg']);
            imwrite(ut,fioutThump);
            disp(['..writing thumbnail-' num2str(i) ': ' fiout]);
-         end
-         
+         end 
      end
+     ut2(:,:,i) = ut(:,:,3);
 end
+% ==============================================
+%%   make montage plot
+% ===============================================
+tif3=imresize(w(:,:,3),[ size(ut2,1)  size(ut2,2) ]);
+% ==============================================
+%%   
+% ===============================================
+
+ut3=cat(3,tif3,ut2);
+ut3=imresize(ut3,[500 500]);
+ut3=padarray(ut3,[3 3],0,'both');
+ms=['orig' cellstr(num2str([1:5]'))'];
+for i=1:size(ut3,3)
+   tm=text2im(ms{i});
+   ut3(1:size(tm,1),1:size(tm,2) ,i)=tm.*255;
+end
+mon=montageout(permute(ut3,[1 2 4 3 ]));
+% fg,imagesc(mon)
+
+
+% imwrite(mon,'dum.jpg');
+fioutMon=fullfile(x.outpath,['a0_cut.jpg']);
+imwrite(mon,fioutMon);
+showinfo2('..cutting..Infoimage',fioutMon);
+
 
 % ==============================================
 %%    %-------write info struct

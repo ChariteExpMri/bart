@@ -110,17 +110,27 @@ end
 % ==============================================
 %%   get histoVolume
 % ===============================================
-[ cv]=p_getHIstvol(fullfile(pa_template, 'HISTOVOL.nii' ),1) ;
-
-if 0
-    [ cv    ]=p_getHIstvol(fullfile(pa_template, 'AVGT.nii' ),0) ;
-    [ cvmask]=p_getfromHistvolspace(fullfile(pa_template, 'AVGTmask.nii' )) ;
-    cv=cv.*uint8(cvmask);
+% p.useHistVol=0;
+if p.useHistVol==1
+    [ cv]=p_getHIstvol(fullfile(pa_template, 'HISTOVOL.nii' ),1) ;
+    disp(['Template: HISTOVOL']);
+else
+    if 1
+        [ cv    ]=p_getHIstvol(fullfile(pa_template, 'AVGT.nii' ),0) ;
+        [ cvmask]=p_getfromHistvolspace(fullfile(pa_template, 'AVGTmask.nii' )) ;
+        cv=cv.*uint8(cvmask);
+        disp(['Template: AVGT']);
+    end
 end
 
-
-
-
+%———————————————————————————————————————————————
+%%  using  FIB
+%———————————————————————————————————————————————
+fb     =p_getfromHistvolspace(fullfile(pa_template, 'FIBT.nii' )) ;
+cvmask =p_getfromHistvolspace(fullfile(pa_template, 'AVGTmask.nii' )) ;
+fb=(fb./max(fb(:)))*100;
+fb=fb+cvmask;     
+p2.fb=single(fb);
 
 % ==============================================
 %%   optimize test
@@ -128,6 +138,21 @@ end
 [pat name ext]=fileparts(file);
 filename2=fullfile(pat,[ strrep(name,'a1_','a2_') '.mat']);
 s=load(filename2); s=s.s;
+
+% ==============================================
+%%   modified version (pruning)
+% ===============================================
+modfile=fullfile(pat,[ strrep(name,'a1_','a2_') 'mod.tif'])
+if exist(modfile)==2
+   d=imread(modfile) ;
+    
+   s.img=d;
+   s.mask=uint8(s.img>0);
+   
+    
+end
+
+
 
 
 if 0
@@ -168,6 +193,7 @@ LB=p.plan1_LB;
 UB=p.plan1_UB;
 
 plan1=[x0; LB; UB];
+p2.planno=1;
 % xx=func_call_angles5(s, cv,plan1,  struct('parallel',0,'cellsize',16) );
 [xx1,fvel1,flag1,outp1,solx1]=func_call_angles5(s, cv,plan1,  p2 );
 best1=[xx1 fvel1] ;%-198.4362
@@ -200,12 +226,20 @@ UB=p.plan2_UB;
 plan2=[x0; LB; UB];
 plan2(:,1)=[best1(1) best1(1)-p.plan2_tol  best1(1)+p.plan2_tol]';
 
-cv2=uint8(smooth3(cv,'box',3));
+if 1
+    [ cv    ]=p_getHIstvol(fullfile(pa_template, 'AVGT.nii' ),0) ;
+    [ cvmask]=p_getfromHistvolspace(fullfile(pa_template, 'AVGTmask.nii' )) ;
+    cv2=cv.*uint8(cvmask);
+    disp(['Template: AVGT']);
+end
+
+%  cv2=uint8(smooth3(cv,'box',3));
+%cv2=cv;
 %  cv2=uint8(imgaussfilt3(cv,1));
 % s2.img=imadjust(imgaussfilt(imadjust(s.img),3));
 % [xx sol]=func_call_angles4(s2, cv,plan2,struct('parallel',1,'cellsize',16) );%!!!!
 % [xx,fvel,flag,outp,sol]=func_call_angles4(s, cv2,plan2,struct('parallel',1,'cellsize',25) );%!!!!
-
+p2.planno=2;
 [xx,fvel,flag,outp,sol]=func_call_angles5(s, cv2,plan2,p2);%!!!!
 
 
