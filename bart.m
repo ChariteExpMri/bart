@@ -70,7 +70,7 @@ set(hb,'position',[ 0.0125    0.8012    0.0804    0.0464],'callback',@update);
 % ===============================================
 hb=uicontrol('style','text','units','norm');
 set(hb,'string','0/0 dirs; 0/0 files','tag','listboxinfo');
-set(hb,'position',[0.2 0.80119 0.25 0.03],'fontsize',6);
+set(hb,'position',[0.18 0.80119 0.25 0.03],'fontsize',8);
 set(hb,'backgroundcolor','w');
 % ==============================================
 %%   useparallel
@@ -172,11 +172,13 @@ function lb1_defineContext(hb)
 cmenu = uicontextmenu;
 set(hb, 'UIContextMenu', cmenu);
 uimenu(cmenu, 'Label', '<html><b><font color =green> opden DIR', 'Callback', {@lb1_context, 'opdenDIR'});
-uimenu(cmenu, 'Label', '<html><b><font color =blue> show cutting Image', 'Callback', {@lb1_context, 'showCuttingImage'},'separator','on');
+uimenu(cmenu, 'Label', '<html><b><font color =green> DIR: show cutting Image', 'Callback', {@lb1_context, 'showCuttingImage'},'separator','on');
 uimenu(cmenu, 'Label', '<html><b><font color =blue> show resized Tif', 'Callback', {@lb1_context, 'showresizedTif'},'separator','on');
 uimenu(cmenu, 'Label', '<html><b><font color =blue> show Tif and Mask', 'Callback', {@lb1_context, 'showTifandMask'});
 uimenu(cmenu, 'Label', '<html><b><font color =blue> show warped BestSlice', 'Callback', {@lb1_context, 'showWarpedBestSlice'});
 uimenu(cmenu, 'Label', '<html><b><font color =blue> show final result', 'Callback', {@lb1_context, 'show_finalResult'});
+uimenu(cmenu, 'Label', '<html><b><font color =red> remove CONTENT of this directory (keep raw-dir)', 'Callback', {@lb1_context, 'removeContentDir'},'separator','on');
+
 
 % item2 = uimenu(cmenu, 'Label', 'dotted', 'Callback', cb2);
 % item3 = uimenu(cmenu, 'Label', 'solid', 'Callback', cb3);
@@ -249,6 +251,50 @@ elseif strcmp(task,'show_finalResult')
            disp(['could not open: ' fi]);
        end
     end
+ elseif strcmp(task,'removeContentDir')   
+    mix=unique([dirs; fileparts2(files)]);
+% ==============================================
+%% delete content
+% ===============================================
+if ~isempty(char(mix))
+  opts.Interpreter = 'none';
+    % Include the desired Default answer
+    opts.Default = 'Yes';
+    % Use the TeX interpreter to format the question
+    quest = ['PROCEED???  ..DELETING FOLDER CONTENT:' ...
+        char(10) 'YES) DELETE. ' ...
+        char(10) ' NO) CANCEL. '];
+    answer = questdlg(quest,'PROCEED',...
+        'Yes','No ...cancel',opts);
+    if ~isempty(strfind(answer,'No'))
+        disp('canceled...')
+        return
+    end
+end
+% ==============================================
+%%   
+% ===============================================
+    for i=1:length(mix)
+        pa=mix{i};
+        k=dir(pa);
+        names={k(:).name}';
+        names(strcmp(names,'.')) =[];
+        names(strcmp(names,'..')) =[];
+        names(strcmp(names,'raw'))=[];
+        %names
+        for j=1:length(names)
+            delobj=fullfile(pa,names{j});
+            if isdir(delobj)==1
+                rmdir(delobj,'s');
+            else
+                delete(  delobj  );
+            end
+            
+        end
+    end
+    disp('...done');
+    bartcb('update');
+    
     
 end
 
