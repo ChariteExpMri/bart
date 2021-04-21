@@ -146,8 +146,10 @@ modfile=fullfile(pat,[ strrep(name,'a1_','a2_') 'mod.tif'])
 if exist(modfile)==2
    d=imread(modfile) ;
     
-   s.img=d;
-   s.mask=uint8(s.img>0);
+   [maskfile,brainfile]=clean_data_function2(d);
+   s.img=brainfile;
+   s.mask=maskfile;
+   %s.mask=uint8(s.img>0);
    
     
 end
