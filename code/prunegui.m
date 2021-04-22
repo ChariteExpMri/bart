@@ -163,14 +163,18 @@ set(hb,'tooltipstring','redo last step');
 hb=uicontrol('style','pushbutton','units','norm','tag','removeTissue','string','removeTissue');
 set(hb,'position',[0.90217 0.7802 0.072464 0.02809],'fontsize',6);
 set(hb,'callback',@removeTissue);
-set(hb,'tooltipstring','remove tissue --> draw region via mouse');
+set(hb,'tooltipstring',...
+    ['<html><b>remove tissue </b>--> draw region/selection via mouse <br>'...
+    ' shortcut [r]']);
 
 %% ===============================================
 %% fill tissue
 hb=uicontrol('style','pushbutton','units','norm','tag','fillTissue','string','fillTissue');
 set(hb,'position',[0.90097 0.7184 0.072464 0.02809],'fontsize',6);
 set(hb,'callback',@fillTissue);
-set(hb,'tooltipstring','fill tissue --> draw region via mouse');
+set(hb,'tooltipstring',...
+    ['<html><b>add tissue </b>--> draw region/selection via mouse <br>'...
+    ' shortcut [a]']);
 
 %% radio fill tissue-replacetissue
 hb=uicontrol('style','radio','units','norm','tag','replacefilledTissue','string','replace Tissue');
@@ -183,7 +187,9 @@ set(hb,'tooltipstring','[0]do not replace tissue within ROI [1]replace tissue wi
 hb=uicontrol('style','pushbutton','units','norm','tag','moveTissue','string','moveTissue');
 set(hb,'position',[0.90097 0.65661 0.072464 0.02809],'fontsize',6);
 set(hb,'callback',@moveTissue);
-set(hb,'tooltipstring','move tissue--> selection via mouse');
+set(hb,'tooltipstring',...
+    ['<html><b>move tissue </b>--> draw region/selection via mouse <br>'...
+    ' shortcut [m]']);
 
 %% radio move tissue replace-tissue
 hb=uicontrol('style','radio','units','norm','tag','replaceTissue','string','replaceTissue');
@@ -252,6 +258,7 @@ set(hb,'position',[0.901 .84 .108 .15],'fontsize',6);
 set(hb,'callback',@imagelist_cb);
 set(hb,'tooltipstring','select image here');
 set(hb,'backgroundcolor','w');
+set(hb,'KeyPressFcn',@keys)
 
 %===================================================================================================
 %% filename
@@ -773,7 +780,7 @@ if strcmp(e2.Key,'escape')
     set(gcf, 'WindowButtonMotionFcn',[]);
 elseif strcmp(e2.Key,'r')
     removeTissue([],[]);
-elseif strcmp(e2.Key,'f')
+elseif strcmp(e2.Key,'a')
     fillTissue([],[]);
 elseif strcmp(e2.Key,'g')
     glueTissue([],[]);

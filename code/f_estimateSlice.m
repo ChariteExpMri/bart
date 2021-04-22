@@ -34,7 +34,7 @@ para={...
     'parallel'              1       'use parallell-computation' 'b'
     'cellsize'              16      'cellsize of HOG-histogram (larger is finer scaled  )' ''
     'numStartpoints'       100      'number of starting points (recom: 100) of Multistart-optimization' ''
-    'doflt'                  1      'Gauss filt altas slice after extraction from 3dvol {0,1}'  'b'
+    'doflt'                  0      'Gauss filt altas slice after extraction from 3dvol {0,1}'  'b'
     % -------------------
     '' '' '' ''
     'useHistVol'            1     'TEMPLATE to use: (0) AVGT or (1) HISTOVOL'  'b'

@@ -90,7 +90,12 @@ for i=1:length(z.files)
     z2=z;
     z2=rmfield(z2,'files');
     z2.file=z.files{i};
-    warpestSlices(z2);
+    try
+        warpestSlices(z2);
+    catch
+        warpestSlices(z2);
+    end
+    
 end
 
 

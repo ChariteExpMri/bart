@@ -132,6 +132,9 @@ fb=(fb./max(fb(:)))*100;
 fb=fb+cvmask;     
 p2.fb=single(fb);
 
+
+cv=uint8(cvmask).*cv; %IMPORTANT TO MASK HISTOVOLUME!
+
 % ==============================================
 %%   optimize test
 % ===============================================
@@ -228,7 +231,7 @@ UB=p.plan2_UB;
 plan2=[x0; LB; UB];
 plan2(:,1)=[best1(1) best1(1)-p.plan2_tol  best1(1)+p.plan2_tol]';
 
-if 1
+if 0
     [ cv    ]=p_getHIstvol(fullfile(pa_template, 'AVGT.nii' ),0) ;
     [ cvmask]=p_getfromHistvolspace(fullfile(pa_template, 'AVGTmask.nii' )) ;
     cv2=cv.*uint8(cvmask);
@@ -241,8 +244,8 @@ end
 % s2.img=imadjust(imgaussfilt(imadjust(s.img),3));
 % [xx sol]=func_call_angles4(s2, cv,plan2,struct('parallel',1,'cellsize',16) );%!!!!
 % [xx,fvel,flag,outp,sol]=func_call_angles4(s, cv2,plan2,struct('parallel',1,'cellsize',25) );%!!!!
-p2.planno=2;
-[xx,fvel,flag,outp,sol]=func_call_angles5(s, cv2,plan2,p2);%!!!!
+p2.planno=1;
+[xx,fvel,flag,outp,sol]=func_call_angles5(s, cv,plan2,p2);%!!!!
 
 
 best2=xx;
