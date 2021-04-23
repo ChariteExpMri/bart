@@ -8,6 +8,7 @@ if isempty(which('@dummy.m')) %set paths
     addpath(genpath(fullfile(pabart,'code')));
     addpath(genpath(fullfile(pabart,'slicedetection')));
     addpath(genpath(fullfile(pabart,'vlfeat-0.9.21\mex')));
+    addpath(genpath(fullfile(pabart,'celldetection')));
 end
 
 if 0
@@ -91,6 +92,9 @@ m2 = uimenu(m,'Text','close','callback', @closebart);
 m = uimenu('Text','Tools');
 m2 = uimenu(m,'Text','prune tiffs','callback', @cb_pruneTiff);
 % ---------------------
+m = uimenu('Text','CellDetection');
+m2 = uimenu(m,'Text','cellDetection','callback', @cellDetecetion);
+% ---------------------
 m  = uimenu('Text','Extras');
 m2 = uimenu(m,'Text','check updates','callback', {@check_updates,1});
 m2 = uimenu(m,'Text','force updates','callback', {@check_updates,2});
@@ -146,6 +150,20 @@ bartcb('update');
 % convert to 'a2_001.mat''
 
 % ==============================================
+%%   
+% ===============================================
+function cellDetecetion(e,e2)
+
+[sel]=bartcb('getsel');
+if isempty(sel); return; end
+fis=sel((strcmp(sel(:,2),'file')),1);
+fis=fis(existn(fis)==2); %check existence
+% disp(fis);
+x.files=fis;
+f_celldetection(1,x);
+bartcb('update');
+
+% ==============================================
 %%   update Listbox
 % ===============================================
 function update(e,e2)
@@ -179,6 +197,11 @@ uimenu(cmenu, 'Label', '<html><b><font color =blue> show resized Tif', 'Callback
 uimenu(cmenu, 'Label', '<html><b><font color =blue> show Tif and Mask', 'Callback', {@lb1_context, 'showTifandMask'});
 uimenu(cmenu, 'Label', '<html><b><font color =blue> show warped BestSlice', 'Callback', {@lb1_context, 'showWarpedBestSlice'});
 uimenu(cmenu, 'Label', '<html><b><font color =blue> show final result', 'Callback', {@lb1_context, 'show_finalResult'});
+
+uimenu(cmenu, 'Label', '<html><b><font color =black> show cell-counts', 'Callback', {@lb1_context, 'show_cellCounts'},'separator','on');
+
+
+
 uimenu(cmenu, 'Label', '<html><b><font color =red> remove CONTENT of this directory (keep raw-dir)', 'Callback', {@lb1_context, 'removeContentDir'},'separator','on');
 
 
@@ -253,6 +276,20 @@ elseif strcmp(task,'show_finalResult')
            disp(['could not open: ' fi]);
        end
     end
+    
+elseif strcmp(task,'show_cellCounts')
+    for i=1:length(files)
+        [px name ext]=fileparts(files{i});
+        fi=fullfile(px,['cellcounts_' name],['predfus.tif']);
+        if exist(fi)==2
+            system(fi);
+        else
+            disp(['could not open: ' fi]);
+        end
+    end
+    
+    
+    
  elseif strcmp(task,'removeContentDir')   
     mix=unique([dirs; fileparts2(files)]);
 % ==============================================

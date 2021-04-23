@@ -1,6 +1,7 @@
 
 
 function predictcircles3(pa, pin)
+warning off;
 
 p.meth           ='TwoStage';
 p.polarity      ='dark';
@@ -14,6 +15,10 @@ p=catstruct(p,pin);
 p.show          = 0;
 p.save          = 0;
 p.showcounts     = 0;
+
+% -----intensity threshold
+p.doIntensTresh  = 0;
+p.IntensTresh   =180;
 
 p.verbose       =1;
 
@@ -124,8 +129,12 @@ end
 % ===============================================
 if p.istest==1
     if ~isempty(p.testimage)
-        imnum=regexpi2(pr.tb(:,1),p.testimage);
-        imvec=imnum;
+        if isnumeric(p.testimage)
+            imvec=p.testimage;
+        else
+            imnum=regexpi2(pr.tb(:,1),p.testimage);
+            imvec=imnum;
+        end
     end
 else
     imvec=1:size(pr.tb,1);
@@ -146,6 +155,7 @@ for u=1:length(imvec)
     tim1=tic;
     I = imread(pr.tb{ix,1});
     %     fg,imagesc(I)
+    [px, name]=fileparts(pr.tb{ix,1});
     
     
     
@@ -155,12 +165,14 @@ for u=1:length(imvec)
     warning off
     if size(I,3)==3
         b = rgb2gray(I);
+        mag=I(:,:,3);
     else
         b=mat2gray(I) ;
+        mag=I(:,:,1);
     end
     
-%     fg,imagesc(b); colorbar
-%     fg,imagesc(b<120)
+    %     fg,imagesc(b); colorbar
+    %     fg,imagesc(b<120)
     
     
     
@@ -177,9 +189,17 @@ for u=1:length(imvec)
         [ce,ra] = imfindcircles(gm2,p.radius,'Method',p.meth,'ObjectPolarity',p.polarity,...
             'Sensitivity',p.sens);
         
-        ra2=ra; %copy for PIE-PLOT 
-        if p.doHD==1 
-           [ce ra] =doHD(gm2,ce,  p);
+        ra2=ra; %copy for PIE-PLOT
+        if p.doHD==1
+            [ce ra] =doHD(gm2,ce,  p);
+        end
+        
+        if p.doIntensTresh==1
+            [ce ra]=intenstreshAfterDetection(mag,p ,ce,ra);
+        end
+        
+        if p.doCellDistanceThresh==1
+            [ce ra]=mindist(mag,p,ce,ra);
         end
         
     elseif    strcmp(p.meth,'frst')
@@ -193,10 +213,10 @@ for u=1:length(imvec)
         d=imcomplement(mat2gray(double(I)));%load example data
         d=d(:,:,3);
         d=adapthisteq(d);
-%         d=medfilt2(d,[3 3]);
-        min_and_max_of_img1=[min(d(:)) max(d(:))]
-%         rmin=10;%estimated celll radius range and area
-%         rmax=30;
+        %         d=medfilt2(d,[3 3]);
+        min_and_max_of_img1=[min(d(:)) max(d(:))];
+        %         rmin=10;%estimated celll radius range and area
+        %         rmax=30;
         
         rmin=p.radius(1);
         rmax=p.radius(2);
@@ -214,18 +234,21 @@ for u=1:length(imvec)
         k=25;
         d2=mat2gray(d,min_and_max_of_img1);
         try
-        res_frst=frst(d2,d2.*0+1,r,t,k,alpha);
+            res_frst=frst(d2,d2.*0+1,r,t,k,alpha);
         catch
-           res_frst= d2.*0;
+            res_frst= d2.*0;
         end
         
         if 0
-            figure;imshow(d2,[]);hold on;
+            %             figure;imshow(d2,[]);hold on;
+            figure;imagesc(d2);colormap gray;
+            hold on;
             visboundaries(imdilate(res_frst>0,ones(2)))
+            %   visboundaries(res_frst);
             title('dFRST')
         end
         
-%         keyboard
+        %         keyboard
         
         [xx yy]=find(res_frst);
         ce=[ yy xx];
@@ -255,12 +278,14 @@ for u=1:length(imvec)
     %         'Sensitivity',.7);
     %
     
-    msg_title=[ sprintf('Radius: %d-%d',p.radius(1),p.radius(2)) ';sens: ' num2str(p.sens) ];
+    msg_title=[ '#' num2str(imvec(u))  ') "' name '" ' ...
+        sprintf('Radius: %d-%d',p.radius(1),p.radius(2)) ';sens: ' num2str(p.sens)...
+        '; #cells=' num2str(size(ce,1))];
     if p.show==1
         
         fg,imagesc(b);colormap gray;
         viscircles(ce, ra*0+1,'Color','m','linewidth',.5); axis square
-        title(msg_title,'fontsize',8);
+        title(msg_title,'fontsize',8,'interpreter','none');
         drawnow;
     end
     if p.showcounts==1
@@ -301,7 +326,7 @@ for u=1:length(imvec)
     % ==============================================
     %%  BREAK if TEST
     % ===============================================
-
+    
     %%
     % ===============================================
     I2=mat2gray(I);
@@ -392,9 +417,9 @@ uni=unique(cl2); uni(uni==0)=[];
 % ==============================================
 %%
 % ===============================================
- warning off
+warning off
 % p.sens   =.8;%85;
-% 
+%
 % % p.istest =1
 % % p.show   =1;
 % % p.save   =0;
@@ -409,10 +434,10 @@ uni=unique(cl2); uni(uni==0)=[];
 % p.testimage='sec5_12.png'
 % p.radiusHD=[1 30]
 % p.sensHD  =.99
-% 
+%
 % %%%% p.meth='PhaseCode'
 % p.meth='TwoStage'
-% 
+%
 % [ce1,ra1] = imfindcircles(b,p.radius,'Method',p.meth,'ObjectPolarity',p.polarity,...
 %     'Sensitivity',p.sens);
 
@@ -442,27 +467,27 @@ zd=r;
 for i=1:length(uni)
     mas=cl2==uni(i);
     g2=g.*(mas);
-        
-%     if 0
-%         ce2=[];
-%         [ce2(:,2) ce2(:,1)]=find(g2==1);
-%         densimg=sum(r(:))/numel(r)  ; % all cells/numPicels NORMAL
-%         incl=r.*mas;
-%         denscl=   sum(incl(:))/ sum(mas(:));
-%     end
     
-     mas2=(boundarymask(mas)+mas)>0;
-     mas2=imfill(imclose(mas2,ones(10)),'holes');   
-     me=mean(b(mas2));
-     sd=std(b(mas2));
+    %     if 0
+    %         ce2=[];
+    %         [ce2(:,2) ce2(:,1)]=find(g2==1);
+    %         densimg=sum(r(:))/numel(r)  ; % all cells/numPicels NORMAL
+    %         incl=r.*mas;
+    %         denscl=   sum(incl(:))/ sum(mas(:));
+    %     end
+    
+    mas2=(boundarymask(mas)+mas)>0;
+    mas2=imfill(imclose(mas2,ones(10)),'holes');
+    me=mean(b(mas2));
+    sd=std(b(mas2));
     
     if me<.4
         % cx=[cx; ce2];
-         disp(['pass: '  num2str(i)]);
+        %disp(['pass: '  num2str(i)]);
         zd= (zd.*~mas)+g2;
     end
-     
-%     tg3(i,:) = [me sd];
+    
+    %     tg3(i,:) = [me sd];
 end
 
 
@@ -471,11 +496,11 @@ end
 % ===============================================
 
 if 0
-%     fg,imagesc(b);colormap gray;
-%     viscircles(cx, ones( size(cx,1) ,1),'Color','m','linewidth',.5); axis square
-%     title('granular','fontsize',8);
-
-
+    %     fg,imagesc(b);colormap gray;
+    %     viscircles(cx, ones( size(cx,1) ,1),'Color','m','linewidth',.5); axis square
+    %     title('granular','fontsize',8);
+    
+    
     fg,imagesc(b);colormap gray;
     viscircles(ce1, ones( size(ce1,1) ,1),'Color','m','linewidth',.5); axis square
     title('without HD','fontsize',8);
@@ -483,7 +508,7 @@ end
 
 ce3=[];
 [ce3(:,2) ce3(:,1)]=find(zd==1);
- 
+
 if 0
     % ce3=[cx; ce1]
     ce3=unique(ce3,'rows');
@@ -492,9 +517,280 @@ if 0
     title('new','fontsize',8);
 end
 
+% ==============================================
+%%
+% ===============================================
+if 0
+    x=ce3(:,1);
+    y=ce3(:,2);
+    dist2 = pdist2(ce3, ce3);
+    
+    sm=dist2>10;
+    
+    dist2 = pdist2(ce3, ce3);
+    % Find which points are within 100 of each other
+    cp = dist2 < 15;
+    
+    % ==============================================
+    %%
+    % ===============================================
+    
+    
+    
+    % distx = bsxfun(@minus,x,x');
+    % disty = bsxfun(@minus,y,y');
+    % dist = sqrt(x.^2+y.^2);
+    
+    
+    ind=sub2ind(size(b),ce3(:,2),ce3(:,1));
+    s=zeros(numel(b),1);
+    s(ind)=1;
+    s=reshape(s,size(b));
+    
+    fg,imagesc(b);colormap gray;
+    viscircles(ce3, ones( size(ce3,1) ,1),'Color','m','linewidth',.5); axis square
+    title('new','fontsize',8);
+end
+% ==============================================
+%%
+% ===============================================
+
+
+
+
+
 %———————————————————————————————————————————————
 %%   out
 %———————————————————————————————————————————————
 ce=ce3;
 ra=ones(size(ce,1),1);
+
+
+
+
+
+
+function  [ce2 ra2]=intenstreshAfterDetection(mag,p, ce,ra)
+ce2=[];
+% ==============================================
+%%
+% ===============================================
+
+
+% w =medfilt2(mag,[7 7]);
+% w=imgaussfilt(mag,3);
+w=mag;
+si=size(mag);
+% s =zeros(size(w));
+ce=round(ce);
+
+
+% iv1=sub2ind(size(w),ce(:,1),ce(:,2));
+% w2=w(:);
+% s0(iv1)=1;
+% s0=reshape(s0,size(w));
+
+% ts=w2(iv1)
+
+%
+% s2=imdilate(s0,ones(5));
+% sm=s2.*double(w);
+%
+if 0
+    fg,imagesc(mag);colormap gray;
+    viscircles(ce, ones(size(ce,1),1)*0+1,'Color','m','linewidth',.5);
+    %     axis square
+    %     drawnow;
+end
+
+%
+% s2=s(:);
+% iv=find(s2==1)
+% [xy(:,1) xy(:,2)]=ind2sub(size(s),iv)
+
+xy=ce;
+
+
+% % ==============================================
+%
+% ===============================================
+
+% ke=strel('disk', round(mean(p.radius)) );
+ke=strel('disk', round(min(p.radius)) );
+% ke=strel('disk', 1);
+ke=ke.Neighborhood ;
+
+[xs ys]=meshgrid([-size(ke,1):size(ke,1)]);
+ts=[];
+for i=1:size(xy,1)
+    su=xy(i,[2 1]);
+    sw=[xs(:)+su(1) ys(:)+su(2)];
+    sw([find(sw(:,1)<=0); find(sw(:,2)<=0)],:)=[];
+    sw([find(sw(:,1)>si(1)); find(sw(:,2)>si(1))],:)=[];
+    iv2=sub2ind(si,sw(:,1),sw(:,2));
+    
+    bs=zeros(si);
+    bs(iv2)=1;
+    bs=reshape(bs,si);
+    
+    me=mean(w(iv2));
+    %     ku=kurtosis(w(iv2));
+    ts(i,:)=[me ];
+end
+
+% ==============================================
+%%
+% ===============================================
+% cf
+% p.IntensTresh=100;
+try
+is=find(ts(:,1)<p.IntensTresh);
+catch
+    [ce2 ra2]=deal([]);
+    return
+   % keyboard
+end
+% is=find(ts(:,2)<2);
+% is=find(ts(:,1)<180);
+ce2=xy(is,:);
+ra2=ra(is,:);
+% iv3=sub2ind(size(s),xy2(:,1),xy2(:,2));
+% bs=zeros(size(s2));
+% bs(iv3)=1;
+% bs=reshape(bs,size(s));
+
+
+if 0
+    fg,imagesc(mag);colormap gray;
+    viscircles(ce, ones(size(ce,1),1)*0+1,'Color','m','linewidth',.2); axis square
+    drawnow;
+    title('orig')
+    
+    
+    fg,imagesc(mag);colormap gray;
+    viscircles(ce2, ones(size(ce2,1),1)*0+1,'Color','m','linewidth',.2); axis square
+    title('is');
+    
+    isnot=setdiff(1:size(ts,1),is);
+    ce3=xy(isnot,:);
+    fg,imagesc(mag);colormap gray;
+    viscircles(ce3, ones(size(ce3,1),1)*0+1,'Color','m','linewidth',.2); axis square
+    title('is not');
+    
+end
+
+
+
+% disp('..intensThresh');
+% fprintf('..intensThresh..');
+
+%minDilationDistance
+function [ce2 ra]=mindist(b,p,ce,ra)
+
+% fprintf('..CellDistCheck..');
+
+% fg,imagesc(b);colormap gray;
+% viscircles(ce, ones( size(ce,1) ,1),'Color','m','linewidth',.5); axis square
+% title('new','fontsize',8);
+
+% ==============================================
+%%
+% ===============================================
+try
+    if isempty(ce)
+        [ce2 ra]=deal([]);
+        return
+    end
+    
+    ce=round(ce);
+    ind=sub2ind(size(b),ce(:,2),ce(:,1));
+    
+    
+    s=zeros(numel(b),1);
+    s(ind)=1;
+    s=reshape(s,size(b));
+catch
+    keyboard
+end
+s2=imdilate(s,ones(p.minCellDistance));
+pp=regionprops(s2>0,'centroid');
+ce2=round(cell2mat({pp(:).Centroid}'));
+ra =ones(size(ce2,1),1);
+
+if 0
+    fg,imagesc(b);colormap gray;
+    viscircles(ce, ones( size(ce,1) ,1),'Color','m','linewidth',.5); axis square
+    title('new','fontsize',8);
+    title('orig')
+    
+    fg,imagesc(b);colormap gray;
+    viscircles(ce2, ones( size(ce2,1) ,1),'Color','m','linewidth',.5); axis square
+    title('new','fontsize',8);
+end
+
+
+% ==============================================
+%%
+% ===============================================
+if 0
+    bv=b(:);
+    ds = pdist2(ce, ce);
+    tr   =triu(ds);
+    tr(tr==0)=500;
+    
+    t=tr<10;
+    ce2=[];
+    for i=1:size(ce,1)
+        ix=find(t(i,:)==1);
+        if isempty(ix)
+            ce2(end+1,:)=ce(i,:);
+        else
+            xy=[ce(i,:);ce(ix,:)];
+            ind=sub2ind(size(b),xy(:,2), xy(:,1));
+            val=bv(ind);
+            ce2(end+1,:)=xy(  min( find(val==min(val)) ) ,:);
+        end
+    end
+    ce2=unique(ce2,'rows');
+    fg,imagesc(b);colormap gray;
+    viscircles(ce2, ones( size(ce2,1) ,1),'Color','m','linewidth',.5); axis square
+    title('new','fontsize',8);
+    
+end
+
+% ==============================================
+%%
+% ===============================================
+
+if 0
+    x=ce3(:,1);
+    y=ce3(:,2);
+    dist2 = pdist2(ce3, ce3);
+    
+    sm=dist2>10;
+    
+    dist2 = pdist2(ce3, ce3);
+    % Find which points are within 100 of each other
+    cp = dist2 < 15;
+    
+    % ==============================================
+    %%
+    % ===============================================
+    
+    
+    
+    % distx = bsxfun(@minus,x,x');
+    % disty = bsxfun(@minus,y,y');
+    % dist = sqrt(x.^2+y.^2);
+    
+    
+    ind=sub2ind(size(b),ce3(:,2),ce3(:,1));
+    s=zeros(numel(b),1);
+    s(ind)=1;
+    s=reshape(s,size(b));
+    
+    fg,imagesc(b);colormap gray;
+    viscircles(ce3, ones( size(ce3,1) ,1),'Color','m','linewidth',.5); axis square
+    title('new','fontsize',8);
+end
 

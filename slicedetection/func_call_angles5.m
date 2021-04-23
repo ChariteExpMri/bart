@@ -9,7 +9,7 @@ function [xx,fvel,exitflag,output,solutions]=func_call_angles5(s, cv,plan,p0)
 p.parallel       = 0   ;    % use parallell-comp
 p.cellsize       = 16  ;    % HOG histogram (larger is finer scaled  )
 p.numStartpoints = 5   ;    % number of starting points (recom: 100)
-p.doflt          = 1   ;    % gaus filt altas slice after extraction from 3dvol
+p.doflt          = 0   ;    % gaus filt altas slice after extraction from 3dvol
 % -------------------
 p.plot           = 1   ;    % plot update for each iteration (slow)
 p.plotresult     = 1   ;    % plot result best "solution" (image)

@@ -307,6 +307,7 @@ t={...
     'warp_#.mat'           [1 0 0 ]                        'suggested slices warped'
     'bestslice_#.mat'      [ 0.4667    0.6745    0.1882]   'best slice selected'
     ['fin' filesep 's#_result.gif']      [1 0 1]   'backtransformed images to histo-space'
+    ['cellcounts_a1_#' filesep 'predfus.tif'] [0 0 0] 'cell-detection'
     };
 if exist('r')~=1
     % ==============================================
@@ -315,7 +316,11 @@ if exist('r')~=1
 %     <html><pre>
     v3={};
     for j=1:size(t,1)
+        if isnumeric(t{j,2})
         colhex=sprintf('%02X',round([t{j,2}]*255));
+        else
+            colhex=t{j,2};
+        end
        v3{j,1}= [    '<font color =#' colhex '>&#9632' ...
             '<font color =black><b> ' t{j,3} '</b>' ' [' t{j,1} ']' ];
     end

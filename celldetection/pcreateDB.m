@@ -2,15 +2,19 @@
 % pcreateDB(pax)
 % pcreateDB('C:\Users\skoch\Desktop\deeplearning\DeNeRD\datset4')
 
+% sourcefile: fullpathfilename of histo-slice
 
-function pcreateDB(pax)
 
+function pcreateDB(pax,sourcefile)
 
+if exist('sourcefile')~=1
+    sourcefile='';
+end
 
 
 % tot_brain_sects=1;
 % for k=1:tot_brain_sects
-    disp('first loop')
+%     disp('first loop')
     %    tb=string(ls('dataset')); %get tb of images in training folder
     %     tb=string(ls('dataset')); %get tb of images in training folder
     
@@ -71,4 +75,6 @@ training(:,1)=regexprep(training(:,1),'\s+$','');%regexprep(training(:,1),'\s+',
 % training.training=char(training.training);
 % training = table2cell(training);
 
+source=sourcefile;
 save(fullfile(pax,'training.mat'), 'training');
+save(fullfile(pax,'source.mat'), 'source');
