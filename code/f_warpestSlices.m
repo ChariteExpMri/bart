@@ -27,7 +27,8 @@ para={...
 'files'           ''                'select "optim-mat"-file(s)'                   'mf'
   'doplot'          1          'plot result {0,1}'  'b'
   'nbest'           inf        'warp nbest-slices (i.e. the n-best canditates), "inf": warp all available slices (defined by "f_estimateSlice.m" ) '  {inf,100}
-  'cellsize'        16         'HOG-cellSize (larger is more detailed)' ''
+  'cellsize'        4           'HOG-cellSize (larger is rougher)' ''
+  'useSSIM'         1          'use Multiscale structural similarity' 'b'
   'size'           [330 450]   'image-size to calculate HOG..do not change!'  ''
   'nresolutions'   [1 1 ]     'number of pyramids for affine/nonlinear registration: resolutions (val1): affine registration (val2) B-spline registration (values>1 takes longer but might be more precise)' ''
   }; 

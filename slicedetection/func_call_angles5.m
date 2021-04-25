@@ -47,7 +47,14 @@ end
 %% ===fill params================================================================================================
 experimental_file =s.img;
 maskfile          =s.mask;
-cellsize          =p.cellsize;
+% cellsize          =p.cellsize;
+% useSSIM           =p.useSSIM;
+
+%% ===================================================================================================
+p3=p;
+try; p3=rmfield(p3,{'fb'}); end
+
+
 
 %% ===================================================================================================
 
@@ -256,9 +263,9 @@ end
         %%   hog diff
         % ===============================================
         if p0.planno==1
-          [hogval ]=compute_hog_single_v3(experimental_file,maskfile,tatlas,cellsize); 
+          [hogval ]=compute_hog_single_v3(experimental_file,maskfile,tatlas,p3); 
         else
-           [hogval ]=compute_hog_single_v4(experimental_file,maskfile,tatlas,fib,cellsize);  
+           [hogval ]=compute_hog_single_v4(experimental_file,maskfile,tatlas,fib,p3);  
         end
        
         %         hogval=compute_hog_single(cellsize,experimental_file,tatlas,experimental_thickness,...

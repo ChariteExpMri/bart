@@ -8,7 +8,8 @@ function warpestSlices(p0)
 p.file=         '' ;%optim-mat file
 p.doplot        =1         ; % plot result
 p.nbest         =50        ; %best n-results
-p.cellsize      =16        ; % HOG-cellSize (larger is more detailed)'
+p.cellsize      =4        ; % HOG-cellSize (larger is rougher/smoother)
+p.useSSIM       =1         ; %use use Multiscale structural similarity 
 p.size          =[330 450] ; %resize image (current-atlas-size: 320x456)
 p.nresolutions  =[1 1 ]; %number of resolutions (val1): affine registration (val2) B-spline registration (values>1 takes longer but might be more precise)
 % -------------------
@@ -156,6 +157,7 @@ cprintf([0 .5 0],['  ..dT-prereq: ' sprintf('%2.2f',toc(timex0)/60)  ' min\n']);
 % -------------------
 n        = p.nbest;
 cellsize = p.cellsize;
+useSSIM  = p.useSSIM;
 siz      = p.size;
 numresolutions=p.nresolutions;
 
@@ -219,8 +221,13 @@ parfor i=1:n%10
     
     %----HOG
     hog_at= vl_hog(single(wa ),cellsize);
-    hog_diff=hog_hi-hog_at;
-    met1(i,:)=norm(reshape(hog_diff,1,numel(hog_diff)));
+    if useSSIM==0
+        hog_diff=hog_hi-hog_at;
+        met1(i,:)=norm(reshape(hog_diff,1,numel(hog_diff)));
+    else
+        met1(i,:)=1-multissim3(hog_at,hog_hi);
+        %disp('multi-SSIM');
+    end
     
     %---MI-------
     lg=outs.log;
@@ -264,13 +271,17 @@ if p.doplot==1
     min3=min(find(met3==min(met3)));
      
     
-    fg;
+   
     msg1=['HOG (ix:' num2str(min1) ')'  sprintf('%2.2f ',ss.s(min1,:)) ];
     msg2=['MI  (ix:' num2str(min2) ')' sprintf('%2.2f ',ss.s(min2,:))];
     msg3=['RMS(MI,HOG  (ix:' num2str(min3) ')' sprintf('%2.2f ',ss.s(min3,:))];
-    subplot(2,2,1); plot(met1,'-r.'); title(msg1,'fontsize',8);
-    subplot(2,2,2); plot(met2,'-b.'); title(msg2,'fontsize',8);
-%     subplot(2,2,3);plot(met3,'-b.'); title(msg3,'fontsize',8);
+    
+    if 0
+        fg;
+        subplot(2,2,1); plot(met1,'-r.'); title(msg1,'fontsize',8);
+        subplot(2,2,2); plot(met2,'-b.'); title(msg2,'fontsize',8);
+        %     subplot(2,2,3);plot(met3,'-b.'); title(msg3,'fontsize',8);
+    end
     
     disp(['metric-solution-Idx' fprintf('%d ',[min1 min2 min3])]);
     imoverlay(imadjust(mat2gray(fix)),q(:,:,min1)); title(msg1,'fontsize',8);

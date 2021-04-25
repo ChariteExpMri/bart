@@ -1,4 +1,4 @@
-function [hogdiff2 ]=compute_hog_single_v3(experimental_file,maskfile,tatlas,cellsize)
+function [hogdiff2 ]=compute_hog_single_v3(experimental_file,maskfile,tatlas,p)
 
 % try
 %     % prevVers: compute_hog_single_
@@ -18,7 +18,7 @@ function [hogdiff2 ]=compute_hog_single_v3(experimental_file,maskfile,tatlas,cel
 % hogdiff2=rand(1); return
 
     try
-    hog_hi= vl_hog(single(experimental_file  ),cellsize);
+    hog_hi= vl_hog(single(experimental_file  ),p.cellsize);
 %     'worked'
    catch
          'fehler'
@@ -43,17 +43,28 @@ function [hogdiff2 ]=compute_hog_single_v3(experimental_file,maskfile,tatlas,cel
         warpedatlas = imtransform(atlasslice,tform,'bilinear','XData',[1 size(small_mask,2)],'YData',...
             [1 size(small_mask,1)]);
         %-------paul-------
-        hog_at= vl_hog(single(warpedatlas),cellsize);
-        %hog_at= vl_hog(single(warpedatlas).*single(small_mask),cellsize); %TEST WITH SAME MASK
+        hog_at= vl_hog(single(warpedatlas),p.cellsize);
+        %hog_at= vl_hog(single(warpedatlas).*single(small_mask),p.cellsize); %TEST WITH SAME MASK
         
-        hog_diff=hog_hi-hog_at;
-        hogdiff2=norm(reshape(hog_diff,1,numel(hog_at))) ;
+        
+        % ==============================================
+        %%   ssim
+        % ===============================================
+
+        if p.useSSIM==0
+            hog_diff=hog_hi-hog_at;
+            hogdiff2=norm(reshape(hog_diff,1,numel(hog_at))) ;
+        else
+            %hogdiff2= 1-ssim(single(warpedatlas),single(small_exp));
+            hogdiff2= 1-multissim3(hog_at,hog_hi);
+           % disp('useSSIM');
+        end
         %      hogdiff2=100-((mi(hog_diff,hog_at))*30);
         %     hogdiff2=100-mi(small_exp,warpedatlas);
         if 0
             %hogdiff2=hogdiff2 *((1/jaccard(warpedatlas>0,small_mask>0)));
-            hogatm=vl_hog(single(warpedatlas>0  ),cellsize) ;
-            hoghim=vl_hog(single(small_mask>0  ),cellsize) ;
+            hogatm=vl_hog(single(warpedatlas>0  ),p.cellsize) ;
+            hoghim=vl_hog(single(small_mask>0  ),p.cellsize) ;
             hog_diff_mask=hoghim-hogatm;
             hogdiff3=norm(reshape(hog_diff_mask,1,numel(hog_at))) ;
             %     hogdiff2=hogdiff2+hogdiff3;

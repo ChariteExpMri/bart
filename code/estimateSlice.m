@@ -12,7 +12,8 @@ p.channel           = 3;
 p.usemanualrotation = 1;
 
 p.parallel       = 1   ;    % use parallell-comp
-p.cellsize       = 16  ;    % HOG histogram (larger is finer scaled  )
+p.cellsize       = 4   ;    % HOG-cellSize (larger is rougher/smoother)
+p.useSSIM        = 1   ;   % use Multiscale structural similarity' 
 p.numStartpoints = 100 ;    % number of starting points (recom: 100)
 p.doflt          = 1   ;    % gaus filt altas slice after extraction from 3dvol
 % -------------------
@@ -187,6 +188,7 @@ timeplan1=tic;
 
 p2.parallel       = p.parallel         ;% use parallell-comp
 p2.cellsize       = p.cellsize         ;% HOG histogram (larger is finer scaled  )
+p2.useSSIM        = p.useSSIM;
 p2.numStartpoints = p.numStartpoints   ;% number of starting points (recom: 100)
 p2.doflt          = p.doflt            ;% gauss-filt altas slice after extraction from 3dvol
 p2.plot           = p.plot             ;% plot update for each iteration (slow)

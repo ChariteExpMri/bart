@@ -311,6 +311,25 @@ if ~isempty(char(mix))
     end
 end
 % ==============================================
+%%   check
+% ===============================================
+
+dlgtitle = 'Delete Folder Content';
+prompt = {['Just to be shure!'  char(10) 'Type "del" to remove the content of the selected folder(s).' char(10) ...
+    'This operation is IRREVERSIBLE!']};
+dims = [1 60];
+definput = {''};
+answer = inputdlg(prompt,dlgtitle,dims,definput);
+
+chk=char(answer{1});
+if strcmp(chk,'del')~=1
+    disp('canceled');
+    return
+end
+
+disp('removing folder content');
+% return
+% ==============================================
 %%   
 % ===============================================
     for i=1:length(mix)
