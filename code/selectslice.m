@@ -46,7 +46,7 @@ bf.ss=ss;
 bf.file=file;
 
 bf.cmap={'gray' 'hot' 'parula','jet'};
-bf.cmapValue=2;
+bf.cmapValue=1;
 bf.sortcolumn=5;
 %===================================================================================================
 
@@ -63,6 +63,15 @@ makelist();
 updateplot(1);
 sortafter([],[], bf.sortcolumn);
 
+%———————————————————————————————————————————————
+%%   
+%———————————————————————————————————————————————
+function docontour(e,e2)
+hl=findobj(gcf,'tag','lb1');
+listnum=hl.Value;
+updateplot(listnum)
+
+
 % ==============================================
 %%   updateplot
 % ===============================================
@@ -77,32 +86,76 @@ cla;
 hc=findobj(gcf,'tag','cmap'); hc=hc(1);
 % % % get(hc)
 dooverlay=get(findobj(gcf,'tag','dooverlay'),'value');
+docontour=get(findobj(gcf,'tag','docontour'),'value');
 
-if dooverlay==1
-    imoverlay(bf.ss.q(:,:,fignum),bf.ss.hi,[],[],hc.String{hc.Value},[],ax1);
-     xlim([1 size(  bf.ss.hi ,2)]);    ylim([1 size(bf.ss.hi,1)]); drawnow
-else
-    
-    b=[imadjust(mat2gray(bf.ss.q(:,:,fignum)))   imadjust(mat2gray(bf.ss.hi))];
-    b(find(sum(b,2)==0),:)=[];
-    b(:,find(sum(b,1)==0))=[];
-%     fg,
-    imagesc(b);colormap(hc.String{hc.Value});
-    caxis('auto');
-    xlim([1 size(b,2)]);    ylim([1 size(b,1)]);
-    linstp=20;
-    lin= 1:linstp:size(b,1);
-    hl=hline(lin,'color',[0 .5 1]);
-    
-    
-    %     fg;
-    if 0
-        hold on
-        contour(b,2,'k');
-        set(gca,'ydir','reverse');
+if docontour==1
+    %———————————————————————————————————————————————
+    %%
+    %———————————————————————————————————————————————
+    mode=2;
+    if mode==1
+        c1=imadjust(mat2gray(bf.ss.q(:,:,fignum)))  ;
+        c2=imadjust(mat2gray(bf.ss.hi));
+    else
+        
+        c2=imadjust(mat2gray(bf.ss.q(:,:,fignum)))  ;
+        c1=imadjust(mat2gray(bf.ss.hi));
     end
     
     
+%     figure(10);
+%     cla
+    imagesc(c1);colormap(hc.String{hc.Value});%colormap(gray);
+    hold on;
+    contour(c2,3,'r');
+    caxis('auto');
+    xlim([1 size(c1,2)]);    ylim([1 size(c1,1)]);
+    linstp=20;
+    lin= 1:linstp:size(c1,1);
+    hl=hline(lin,'color',[0 .5 1]);
+    
+    %
+    %     b=[imadjust(mat2gray(bf.ss.q(:,:,fignum)))   imadjust(mat2gray(bf.ss.hi))];
+    %     b(find(sum(b,2)==0),:)=[];
+    %     b(:,find(sum(b,1)==0))=[];
+    %     %     fg,
+    %     imagesc(b);colormap(hc.String{hc.Value});
+    %     caxis('auto');
+    %     xlim([1 size(b,2)]);    ylim([1 size(b,1)]);
+    %     linstp=20;
+    %     lin= 1:linstp:size(b,1);
+    %     hl=hline(lin,'color',[0 .5 1]);
+    %———————————————————————————————————————————————
+    %%
+    %———————————————————————————————————————————————
+    
+    
+else
+    if dooverlay==1
+        imoverlay(bf.ss.q(:,:,fignum),bf.ss.hi,[],[],hc.String{hc.Value},[],ax1);
+        xlim([1 size(  bf.ss.hi ,2)]);    ylim([1 size(bf.ss.hi,1)]); drawnow
+    else
+        if 1
+            b=[imadjust(mat2gray(bf.ss.q(:,:,fignum)))   imadjust(mat2gray(bf.ss.hi))];
+            b(find(sum(b,2)==0),:)=[];
+            b(:,find(sum(b,1)==0))=[];
+            %     fg,
+            imagesc(b);colormap(hc.String{hc.Value});
+            caxis('auto');
+            xlim([1 size(b,2)]);    ylim([1 size(b,1)]);
+            linstp=20;
+            lin= 1:linstp:size(b,1);
+            hl=hline(lin,'color',[0 .5 1]);
+        end        
+        %     fg;
+        if 0
+            hold on
+            contour(b,2,'k');
+            set(gca,'ydir','reverse');
+        end
+        
+        
+    end
 end
 set(gca,'tag','ax1');
 axis off;
@@ -162,10 +215,16 @@ set(hb,'position', [0.85   0.9632    0.07    0.0289],'callback',@dooverlay);
 set(hb,'string','overlay','fontsize',6,'backgroundcolor','w');
 set(hb,'value',0);
 
+%% contour
+hb=uicontrol('style','radio','units','norm','tag','docontour');
+set(hb,'position', [0.77967 0.96625 0.07 0.0289],'callback',@docontour);
+set(hb,'string','contour','fontsize',6,'backgroundcolor','w');
+set(hb,'value',0);
+
 
 %%  sort 
 hb=uicontrol('style','popupmenu','units','norm','tag','sortafter');
-set(hb,'position',[0.67204 0.965 0.12 0.0289],'callback',@sortafter);
+set(hb,'position',[0.63 0.965 0.1 0.0289],'callback',@sortafter);
 set(hb,'string',{'ImgNumber' 'Slice' 'Pitch' 'YAW' 'HOGwarp' 'MIwarp' 'HOGaffine'});
 set(hb,'value',1);
 

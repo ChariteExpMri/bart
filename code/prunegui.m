@@ -157,21 +157,30 @@ set(hb,'position',[0.35024+0.072464 0.901 0.072464 0.02809]);
 set(hb,'callback',{@undoredo,1});
 set(hb,'tooltipstring','redo last step');
 
+
 %% ===============================================
 
+%% remove background
+hb=uicontrol('style','pushbutton','units','norm','tag','removeBackground','string','removeBackground');
+set(hb,'position',[0.90217 0.802 0.098 0.02809],'fontsize',6);
+set(hb,'callback',@removeBackground);
+set(hb,'tooltipstring',...
+    ['<html><b>remove background </b>--> click location to remove this and neighbouring background intensity <br>'...
+    ' shortcut [b]']);
+%% ===============================================
 %% remove tissue
 hb=uicontrol('style','pushbutton','units','norm','tag','removeTissue','string','removeTissue');
-set(hb,'position',[0.90217 0.7802 0.072464 0.02809],'fontsize',6);
+set(hb,'position',[0.90217 0.7602 0.072464 0.02809],'fontsize',6);
 set(hb,'callback',@removeTissue);
 set(hb,'tooltipstring',...
     ['<html><b>remove tissue </b>--> draw region/selection via mouse <br>'...
     ' shortcut [r]']);
 
 %% ===============================================
-%% fill tissue
-hb=uicontrol('style','pushbutton','units','norm','tag','fillTissue','string','fillTissue');
+%% add tissue
+hb=uicontrol('style','pushbutton','units','norm','tag','addTissue','string','addTissue');
 set(hb,'position',[0.90097 0.7184 0.072464 0.02809],'fontsize',6);
-set(hb,'callback',@fillTissue);
+set(hb,'callback',@addTissue);
 set(hb,'tooltipstring',...
     ['<html><b>add tissue </b>--> draw region/selection via mouse <br>'...
     ' shortcut [a]']);
@@ -208,7 +217,8 @@ set(hb,'callback',@glueTissue);
 set(hb,'tooltipstring','');
 set(hb,'tooltipstring',['<html><b>glue tissue (RUPTURE/TEAR)</b><br> click pair-wise points along the rupture<br> '...
     'point-order: A1,A2,B1,B2,..N1,N2, such that the point A1 is contracted with point A2, <br>' ...
-    ' B1 with B2...N1 with N2 ']);
+    ' B1 with B2...N1 with N2 <br>' ...
+    ' shortcut [g]']);
 
 %% glue iter
 hb=uicontrol('style','edit','units','norm','tag','glueTissueiter','string','3');
@@ -506,6 +516,27 @@ elseif stp<0 && num>0
     showimage(num);
 end
 
+function removeBackground(e,e2)
+
+cp=ginput(1);
+cp=round(cp);
+him=findobj(gcf,'tag','him');
+d=get(him,'Cdata');
+% d=medfilt2(d,[11 11]);
+o=otsu(d,3);
+val=o(cp(2),cp(1));
+os=o==val;
+cl=bwlabeln(os);
+sel=cl==cl(cp(2),cp(1));
+dx=d.*cast(imcomplement(sel),'like',d);
+% -----------------------;
+u=get(gcf,'userdata');
+u.stepnum=u.stepnum+1;
+u.imb(:,:,u.stepnum)=dx;
+set(gcf,'userdata',u);
+showimage(u.stepnum);
+
+
 function removeTissue(e,e2)
 h = drawfreehand;
 pos=round(h.Position);
@@ -517,7 +548,7 @@ d=get(him,'Cdata');
 % m(bd)=1;
 m=createMask(h);
 d(m)=0;
-
+% -----------------------;
 u=get(gcf,'userdata');
 u.stepnum=u.stepnum+1;
 u.imb(:,:,u.stepnum)=d;
@@ -527,7 +558,7 @@ showimage(u.stepnum);
 
 delete(h);
 
-function fillTissue(e,e2)
+function addTissue(e,e2)
 h = drawfreehand;
 pos=round(h.Position);
 % ---------------
@@ -781,9 +812,11 @@ if strcmp(e2.Key,'escape')
 elseif strcmp(e2.Key,'r')
     removeTissue([],[]);
 elseif strcmp(e2.Key,'a')
-    fillTissue([],[]);
+    addTissue([],[]);
 elseif strcmp(e2.Key,'g')
     glueTissue([],[]);
+elseif strcmp(e2.Key,'b')    
+    removeBackground([],[]);
 end
 
 
