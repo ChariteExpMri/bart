@@ -355,7 +355,7 @@ set(jSlider, 'Value',0, 'MajorTickSpacing',1, 'PaintLabels',true,'Minimum',1,'Ma
 set(jSlider,'SnapToTicks',1);
 set(jSlider,'value',1);
 % set(jSlider, 'Orientation',jSlider.VERTICAL);
-set(hb,'units','norm','position',[ .74 .962 .12 .035 ]);
+set(hb,'units','norm','position',[ .74 .95 .12 .07 ]);
 
 lab={'OVL' 'SbS' 'con1' 'con2'}
 % ticknum=[0 33 66 99]
@@ -366,9 +366,8 @@ for i=1:length(lab)
     key=ticknum(i);
     mLabel = lab{i}; %Matlab Char
     jLabel = javaObjectEDT('javax.swing.JLabel', mLabel); % Java JLabel
-  
     font=jLabel.getFont;
-    font2 = java.awt.Font(font.getName,font.getStyle,font.getSize.*.7  );
+    font2 = java.awt.Font(font.getName,font.getStyle,font.getSize.*.8  );
     set(jLabel,'font',font2);
     labelTable.put(int32(key), jLabel);
 end
@@ -376,9 +375,8 @@ jSlider.setLabelTable(labelTable);
  jbh = handle(jSlider,'CallbackProperties');
 set (jbh, 'StateChangedCallback', @sliderPlotType_cb)
 set(jSlider,'Background',java.awt.Color.white);
-
-
 set(hb,'tag','sliderPlotType');
+
 
 %———————————————————————————————————————————————
 %%   
