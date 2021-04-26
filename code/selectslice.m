@@ -88,12 +88,29 @@ hc=findobj(gcf,'tag','cmap'); hc=hc(1);
 dooverlay=get(findobj(gcf,'tag','dooverlay'),'value');
 docontour=get(findobj(gcf,'tag','docontour'),'value');
 
-if docontour==1
-    %———————————————————————————————————————————————
-    %%
-    %———————————————————————————————————————————————
-    mode=2;
-    if mode==1
+hp=findobj(gcf,'tag','sliderPlotType');
+hj=get(hp,'JavaPeer');
+plotmode=get(hj,'Value');
+
+
+if plotmode==1 %overlay
+    imoverlay(bf.ss.q(:,:,fignum),bf.ss.hi,[],[],hc.String{hc.Value},[],ax1);
+    xlim([1 size(  bf.ss.hi ,2)]);    ylim([1 size(bf.ss.hi,1)]); drawnow
+    
+elseif plotmode==2%sideBySide
+    b=[imadjust(mat2gray(bf.ss.q(:,:,fignum)))   imadjust(mat2gray(bf.ss.hi))];
+    b(find(sum(b,2)==0),:)=[];
+    b(:,find(sum(b,1)==0))=[];
+    %     fg,
+    imagesc(b);colormap(hc.String{hc.Value});
+    caxis('auto');
+    xlim([1 size(b,2)]);    ylim([1 size(b,1)]);
+    linstp=20;
+    lin= 1:linstp:size(b,1);
+    hl=hline(lin,'color',[0 .5 1]);
+    
+elseif plotmode==3 || plotmode==4 %contour
+    if plotmode==3
         c1=imadjust(mat2gray(bf.ss.q(:,:,fignum)))  ;
         c2=imadjust(mat2gray(bf.ss.hi));
     else
@@ -101,64 +118,94 @@ if docontour==1
         c2=imadjust(mat2gray(bf.ss.q(:,:,fignum)))  ;
         c1=imadjust(mat2gray(bf.ss.hi));
     end
-    
-    
-%     figure(10);
-%     cla
+    %     figure(10);
+    %     cla
     imagesc(c1);colormap(hc.String{hc.Value});%colormap(gray);
     hold on;
-    contour(c2,3,'r');
+    contour(c2,2,'r','linewidth',1);
     caxis('auto');
     xlim([1 size(c1,2)]);    ylim([1 size(c1,1)]);
     linstp=20;
     lin= 1:linstp:size(c1,1);
-    hl=hline(lin,'color',[0 .5 1]);
-    
-    %
-    %     b=[imadjust(mat2gray(bf.ss.q(:,:,fignum)))   imadjust(mat2gray(bf.ss.hi))];
-    %     b(find(sum(b,2)==0),:)=[];
-    %     b(:,find(sum(b,1)==0))=[];
-    %     %     fg,
-    %     imagesc(b);colormap(hc.String{hc.Value});
-    %     caxis('auto');
-    %     xlim([1 size(b,2)]);    ylim([1 size(b,1)]);
-    %     linstp=20;
-    %     lin= 1:linstp:size(b,1);
-    %     hl=hline(lin,'color',[0 .5 1]);
-    %———————————————————————————————————————————————
-    %%
-    %———————————————————————————————————————————————
-    
-    
-else
-    if dooverlay==1
-        imoverlay(bf.ss.q(:,:,fignum),bf.ss.hi,[],[],hc.String{hc.Value},[],ax1);
-        xlim([1 size(  bf.ss.hi ,2)]);    ylim([1 size(bf.ss.hi,1)]); drawnow
-    else
-        if 1
-            b=[imadjust(mat2gray(bf.ss.q(:,:,fignum)))   imadjust(mat2gray(bf.ss.hi))];
-            b(find(sum(b,2)==0),:)=[];
-            b(:,find(sum(b,1)==0))=[];
-            %     fg,
-            imagesc(b);colormap(hc.String{hc.Value});
-            caxis('auto');
-            xlim([1 size(b,2)]);    ylim([1 size(b,1)]);
-            linstp=20;
-            lin= 1:linstp:size(b,1);
-            hl=hline(lin,'color',[0 .5 1]);
-        end        
-        %     fg;
-        if 0
-            hold on
-            contour(b,2,'k');
-            set(gca,'ydir','reverse');
-        end
-        
-        
-    end
+    hl=hline(lin,'color',[0 .5 1]); 
 end
-set(gca,'tag','ax1');
-axis off;
+ set(gca,'tag','ax1');
+axis off;   
+    
+
+
+% 
+% if docontour==1
+% %     %———————————————————————————————————————————————
+% %     %%
+% %     %———————————————————————————————————————————————
+% %     mode=1;
+% %     if mode==1
+% %         c1=imadjust(mat2gray(bf.ss.q(:,:,fignum)))  ;
+% %         c2=imadjust(mat2gray(bf.ss.hi));
+% %     else
+% %         
+% %         c2=imadjust(mat2gray(bf.ss.q(:,:,fignum)))  ;
+% %         c1=imadjust(mat2gray(bf.ss.hi));
+% %     end
+% %     
+% %     
+% % %     figure(10);
+% % %     cla
+% %     imagesc(c1);colormap(hc.String{hc.Value});%colormap(gray);
+% %     hold on;
+% %     contour(c2,2,'r','linewidth',1);
+% %     caxis('auto');
+% %     xlim([1 size(c1,2)]);    ylim([1 size(c1,1)]);
+% %     linstp=20;
+% %     lin= 1:linstp:size(c1,1);
+% %     hl=hline(lin,'color',[0 .5 1]);
+% %     
+% %     %
+% %     %     b=[imadjust(mat2gray(bf.ss.q(:,:,fignum)))   imadjust(mat2gray(bf.ss.hi))];
+% %     %     b(find(sum(b,2)==0),:)=[];
+% %     %     b(:,find(sum(b,1)==0))=[];
+% %     %     %     fg,
+% %     %     imagesc(b);colormap(hc.String{hc.Value});
+% %     %     caxis('auto');
+% %     %     xlim([1 size(b,2)]);    ylim([1 size(b,1)]);
+% %     %     linstp=20;
+% %     %     lin= 1:linstp:size(b,1);
+% %     %     hl=hline(lin,'color',[0 .5 1]);
+% %     %———————————————————————————————————————————————
+% %     %%
+% %     %———————————————————————————————————————————————
+% %     
+%     
+% else
+%     if dooverlay==1
+%         imoverlay(bf.ss.q(:,:,fignum),bf.ss.hi,[],[],hc.String{hc.Value},[],ax1);
+%         xlim([1 size(  bf.ss.hi ,2)]);    ylim([1 size(bf.ss.hi,1)]); drawnow
+%     else
+%         if 1
+%             b=[imadjust(mat2gray(bf.ss.q(:,:,fignum)))   imadjust(mat2gray(bf.ss.hi))];
+%             b(find(sum(b,2)==0),:)=[];
+%             b(:,find(sum(b,1)==0))=[];
+%             %     fg,
+%             imagesc(b);colormap(hc.String{hc.Value});
+%             caxis('auto');
+%             xlim([1 size(b,2)]);    ylim([1 size(b,1)]);
+%             linstp=20;
+%             lin= 1:linstp:size(b,1);
+%             hl=hline(lin,'color',[0 .5 1]);
+%         end        
+%         %     fg;
+%         if 0
+%             hold on
+%             contour(b,2,'k');
+%             set(gca,'ydir','reverse');
+%         end
+%         
+%         
+%     end
+% end
+% set(gca,'tag','ax1');
+% axis off;
 
 function lb1_cb(e,e2)
 if strcmp(get(gcf,'selectiontype'),'open')
@@ -209,17 +256,18 @@ set(hb,'position', [0.92109 0.965 0.0793 0.0289],'callback',@cmap_cb);
 set(hb,'string',bf.cmap);
 set(hb,'value',bf.cmapValue);
 
-%overlay
-hb=uicontrol('style','radio','units','norm','tag','dooverlay');
-set(hb,'position', [0.85   0.9632    0.07    0.0289],'callback',@dooverlay);
-set(hb,'string','overlay','fontsize',6,'backgroundcolor','w');
-set(hb,'value',0);
-
-%% contour
-hb=uicontrol('style','radio','units','norm','tag','docontour');
-set(hb,'position', [0.77967 0.96625 0.07 0.0289],'callback',@docontour);
-set(hb,'string','contour','fontsize',6,'backgroundcolor','w');
-set(hb,'value',0);
+if 0
+    %overlay
+    hb=uicontrol('style','radio','units','norm','tag','dooverlay');
+    set(hb,'position', [0.85   0.9632    0.07    0.0289],'callback',@dooverlay);
+    set(hb,'string','overlay','fontsize',6,'backgroundcolor','w');
+    set(hb,'value',0);
+    %% contour
+    hb=uicontrol('style','radio','units','norm','tag','docontour');
+    set(hb,'position', [0.77967 0.96625 0.07 0.0289],'callback',@docontour);
+    set(hb,'string','contour','fontsize',6,'backgroundcolor','w');
+    set(hb,'value',0);
+end
 
 
 %%  sort 
@@ -227,6 +275,13 @@ hb=uicontrol('style','popupmenu','units','norm','tag','sortafter');
 set(hb,'position',[0.63 0.965 0.1 0.0289],'callback',@sortafter);
 set(hb,'string',{'ImgNumber' 'Slice' 'Pitch' 'YAW' 'HOGwarp' 'MIwarp' 'HOGaffine'});
 set(hb,'value',1);
+
+%________________________________________________
+%% to top
+hb=uicontrol('style','pushbutton','units','norm','tag','toTop');
+set(hb,'position',[0.68085 0.1612 0.07 0.04]);
+set(hb,'string','to TOP','callback', @totop);
+%________________________________________________
 
 
 %% find slice manally
@@ -286,6 +341,76 @@ if exist(f2)==2
 else
   set(hb,'string','best slice not defined jet');  
 end
+
+%———————————————————————————————————————————————
+%%   
+%———————————————————————————————————————————————
+
+
+% Standard Java JSlider (20px high if no ticks/labels, otherwise use 45px)
+jSlider = javax.swing.JSlider;
+[hg hb]=javacomponent(jSlider,[10,70,200,45]);
+set(hb,'units','norm');%,'position',[ .01 .4 .2 .06 ]);
+set(jSlider, 'Value',0, 'MajorTickSpacing',1, 'PaintLabels',true,'Minimum',1,'Maximum',4);  % with labels, no ticks
+set(jSlider,'SnapToTicks',1);
+set(jSlider,'value',1);
+% set(jSlider, 'Orientation',jSlider.VERTICAL);
+set(hb,'units','norm','position',[ .74 .962 .12 .035 ]);
+
+lab={'OVL' 'SbS' 'con1' 'con2'}
+% ticknum=[0 33 66 99]
+ticknum=[1 2 3 4]
+labelTable = java.util.Hashtable;
+% font = java.awt.Font('Tahoma',java.awt.Font.PLAIN, 8);
+for i=1:length(lab) 
+    key=ticknum(i);
+    mLabel = lab{i}; %Matlab Char
+    jLabel = javaObjectEDT('javax.swing.JLabel', mLabel); % Java JLabel
+  
+    font=jLabel.getFont;
+    font2 = java.awt.Font(font.getName,font.getStyle,font.getSize.*.8  );
+    set(jLabel,'font',font2);
+    labelTable.put(int32(key), jLabel);
+end
+jSlider.setLabelTable(labelTable);
+ jbh = handle(jSlider,'CallbackProperties');
+set (jbh, 'StateChangedCallback', @sliderPlotType_cb)
+set(jSlider,'Background',java.awt.Color.white);
+
+
+set(hb,'tag','sliderPlotType');
+
+%———————————————————————————————————————————————
+%%   
+%———————————————————————————————————————————————
+
+function sliderPlotType_cb(e,e2)
+hl=findobj(gcf,'tag','lb1');
+listnum=hl.Value;
+updateplot(listnum);
+
+function totop(e,e2)
+hl=findobj(gcf,'tag','lb1');
+listnum=hl.Value
+% li=get(hl,'string');
+
+
+global bf
+ls=bf.ls;
+ontop=ls(listnum);
+ls(listnum)=[];
+bf.ls=[ontop; ls   ];
+% ------------------
+tb=bf.tb;
+ontop=tb(listnum,:);
+tb(listnum,:)=[];
+bf.tb=[ontop; tb   ];
+% ---------------
+set(hl,'string',bf.ls);
+
+
+
+
 
 function keys(e,e2)
 

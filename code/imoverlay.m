@@ -194,34 +194,36 @@ set(gcf,'WindowButtonupFcn',@clickup)
 set(findobj(gcf,'type','image'),'HitTest','off')
 
     function keypress1(a,b)
-        us=get(gcf,'userdata');
-        if strcmp(b.Key, 'rightarrow')
-            set(us.hF,'AlphaData',ones(size(us.alphadata)));%'R'
-        elseif strcmp(b.Key, 'leftarrow')
-            set(us.hF,'AlphaData',us.alphadata.*0);%'L'
-         elseif strcmp(b.Key, 'downarrow')   
-             mod(us.toggle,2);
-             if mod(us.toggle,2)==0
-                 set(us.hF,'AlphaData',ones(size(us.alphadata)));%'R'
-             else
-                 set(us.hF,'AlphaData',us.alphadata.*0);%'L'
-             end
-             us.toggle=us.toggle+1;
-             set(gcf,'userdata',us);
-             us.toggle;
-           elseif strcmp(b.Key, 'space') 
-             mod(us.toggle,2);
-             if mod(us.toggle,2)==0
-                 set(us.hF,'AlphaData',ones(size(us.alphadata)));%'R'
-             else
-                 set(us.hF,'AlphaData',us.alphadata.*0);%'L'
-             end
-             us.toggle=us.toggle+1;
-             set(gcf,'userdata',us);
-             us.toggle;
-        else
-            try;
-                set(us.hF,'AlphaData',us.alphadata);
+        try
+            us=get(gcf,'userdata');
+            if strcmp(b.Key, 'rightarrow')
+                set(us.hF,'AlphaData',ones(size(us.alphadata)));%'R'
+            elseif strcmp(b.Key, 'leftarrow')
+                set(us.hF,'AlphaData',us.alphadata.*0);%'L'
+            elseif strcmp(b.Key, 'downarrow')
+                mod(us.toggle,2);
+                if mod(us.toggle,2)==0
+                    set(us.hF,'AlphaData',ones(size(us.alphadata)));%'R'
+                else
+                    set(us.hF,'AlphaData',us.alphadata.*0);%'L'
+                end
+                us.toggle=us.toggle+1;
+                set(gcf,'userdata',us);
+                us.toggle;
+            elseif strcmp(b.Key, 'space')
+                mod(us.toggle,2);
+                if mod(us.toggle,2)==0
+                    set(us.hF,'AlphaData',ones(size(us.alphadata)));%'R'
+                else
+                    set(us.hF,'AlphaData',us.alphadata.*0);%'L'
+                end
+                us.toggle=us.toggle+1;
+                set(gcf,'userdata',us);
+                us.toggle;
+            else
+                try;
+                    set(us.hF,'AlphaData',us.alphadata);
+                end
             end
         end
     end
