@@ -58,8 +58,8 @@ para={...
 'inf4'     '_____ ELASTIX PARAMETER _________________________' '' ''
 'useModFile'                 1           'use modFile "a2_XXXmod.tif" if exist'  'b'
 'NumResolutions'             [2 2     ]  'number of resolutions for affine(arg1) & B-spline(arg2) transformation'   ''
-'MaximumNumberOfIterations'  [250 1000]  'number of iterations within each resolution for affine(arg1) & B-spline(arg2) transformation' ''
-'FinalGridSpacingInVoxels'   70          'control point spacing of the bspline transformation (lower value: improve accuracy but may cause unrealistic deformations)' ''
+'MaximumNumberOfIterations'  [1250 1000]  'number of iterations within each resolution for affine(arg1) & B-spline(arg2) transformation' ''
+'FinalGridSpacingInVoxels'   100          'control point spacing of the bspline transformation (lower value: improve accuracy but may cause unrealistic deformations)' ''
 
 
 '' '' '' ''

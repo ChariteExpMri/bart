@@ -473,8 +473,8 @@ nameout2=['bestslice_' regexprep(name,'.*_','') '.gif'];
 fileout2=fullfile(pa,nameout2);
 disp(['..make gif: '  nameout2]);
 
-ref2=imresize( imadjust(s2.ref)  ,[1.5]);
-img2=imresize( imadjust(s2.q)  ,[1.5]);
+ref2=imresize( imadjust(mat2gray(s2.ref))  ,[1.5]);
+img2=imresize( imadjust(mat2gray(s2.q))  ,[1.5]);
 tx=text2im(sprintf('%2.2f %2.2f %2.2f',s2.param));
 tx=imcomplement(tx);
 % col=[0.4667    0.6745    0.1882];
@@ -482,8 +482,8 @@ tx=imcomplement(tx);
 tx2=uint8(  zeros([size(tx,1)  size(ref2,2) 1])   )  ;
 tx2(:, 1:size(tx,2),1 )=round(tx.*255);
 
-ref2=[tx2; ref2 ];
-img2=[tx2; img2 ];
+ref2=[tx2; uint8(round(ref2.*255))  ];
+img2=[tx2; uint8(round(img2.*255))  ];
 
 try
     imwrite(ref2  ,fileout2,'gif', 'Loopcount',inf);
