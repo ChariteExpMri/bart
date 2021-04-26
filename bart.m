@@ -81,7 +81,7 @@ set(hb,'string','parallel','tag','isparallel','tooltipstring','use parallel comp
 set(hb,'position',[ 0.2054    0.9202    0.1204    0.0464],'backgroundcolor','w');%,'callback',@update,'');
 
 % ==============================================
-%%   
+%%
 % ===============================================
 
 m = uimenu('Text','File');
@@ -120,7 +120,7 @@ bartcb('close');
 function check_updates(e,e2,task)
 
 if strcmp(which('bart.m'), 'F:\data3\histo2\bart\bart.m')
-   msgbox('This is the original version...can''t be updated');
+    msgbox('This is the original version...can''t be updated');
 else
     %just update
     cd(fileparts(which('bart.m')));
@@ -150,7 +150,7 @@ bartcb('update');
 % convert to 'a2_001.mat''
 
 % ==============================================
-%%   
+%%
 % ===============================================
 function cellDetecetion(e,e2)
 
@@ -174,13 +174,13 @@ function loadproject(e,e2)
 bartcb('load');
 % [fi pa ]=uigetfile(pwd,'select project to load');
 % if isnumeric(fi); return; end
-% 
+%
 % projfile=fullfile(pa,fi);
 % lastpath=pwd;
 % cd(pa);
 % run(regexprep(fi,'\.m',''));
 % cd(lastpath);
-% 
+%
 % global ak;
 % ak=x;
 % disp(['loaded project: '  projfile  'global: "ak"']);
@@ -191,7 +191,7 @@ function lb1_defineContext(hb)
 
 cmenu = uicontextmenu;
 set(hb, 'UIContextMenu', cmenu);
-uimenu(cmenu, 'Label', '<html><b><font color =green> opden DIR', 'Callback', {@lb1_context, 'opdenDIR'});
+uimenu(cmenu, 'Label', '<html><b><font color =green> DIR: open DIRECTORY', 'Callback', {@lb1_context, 'opdenDIR'});
 uimenu(cmenu, 'Label', '<html><b><font color =green> DIR: show cutting Image', 'Callback', {@lb1_context, 'showCuttingImage'},'separator','on');
 uimenu(cmenu, 'Label', '<html><b><font color =blue> show resized Tif', 'Callback', {@lb1_context, 'showresizedTif'},'separator','on');
 uimenu(cmenu, 'Label', '<html><b><font color =blue> show Tif and Mask', 'Callback', {@lb1_context, 'showTifandMask'});
@@ -203,6 +203,12 @@ uimenu(cmenu, 'Label', '<html><b><font color =black> show cell-counts', 'Callbac
 
 
 uimenu(cmenu, 'Label', '<html><b><font color =red> remove CONTENT of this directory (keep raw-dir)', 'Callback', {@lb1_context, 'removeContentDir'},'separator','on');
+% ---ok-registration
+uimenu(cmenu, 'Label', '<html><b><font color =gray> tag as "ok"',          'Callback', {@lb1_context, 'tag_ok'},'separator','on');
+uimenu(cmenu, 'Label', '<html><b><font color =gray> tag as "remind me"',          'Callback', {@lb1_context, 'tag_remindme'},'separator','off');
+
+uimenu(cmenu, 'Label', '<html><b><font color =gray> tag as "problematic"', 'Callback', {@lb1_context, 'tag_problem'},'separator','off');
+uimenu(cmenu, 'Label', '<html><b><font color =gray> untag ',               'Callback', {@lb1_context, 'tag_untag'},'separator','off');
 
 
 % item2 = uimenu(cmenu, 'Label', 'dotted', 'Callback', cb2);
@@ -212,69 +218,69 @@ uimenu(cmenu, 'Label', '<html><b><font color =red> remove CONTENT of this direct
 
 
 function lb1_context(e,e2,task)
-   
-[sel]=bartcb('getsel');  
+
+[sel]=bartcb('getsel');
 files =sel(strcmp(sel(:,2),'file'),1);
-dirs  =sel(strcmp(sel(:,2),'dir'),1);   
-   
+dirs  =sel(strcmp(sel(:,2),'dir'),1);
+
 if strcmp(task,'opdenDIR')
     mix=[dirs; files]
     for i=1:length(mix)
         if isdir(mix{i})
-           explorer((mix{i})) ; 
+            explorer((mix{i})) ;
         else
             explorer(fileparts(mix{i})) ;
         end
         
-    end 
- elseif strcmp(task,'showCuttingImage')   
+    end
+elseif strcmp(task,'showCuttingImage')
     for i=1:length(dirs)
         fi=fullfile(dirs{i},'a0_cut.jpg');
         if exist(fi)==2
             web(fi,'-new');
-       else
-           disp(['could not open: ' fi]);
-       end
+        else
+            disp(['could not open: ' fi]);
+        end
     end
     
     
 elseif strcmp(task,'showresizedTif')
     for i=1:length(files)
-       fi=regexprep(files{i},{[filesep filesep 'a1_'], '.tif$'},{[filesep filesep 'a1_'],'.jpg'});
-       if exist(fi)==2
+        fi=regexprep(files{i},{[filesep filesep 'a1_'], '.tif$'},{[filesep filesep 'a1_'],'.jpg'});
+        if exist(fi)==2
             web(fi,'-new');
-       else
-           disp(['could not open: ' fi]);
-       end
-    end 
- elseif strcmp(task,'showTifandMask')
+        else
+            disp(['could not open: ' fi]);
+        end
+    end
+elseif strcmp(task,'showTifandMask')
     for i=1:length(files)
-       fi=regexprep(files{i},{[filesep filesep 'a1_'], '.tif$'},{[filesep filesep 'a2_'],'.jpg'});
-       if exist(fi)==2
+        fi=regexprep(files{i},{[filesep filesep 'a1_'], '.tif$'},{[filesep filesep 'a2_'],'.jpg'});
+        if exist(fi)==2
             web(fi,'-new');
-       else
-           disp(['could not open: ' fi]);
-       end
-    end    
+        else
+            disp(['could not open: ' fi]);
+        end
+    end
 elseif strcmp(task,'showWarpedBestSlice')
     for i=1:length(files)
-       fi=regexprep(files{i},{[filesep filesep 'a1_'], '.tif$'},{[filesep filesep 'bestslice_'],'.gif'});
-       if exist(fi)==2
+        fi=regexprep(files{i},{[filesep filesep 'a1_'], '.tif$'},{[filesep filesep 'bestslice_'],'.gif'});
+        if exist(fi)==2
             web(fi,'-new');
-       else
-           disp(['could not open: ' fi]);
-       end
+        else
+            disp(['could not open: ' fi]);
+        end
     end
     
 elseif strcmp(task,'show_finalResult')
     for i=1:length(files)
-       fi=regexprep(files{i},{[filesep filesep 'a1_'], '.tif$'},...
-           {[filesep filesep 'fin'  filesep filesep 's'],'_result.gif'});
-       if exist(fi)==2
+        fi=regexprep(files{i},{[filesep filesep 'a1_'], '.tif$'},...
+            {[filesep filesep 'fin'  filesep filesep 's'],'_result.gif'});
+        if exist(fi)==2
             web(fi,'-new');
-       else
-           disp(['could not open: ' fi]);
-       end
+        else
+            disp(['could not open: ' fi]);
+        end
     end
     
 elseif strcmp(task,'show_cellCounts')
@@ -287,51 +293,83 @@ elseif strcmp(task,'show_cellCounts')
             disp(['could not open: ' fi]);
         end
     end
+elseif strcmp(task,'tag_ok') || strcmp(task,'tag_remindme') ...
+        || strcmp(task,'tag_problem') || strcmp(task,'tag_untag')
+    for i=1:length(files)
+        [px name ext]=fileparts(files{i});
+        fi=fullfile(px,['status.mat']);
+        if exist(fi)~=2
+            [fis] = spm_select('List',px,'^a1_\d\d\d.tif$');   fis=cellstr(fis);
+            fis=regexprep(fis,'.tif$','');
+            fis(:,2)={0};
+            fis(:,3)={''};
+            st.fis  =fis;
+            st.hfis ={'name' 'tag','message'};
+            save(fi,'st');
+        else
+            load(fi);
+        end
+        %--------------------------------
+        if strcmp(task,'tag_ok')==1
+            st.fis{find(strcmp(st.fis(:,1),name)) ,2}  =1   ; % set "OK"-tag
+        elseif strcmp(task,'tag_remindme')==1
+            st.fis{find(strcmp(st.fis(:,1),name)) ,2}  =2   ; % set "work"-tag
+        elseif strcmp(task,'tag_problem')==1
+            st.fis{find(strcmp(st.fis(:,1),name)) ,2}  =-1   ; % set "problematic"-tag
+        elseif strcmp(task,'tag_untag')==1
+            st.fis{find(strcmp(st.fis(:,1),name)) ,2}  =0   ; % set "untag"
+        end
+        save(fi,'st');
+        
+        %disp(st.fis);
+    end
+    bartcb('update');
     
-    
-    
- elseif strcmp(task,'removeContentDir')   
+elseif strcmp(task,'removeContentDir')
     mix=unique([dirs; fileparts2(files)]);
-% ==============================================
-%% delete content
-% ===============================================
-if ~isempty(char(mix))
-  opts.Interpreter = 'none';
-    % Include the desired Default answer
-    opts.Default = 'Yes';
-    % Use the TeX interpreter to format the question
-    quest = ['PROCEED???  ..DELETING FOLDER CONTENT:' ...
-        char(10) 'YES) DELETE. ' ...
-        char(10) ' NO) CANCEL. '];
-    answer = questdlg(quest,'PROCEED',...
-        'Yes','No ...cancel',opts);
-    if ~isempty(strfind(answer,'No'))
-        disp('canceled...')
+    % ==============================================
+    %% delete content
+    % ===============================================
+    if ~isempty(char(mix))
+        opts.Interpreter = 'none';
+        % Include the desired Default answer
+        opts.Default = 'Yes';
+        % Use the TeX interpreter to format the question
+        quest = ['PROCEED???  ..DELETING FOLDER CONTENT:' ...
+            char(10) 'YES) DELETE. ' ...
+            char(10) ' NO) CANCEL. '];
+        answer = questdlg(quest,'PROCEED',...
+            'Yes','No ...cancel',opts);
+        if ~isempty(strfind(answer,'No'))
+            disp('canceled...')
+            return
+        end
+        
+    
+        
+    end
+    % ==============================================
+    %%   check
+    % ===============================================
+    
+    dlgtitle = 'Delete Folder Content';
+    prompt = {['Just to be shure!'  char(10) 'Type "del" to remove the content of the selected folder(s).' char(10) ...
+        'This operation is IRREVERSIBLE!']};
+    dims = [1 60];
+    definput = {''};
+    answer = inputdlg(prompt,dlgtitle,dims,definput);
+    
+    chk=char(answer{1});
+    if strcmp(chk,'del')~=1
+        disp('canceled');
         return
     end
-end
-% ==============================================
-%%   check
-% ===============================================
-
-dlgtitle = 'Delete Folder Content';
-prompt = {['Just to be shure!'  char(10) 'Type "del" to remove the content of the selected folder(s).' char(10) ...
-    'This operation is IRREVERSIBLE!']};
-dims = [1 60];
-definput = {''};
-answer = inputdlg(prompt,dlgtitle,dims,definput);
-
-chk=char(answer{1});
-if strcmp(chk,'del')~=1
-    disp('canceled');
-    return
-end
-
-disp('removing folder content');
-% return
-% ==============================================
-%%   
-% ===============================================
+    
+    disp('removing folder content');
+    % return
+    % ==============================================
+    %%
+    % ===============================================
     for i=1:length(mix)
         pa=mix{i};
         k=dir(pa);
@@ -402,30 +440,30 @@ if length(funs)==1
     
     feval(funs{1},1,w2);
 else
-   % MULTI FUNCTION CALL
-   % [1] first call GUIS
-   cw={};
-   for i=1:length(funs)
-       cprintf([0 0 1],['executing: [' funs{i} ']  '  '\n']);
-       
-       if fm{idxfun(i),3}==1 && isparallelSet==1
-           isparallel=1;
-       else
-           isparallel=0;
-       end
-       w2=catstruct(w,struct('isparallel',isparallel));
-       
-       if strcmp(funs{i},'f_importTiff')
-           w2= rmfield(w2,'files');
-       end
-       
-      [w1 w2]= feval(funs{i},2,w2);
-      cw(i,:)={w1 w2};
-   end
-   % [2] execute functions using parameters (from GUIS) WITHOUT GUIS
-   for i=1:length(funs)
-       feval(funs{i},0,cw{i,2});
-   end
+    % MULTI FUNCTION CALL
+    % [1] first call GUIS
+    cw={};
+    for i=1:length(funs)
+        cprintf([0 0 1],['executing: [' funs{i} ']  '  '\n']);
+        
+        if fm{idxfun(i),3}==1 && isparallelSet==1
+            isparallel=1;
+        else
+            isparallel=0;
+        end
+        w2=catstruct(w,struct('isparallel',isparallel));
+        
+        if strcmp(funs{i},'f_importTiff')
+            w2= rmfield(w2,'files');
+        end
+        
+        [w1 w2]= feval(funs{i},2,w2);
+        cw(i,:)={w1 w2};
+    end
+    % [2] execute functions using parameters (from GUIS) WITHOUT GUIS
+    for i=1:length(funs)
+        feval(funs{i},0,cw{i,2});
+    end
 end
 
 
@@ -466,9 +504,9 @@ bartcb('update');
 function keys(e,e2)
 % e2
 if strcmp(e2.Character,'+')
-hl=findobj(gcf,'tag','lb1');
-fs=get(hl,'fontsize');
-set(hl,'fontsize',fs+1);
+    hl=findobj(gcf,'tag','lb1');
+    fs=get(hl,'fontsize');
+    set(hl,'fontsize',fs+1);
 elseif strcmp(e2.Character,'-')
     hl=findobj(gcf,'tag','lb1');
     fs=get(hl,'fontsize');

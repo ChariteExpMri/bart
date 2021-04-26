@@ -334,6 +334,16 @@ if exist('r')~=1
     
 end
 
+
+%----check status-mat and load if exists
+  fi_status=fullfile(r,'status.mat');
+  st=[];
+  if exist(fi_status)==2
+     load(fi_status) 
+  end
+
+% ------
+
 % clc;
 v3={};
 for i=1:length(slic)
@@ -355,6 +365,18 @@ for i=1:length(slic)
     end
     v2=['<html><b><font color =blue>'   [ slic{i} ] v];
     %disp(v2);
+    
+    if ~isempty(st)
+        ix=find(strcmp(st.fis(:,1), regexprep( slic{i} ,'.tif','')));
+        if st.fis{ix,2}==1              %ok
+          v2=[v2  '<font color=green>  &#9819'  ];
+        elseif st.fis{ix,2}==-1         %problematic
+          v2=[v2    '<font color=red>  &#9876'   ];
+        elseif st.fis{ix,2}==2         %work
+          v2=[v2    '<font color=#ff8c00>  &#9873'  ];
+        end
+    end
+    
     
  v3{i,1}=v2;
 end
