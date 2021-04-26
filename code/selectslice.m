@@ -247,7 +247,7 @@ set(gca,'tag','ax1');
 axis off;
 % LISTBOX
 hl=uicontrol('style','listbox','units','norm');
-set(hl,'position',[ 0.6300    0.2000    0.3800    0.7600],'tag','lb1');
+set(hl,'position',[ 0.6300    0.2000    0.3800    0.7500],'tag','lb1');
 set(hl,'callback',@lb1_cb,'fontname','courier','fontsize',8);
 
 %%  cmap 
