@@ -231,8 +231,8 @@ if p.useModFile==1
     s3=(mat2gray(imread(fmodif)).*255);
     paint=s3==255;
     brain=single(s3>0)-single(paint);
-    val=median(s3(brain(:)==1))
-    s3(paint)=50;
+    val=median(s3(brain(:)==1));
+    s3(paint)=val;
     histo=uint8(s3);
     end
 end
@@ -285,11 +285,11 @@ end
 % ===============================================
 warning off;
 delete(fullfile(elxout,'*'));
-[wa,outs]= elastix2( (mov),(fix),elxout,parfile(1:1),pa_el);
+[wa,outs]= elastix2( (mov),(fix),elxout,parfile(1:end),pa_el);
 fprintf(['Done. (t_registration: '  sprintf('%2.2fs',toc(time_warp) ) ')\n']);
 % cprintf([0 .5 0],['  ..t_registEstimation: ' sprintf('%2.2f',toc(time_warp) )  ' s\n']);
 
-if 1
+if 0
     imoverlay(wa,fix);
 end
 
