@@ -368,7 +368,7 @@ for i=1:length(lab)
     jLabel = javaObjectEDT('javax.swing.JLabel', mLabel); % Java JLabel
   
     font=jLabel.getFont;
-    font2 = java.awt.Font(font.getName,font.getStyle,font.getSize.*.8  );
+    font2 = java.awt.Font(font.getName,font.getStyle,font.getSize.*.7  );
     set(jLabel,'font',font2);
     labelTable.put(int32(key), jLabel);
 end
