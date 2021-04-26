@@ -35,12 +35,12 @@ tb(:,1)=stradd(tb0(:,1),[pa_template filesep],1); %fullpath
 p.outDirName                 = 'fin'                           ; %outPutDir
 p.refImg                     = fullfile(pa_template,'AVGT.nii'); %reference image for registration
 p.filesTP                    =  tb                             ; %mandatory files to transform
-p.NumResolutions             = [2 2     ]                      ; %previous: [2 6]
+p.NumResolutions             = [2 4     ]                      ; %previous: [2 6]
 p.MaximumNumberOfIterations  = [250 1000]                      ; %previous: [250 3000]
-p.FinalGridSpacingInVoxels   = 40                              ; %control point spacing of the bspline transformation (lower value: improve accuracy but may cause unrealistic deformations)
+p.FinalGridSpacingInVoxels   = 50                              ; %control point spacing of the bspline transformation (lower value: improve accuracy but may cause unrealistic deformations)
 p.file                       =    ''                           ; % files
-p.plot                       =    0                            ; %plot results
-
+p.plot                       =   0                             ; %plot results
+p.useModFile                 =   1                              ; %use modified files 
 %-------------------
 p=catstruct(p,p0);
 
@@ -217,6 +217,26 @@ if isfield(info,'rottab')==1
         disp([' ..rotating slice back: '  num2str(rotangle) '°']);
     end
 end
+% ==============================================
+%%   2.3.2 use mod_image
+% ===============================================
+histo=s.img;
+
+% useModFile=1;
+
+if p.useModFile==1
+    disp('...using mod-file..');
+    fmodif=fullfile(pa,[strrep(name,'a1_','a2_') 'mod.tif']);
+    if exist(fmodif)==2
+    s3=(mat2gray(imread(fmodif)).*255);
+    paint=s3==255;
+    brain=single(s3>0)-single(paint);
+    val=median(s3(brain(:)==1))
+    s3(paint)=50;
+    histo=uint8(s3);
+    end
+end
+
 
 
 % ==============================================
@@ -232,25 +252,26 @@ fprintf('..warping...');
 % set_ix(parfile{1},'MaximumNumberOfIterations',MaximumNumberOfIterations(1)); %default:250
 % set_ix(parfile{2},'MaximumNumberOfIterations',MaximumNumberOfIterations(2)); %default:1500
 % -------------------------
-if 0
+if 1
     set_ix(parfile{1},'NumberOfResolutions',p.NumResolutions(1)); %default:2
     set_ix(parfile{2},'NumberOfResolutions',p.NumResolutions(2)); %default:6
     set_ix(parfile{1},'MaximumNumberOfIterations',p.MaximumNumberOfIterations(1)); %default:250
     set_ix(parfile{2},'MaximumNumberOfIterations',p.MaximumNumberOfIterations(2)); %default:1500
     
     set_ix(parfile{2},'FinalGridSpacingInVoxels',p.FinalGridSpacingInVoxels); %control point spacing of the bspline transformation (lower value: improve accuracy but may cause unrealistic deformations) (org default: 70)
+   % rm_ix(parfile{2},'FinalGridSpacingInVoxels');
 end
 % -------------------------
-if 1
-    % ### image to atlas-Size (320x456) before warping  (t=70s) -->ok!!!
-    mov =tatlas;
-    fix =imresize(s.img,[size(tatlas)]);
-    %disp(['size [mov;fix]: ' num2str(size(mov))  '-'  num2str(size(fix))]);
-end
 if 0
     % ### image to atlas-Size (320x456) before warping  (t=70s) -->ok!!!
+    mov =tatlas;
+    fix =imresize(histo,[size(tatlas)]);
+    %disp(['size [mov;fix]: ' num2str(size(mov))  '-'  num2str(size(fix))]);
+end
+if 1
+    % ### image to atlas-Size (320x456) before warping  (t=70s) -->ok!!!
     mov =imresize(tatlas,[1000 1000]);
-    fix =imresize(s.img ,[size(mov)]);
+    fix =imresize(histo ,[size(mov)]);
 end
 % -------------------------
 % ### atlas to image size (2000x2000) before warping  (t=90s) --> not that good!
@@ -262,12 +283,13 @@ end
 % ==============================================
 %%   
 % ===============================================
-
-[wa,outs]= elastix2(mov,fix,elxout,parfile(1:end),pa_el);
+warning off;
+delete(fullfile(elxout,'*'));
+[wa,outs]= elastix2( (mov),(fix),elxout,parfile(1:1),pa_el);
 fprintf(['Done. (t_registration: '  sprintf('%2.2fs',toc(time_warp) ) ')\n']);
 % cprintf([0 .5 0],['  ..t_registEstimation: ' sprintf('%2.2f',toc(time_warp) )  ' s\n']);
 
-if 0
+if 1
     imoverlay(wa,fix);
 end
 
@@ -365,6 +387,19 @@ for i=1:size(tb,1)
         FinalBSplineInterpolationOrder=3;
     end
     w2=obliqueslice(w, vol_center, [Y -X 90],'Method',interpx);
+    
+    %---------------RESIZE---
+    if any(size(w2)-size(fix))
+         if tb{i,2}==0
+            interpy                        ='nearest';
+        else
+            interpy                       ='bilinear';%'bicubic' ;  % 'bilinear';
+        end
+        w2=imresize(w2,[size(fix)],interpy);
+        
+    end
+    
+    
     % ------------------------------------------------------ transformix
     trafofile2=fullfile(elxout,'TransformParameters.1.txt');
     set_ix(trafofile2,'FinalBSplineInterpolationOrder',FinalBSplineInterpolationOrder); %default:1500
@@ -379,9 +414,9 @@ for i=1:size(tb,1)
     % ------------------------------------------------------ transformix
     if p.plot==1
         if strcmp(fiName,'ANO')
-            imoverlay(fix,pseudocolorize(w3));gridder(20,'color','w');
+            imoverlay(fix,pseudocolorize(w3));gridder(100,'color','w');
         else
-            imoverlay(fix,w3);gridder(20,'color','w');
+            imoverlay(fix,w3);gridder(100,'color','w');
         end
         title(fiName);
     end
