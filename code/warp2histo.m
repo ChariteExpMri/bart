@@ -40,7 +40,7 @@ p.MaximumNumberOfIterations  = [250 1000]                      ; %previous: [250
 p.FinalGridSpacingInVoxels   = 50                              ; %control point spacing of the bspline transformation (lower value: improve accuracy but may cause unrealistic deformations)
 p.file                       =    ''                           ; % files
 p.plot                       =   0                             ; %plot results
-p.useModFile                 =   1                              ; %use modified files 
+p.useModFile                 =   1                              ; %use modified files
 %-------------------
 p=catstruct(p,p0);
 
@@ -61,9 +61,15 @@ file  = p.file;
 [pa name ext]=fileparts(file);           %name: "'a1_004'"
 numberstr    =regexprep(name,'.*_','_'); % such as '_004'
 
-cprintf([0 0 1],['  [' mfilename  ']: ']);
-cprintf([1 0 1],['processing "[' name ']" of "'  strrep(pa,[filesep],[filesep filesep])   '"\n']);
-
+try
+    cprintf([0 0 1],['  [' mfilename  ']: ']);
+    cprintf([1 0 1],['processing "[' name ']" of "'  strrep(pa,[filesep],[filesep filesep])   '"\n']);
+catch
+    fprintf(['  [' mfilename  ']: ']);
+    fprintf(['processing "[' name ']" of "'  strrep(pa,[filesep],[filesep filesep])   '"\n']);
+    
+    
+end
 % cprintf([0 0 1],['  [' mfilename  ']: "' name '" of "'  strrep(pa,[filesep],[filesep filesep])   '"\n']);
 % ==============================================
 %%   add paths
@@ -93,7 +99,7 @@ parameter=s2.param;
 %%   get reference image(CV)
 % ===============================================
 if exist('cv')~=1
-  
+    
     % if 0
     %     [ cv]=p_getHIstvol(fullfile(pa_template, 'HISTOVOL.nii' ),1) ;
     % end
@@ -151,8 +157,8 @@ elseif p.approach ==3 %50sec!
         fullfile(pa_el, 'parameters_Affine_default.txt')
         %         fullfile(pa_el, 'parameters_BSpline_default.txt') }; %##default
         %            fullfile(pa_el,'par_bspline033_Ncorr.txt')};
-%         fullfile(pa_el,'par_bspline033CD1_2d.txt')};
-%         fullfile(pa_el, 'parameters_BSpline_default2.txt') }; %####LAST one
+        %         fullfile(pa_el,'par_bspline033CD1_2d.txt')};
+        %         fullfile(pa_el, 'parameters_BSpline_default2.txt') }; %####LAST one
         fullfile(pa_el, 'Par0034bspline.txt') };
     
 end
@@ -201,7 +207,7 @@ s=load(fir); s=s.s;
 % rotate back
 % ===============================================
 fi_info=fullfile(pa,['a1_info.mat']);
-info=load(fi_info); 
+info=load(fi_info);
 info=info.v;
 % ==============================================
 %%   2.3.2 check for manual rotations saved in ['a1_info.mat']!!!!
@@ -228,12 +234,12 @@ if p.useModFile==1
     disp('...using mod-file..');
     fmodif=fullfile(pa,[strrep(name,'a1_','a2_') 'mod.tif']);
     if exist(fmodif)==2
-    s3=(mat2gray(imread(fmodif)).*255);
-    paint=s3==255;
-    brain=single(s3>0)-single(paint);
-    val=median(s3(brain(:)==1));
-    s3(paint)=val;
-    histo=uint8(s3);
+        s3=(mat2gray(imread(fmodif)).*255);
+        paint=s3==255;
+        brain=single(s3>0)-single(paint);
+        val=median(s3(brain(:)==1));
+        s3(paint)=val;
+        histo=uint8(s3);
     end
 end
 
@@ -259,7 +265,7 @@ if 1
     set_ix(parfile{2},'MaximumNumberOfIterations',p.MaximumNumberOfIterations(2)); %default:1500
     
     set_ix(parfile{2},'FinalGridSpacingInVoxels',p.FinalGridSpacingInVoxels); %control point spacing of the bspline transformation (lower value: improve accuracy but may cause unrealistic deformations) (org default: 70)
-   % rm_ix(parfile{2},'FinalGridSpacingInVoxels');
+    % rm_ix(parfile{2},'FinalGridSpacingInVoxels');
 end
 % -------------------------
 if 0
@@ -281,7 +287,7 @@ end
 % end
 % -------------------------
 % ==============================================
-%%   
+%%
 % ===============================================
 warning off;
 delete(fullfile(elxout,'*'));
@@ -294,7 +300,7 @@ if 0
 end
 
 % ==============================================
-%%   
+%%
 % ===============================================
 
 % ==============================================
@@ -390,7 +396,7 @@ for i=1:size(tb,1)
     
     %---------------RESIZE---
     if any(size(w2)-size(fix))
-         if tb{i,2}==0
+        if tb{i,2}==0
             interpy                        ='nearest';
         else
             interpy                       ='bilinear';%'bicubic' ;  % 'bilinear';
@@ -473,33 +479,33 @@ for i=1:size(tb,1)
         FinalBSplineInterpolationOrder=3;
     end
     w2=obliqueslice(w, vol_center, [Y -X 90],'Method',interpx);
-      %---------------RESIZE---
-      if any(size(w2)-size(fix))
-          if tb{i,2}==0
-              interpy                        ='nearest';
-          else
-              interpy                       ='bilinear';%'bicubic' ;  % 'bilinear';
-          end
-          w2=imresize(w2,[size(fix)],interpy);
-          
-      end
-      
-      
-      
+    %---------------RESIZE---
+    if any(size(w2)-size(fix))
+        if tb{i,2}==0
+            interpy                        ='nearest';
+        else
+            interpy                       ='bilinear';%'bicubic' ;  % 'bilinear';
+        end
+        w2=imresize(w2,[size(fix)],interpy);
+        
+    end
+    
+    
+    
     % ------------------------------------------------------ transformix
     
     orig_interpolator   = get_ix(trafofile_affie,'FinalBSplineInterpolationOrder');
     set_ix(trafofile_affie,'FinalBSplineInterpolationOrder',FinalBSplineInterpolationOrder); %default:1500
     
-     set_ix(trafofile_affie,'ResultImagePixelType','float'); %default:1500
-
-
+    set_ix(trafofile_affie,'ResultImagePixelType','float'); %default:1500
+    
+    
     
     pawork =pwd;
     cd(fileparts(which('elastix.exe')));
     %[w3,log] = transformix(w2,elxout) ;
     [msg,w3,log]=evalc('transformix(w2,elxout_aff)');
-%     disp(['max of: w2/w3: '  num2str(max(w2(:)))  '/' num2str(max(w3(:)))]);
+    %     disp(['max of: w2/w3: '  num2str(max(w2(:)))  '/' num2str(max(w3(:)))]);
     cd(pawork);
     % ------------------------------------------------------ put to [o]-cell
     a(i,:)={fiName w3};
@@ -513,7 +519,7 @@ for i=1:size(tb,1)
         title([fiName '-affine']);
     end
     
-     set_ix(trafofile_affie,'FinalBSplineInterpolationOrder',orig_interpolator);
+    set_ix(trafofile_affie,'FinalBSplineInterpolationOrder',orig_interpolator);
 end %over images
 % fprintf('Done.\n');
 fprintf(['Done. (t_transformImages: '  sprintf('%2.2fs',toc(time_transform) ) ')\n']);
@@ -527,23 +533,23 @@ fprintf(['Done. (t_transformImages: '  sprintf('%2.2fs',toc(time_transform) ) ')
 %%
 % ==============================================
 % ==============================================
-%%   [4.1] output dir  
+%%   [4.1] output dir
 % ===============================================
- outdir=fullfile(pa,p.outDirName);
- mkdir(outdir);
- outtag=[strrep(numberstr,'_', 's') '_'];  %PREFIX-outTage ('s001_','s002_', etc)
- % ==============================================
-%%   [4.2] load original tif  
+outdir=fullfile(pa,p.outDirName);
+mkdir(outdir);
+outtag=[strrep(numberstr,'_', 's') '_'];  %PREFIX-outTage ('s001_','s002_', etc)
+% ==============================================
+%%   [4.2] load original tif
 % ===============================================
 fprintf('...load orig. tiff.. ');
- tifname=fullfile(pa,['a1' numberstr '.tif']);
- info=imfinfo(tifname);
- size_img=[info.Height info.Width ];
- t=imread(tifname);
- if size(t,3)==3              %---USING BLUE-RGB-DIM
-     t=t(:,:,3);
- end
- fprintf('Done.\n');
+tifname=fullfile(pa,['a1' numberstr '.tif']);
+info=imfinfo(tifname);
+size_img=[info.Height info.Width ];
+t=imread(tifname);
+if size(t,3)==3              %---USING BLUE-RGB-DIM
+    t=t(:,:,3);
+end
+fprintf('Done.\n');
 % ==============================================
 %%   [4.3A] resize images +save as mat  NON-LINEAR-IMAGES
 % ===============================================
@@ -578,22 +584,22 @@ fprintf('saving(noaffine): ');
 for i=1:size(a,1)
     nameout=[outtag a{i,1} '_affine' '.mat' ];
     fprintf([ '(' num2str(i) ') "' nameout '"; ']);
-
-        if tb{i,2}==0
-            interpy                        ='nearest';
-        else
-            interpy                       ='bilinear';%'bicubic' ;  % 'bilinear';
-        end
-        v=imresize(a{i,2},[size_img],interpy);
-        if (length(unique(a{i,2})))/(numel(a{i,2})) >.4  % convert to uint8 ---file to large for intensbased images
-            v=round((mat2gray(v).*255));
-            v=uint8(v);
-           % disp('..intensIMG..conv-to uin8');
-        end
-        % ------------------------------------------------------ save  [imageName_###.mat]
-        fi_out=fullfile(outdir, nameout);
-        save(fi_out, 'v');
-
+    
+    if tb{i,2}==0
+        interpy                        ='nearest';
+    else
+        interpy                       ='bilinear';%'bicubic' ;  % 'bilinear';
+    end
+    v=imresize(a{i,2},[size_img],interpy);
+    if (length(unique(a{i,2})))/(numel(a{i,2})) >.4  % convert to uint8 ---file to large for intensbased images
+        v=round((mat2gray(v).*255));
+        v=uint8(v);
+        % disp('..intensIMG..conv-to uin8');
+    end
+    % ------------------------------------------------------ save  [imageName_###.mat]
+    fi_out=fullfile(outdir, nameout);
+    save(fi_out, 'v');
+    
 end
 
 
@@ -610,7 +616,11 @@ fprintf([ '(' num2str(i+1) ') "' nameout '"; ']);
 save(fi_out, 'v');
 
 fprintf('Done.\n');
-cprintf([0 .5 0],['  ..t_savingIMGs: ' sprintf('%2.2f',toc(time_save) )  ' s\n']);
+try
+    cprintf([0 .5 0],['  ..t_savingIMGs: ' sprintf('%2.2f',toc(time_save) )  ' s\n']);
+catch
+    fprintf(['  ..t_savingIMGs: ' sprintf('%2.2f',toc(time_save) )  ' s\n']);
+end
 
 % ==============================================
 %%   [4.5] make plot (all necessary steps are done now!)
@@ -619,19 +629,19 @@ fprintf(['...create image ' [ '"res'  numberstr '.gif"...' ] ]);
 sizp=[500 500];
 v2=uint8(zeros([ sizp length(o) ]));
 for i=1:size(o,1)
-        if tb{i,2}==0
-            interpy                        ='nearest';
-        else
-            interpy                       ='bilinear';%'bicubic' ;  % 'bilinear';
-        end
-        
-        v=imresize(o{i,2},[sizp],interpy);
-        if strcmp(o{i,1},'ANO')
-            v=pseudocolorize(v);
-        end
-        v=imadjust(mat2gray(v));
-        v=uint8(round(v*255));
-        v2(:,:,i)=v;
+    if tb{i,2}==0
+        interpy                        ='nearest';
+    else
+        interpy                       ='bilinear';%'bicubic' ;  % 'bilinear';
+    end
+    
+    v=imresize(o{i,2},[sizp],interpy);
+    if strcmp(o{i,1},'ANO')
+        v=pseudocolorize(v);
+    end
+    v=imadjust(mat2gray(v));
+    v=uint8(round(v*255));
+    v2(:,:,i)=v;
 end
 
 vh=imresize(t,[sizp],'nearest');
@@ -655,7 +665,7 @@ tx_war=uint8(round(imcomplement(text2im([ 'refImg_warped' ]))*255));
 movr(1:size(tx_mov,1),1:size(tx_mov,2))=tx_mov;
 warp(1:size(tx_war,1),1:size(tx_war,2))=tx_war;
 % ==============================================
-%  
+%
 % ===============================================
 
 % v2=cat(3,fixr,movr,v2);
@@ -718,8 +728,11 @@ showinfo2('final image',fileout2);
 
 
 % ==============================================
-%%   
+%%
 % ===============================================
-cprintf([0 .5 0],['  [' mfilename '] DONE.  (dT: ' sprintf('%2.2f',toc(timeTot)/60 )  'min)\n']);
-
+try
+    cprintf([0 .5 0],['  [' mfilename '] DONE.  (dT: ' sprintf('%2.2f',toc(timeTot)/60 )  'min)\n']);
+catch
+    fprintf(['  [' mfilename '] DONE.  (dT: ' sprintf('%2.2f',toc(timeTot)/60 )  'min)\n']);
+end
 
