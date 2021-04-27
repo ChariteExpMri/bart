@@ -94,6 +94,7 @@ m2 = uimenu(m,'Text','prune tiffs','callback', @cb_pruneTiff);
 % ---------------------
 m = uimenu('Text','CellDetection');
 m2 = uimenu(m,'Text','cellDetection','callback', @cellDetecetion);
+m2 = uimenu(m,'Text','assign cells to region','callback', @cell2regionAssign);
 % ---------------------
 m  = uimenu('Text','Extras');
 m2 = uimenu(m,'Text','check updates','callback', {@check_updates,1});
@@ -162,6 +163,18 @@ fis=fis(existn(fis)==2); %check existence
 x.files=fis;
 f_celldetection(1,x);
 bartcb('update');
+
+
+function cell2regionAssign(e,e2)
+[sel]=bartcb('getsel');
+if isempty(sel); return; end
+fis=sel((strcmp(sel(:,2),'file')),1);
+fis=fis(existn(fis)==2); %check existence
+% disp(fis);
+x.files=fis;
+f_cell2region(1,x);
+bartcb('update');
+
 
 % ==============================================
 %%   update Listbox

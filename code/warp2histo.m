@@ -436,6 +436,14 @@ time_transform = tic;
 a={};
 global bigtemplate
 fprintf('transforming affine:');
+
+elxout_aff=fullfile([elxout],'affine');
+mkdir(elxout_aff); %extra-affine FOLDER
+trafofile_affie0=fullfile(fullfile(elxout    ,'TransformParameters.0.txt'));
+trafofile_affie =fullfile(fullfile(elxout_aff,'TransformParameters_affine.0.txt'));
+copyfile(trafofile_affie0 , trafofile_affie ,'f')
+
+
 for i=1:size(tb,1)
     [~,fiName]=fileparts(tb{i,1});
     fprintf([ '(' num2str(i) ') "' fiName '.nii"; ']);
@@ -465,15 +473,33 @@ for i=1:size(tb,1)
         FinalBSplineInterpolationOrder=3;
     end
     w2=obliqueslice(w, vol_center, [Y -X 90],'Method',interpx);
+      %---------------RESIZE---
+      if any(size(w2)-size(fix))
+          if tb{i,2}==0
+              interpy                        ='nearest';
+          else
+              interpy                       ='bilinear';%'bicubic' ;  % 'bilinear';
+          end
+          w2=imresize(w2,[size(fix)],interpy);
+          
+      end
+      
+      
+      
     % ------------------------------------------------------ transformix
-    trafofile2          = fullfile(elxout,'TransformParameters.0.txt');
-    orig_interpolator   = get_ix(trafofile2,'FinalBSplineInterpolationOrder');
-    set_ix(trafofile2,'FinalBSplineInterpolationOrder',FinalBSplineInterpolationOrder); %default:1500
+    
+    orig_interpolator   = get_ix(trafofile_affie,'FinalBSplineInterpolationOrder');
+    set_ix(trafofile_affie,'FinalBSplineInterpolationOrder',FinalBSplineInterpolationOrder); %default:1500
+    
+     set_ix(trafofile_affie,'ResultImagePixelType','float'); %default:1500
+
+
     
     pawork =pwd;
     cd(fileparts(which('elastix.exe')));
     %[w3,log] = transformix(w2,elxout) ;
-    [msg,w3,log]=evalc('transformix(w2,elxout)');
+    [msg,w3,log]=evalc('transformix(w2,elxout_aff)');
+%     disp(['max of: w2/w3: '  num2str(max(w2(:)))  '/' num2str(max(w3(:)))]);
     cd(pawork);
     % ------------------------------------------------------ put to [o]-cell
     a(i,:)={fiName w3};
@@ -487,11 +513,12 @@ for i=1:size(tb,1)
         title([fiName '-affine']);
     end
     
-     set_ix(trafofile2,'FinalBSplineInterpolationOrder',orig_interpolator);
+     set_ix(trafofile_affie,'FinalBSplineInterpolationOrder',orig_interpolator);
 end %over images
 % fprintf('Done.\n');
 fprintf(['Done. (t_transformImages: '  sprintf('%2.2fs',toc(time_transform) ) ')\n']);
 % cprintf([0 .5 0],['  ..t_transformImages: ' sprintf('%2.2f',toc(time_transform) )  ' s\n']);
+
 
 
 % ==============================================
@@ -551,7 +578,7 @@ fprintf('saving(noaffine): ');
 for i=1:size(a,1)
     nameout=[outtag a{i,1} '_affine' '.mat' ];
     fprintf([ '(' num2str(i) ') "' nameout '"; ']);
-    if 1
+
         if tb{i,2}==0
             interpy                        ='nearest';
         else
@@ -560,12 +587,13 @@ for i=1:size(a,1)
         v=imresize(a{i,2},[size_img],interpy);
         if (length(unique(a{i,2})))/(numel(a{i,2})) >.4  % convert to uint8 ---file to large for intensbased images
             v=round((mat2gray(v).*255));
+            v=uint8(v);
            % disp('..intensIMG..conv-to uin8');
         end
         % ------------------------------------------------------ save  [imageName_###.mat]
         fi_out=fullfile(outdir, nameout);
         save(fi_out, 'v');
-    end
+
 end
 
 
