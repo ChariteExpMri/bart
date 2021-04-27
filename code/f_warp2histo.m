@@ -61,8 +61,8 @@ para={...
 'MaximumNumberOfIterations'  [1250 1000]  'number of iterations within each resolution for affine(arg1) & B-spline(arg2) transformation' ''
 'FinalGridSpacingInVoxels'   100          'control point spacing of the bspline transformation (lower value: improve accuracy but may cause unrealistic deformations)' ''
 
-'inf5'    '_____ MISC _________________________'  ''  ''
-'isparallel'           0   'parallel processing {0,1}' 'b'
+% 'inf5'    '_____ MISC _________________________'  ''  ''
+% 'isparallel'           0   'parallel processing {0,1}' 'b'
 
 '' '' '' ''
 'inf6'     '_____ DO THIS FOR THE FOLLOWING FILES _________________________' '' ''
@@ -113,24 +113,28 @@ cprintf([0 0 1],[' warp estimated slices... '  '\n']);
 % ==============================================
 %%   PROCEED
 % ===============================================
+cprintf([0 0 1],[' warping to histoSpace... '  '\n']);
 z.files=cellstr(z.files);
 if isempty(z.files{1}); return; end
-
-if z.isparallel==0
+timex=tic;
+% if z.isparallel==0
     for i=1:length(z.files)
         z2=z;
         z2=rmfield(z2,'files');
         z2.file=z.files{i};
         warp2histo(z2);
     end
-else
-   parfor i=1:length(z.files)
-        z2=z;
-        z2=rmfield(z2,'files');
-        z2.file=z.files{i};
-        warp2histo(z2);
-    end 
-end
+% else
+%     n=length(z.files);
+%    parfor i=1:n
+%        disp('hui')
+%         z2=z;
+%         z2=rmfield(z2,'files');
+%         z2.file=z.files{i};
+%         warp2histo(z2);
+%     end 
+% end
+cprintf([0 0 1],[' done... dT=' sprintf('%2.2f min',toc(timex)/60)  '\n']);
 
 
 
