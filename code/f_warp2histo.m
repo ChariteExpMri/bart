@@ -60,11 +60,12 @@ para={...
 'NumResolutions'             [2 2     ]  'number of resolutions for affine(arg1) & B-spline(arg2) transformation'   ''
 'MaximumNumberOfIterations'  [1250 1000]  'number of iterations within each resolution for affine(arg1) & B-spline(arg2) transformation' ''
 'FinalGridSpacingInVoxels'   100          'control point spacing of the bspline transformation (lower value: improve accuracy but may cause unrealistic deformations)' ''
+
 'inf5'    '_____ MISC _________________________'  ''  ''
 'isparalel'           0   'parallel processing {0,1}' 'b'
 
 '' '' '' ''
-'inf5'     '_____ DO THIS FOR THE FOLLOWING FILES _________________________' '' ''
+'inf6'     '_____ DO THIS FOR THE FOLLOWING FILES _________________________' '' ''
 'files'    {}          'histo-files'  'mf'
 };
 % ==============================================
