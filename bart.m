@@ -90,13 +90,16 @@ m2 = uimenu(m,'Text','import Tiffs','callback', @importTiffs);
 m2 = uimenu(m,'Text','close','callback', @closebart);
 % ---------------------
 m = uimenu('Text','Tools');
+m2 = uimenu(m,'Text','flip up-down original tiff','callback', @cb_flipTiffUD);
 m2 = uimenu(m,'Text','prune tiffs','callback', @cb_pruneTiff);
 % ---------------------
 m = uimenu('Text','CellDetection');
 m2 = uimenu(m,'Text','cellDetection','callback', @cellDetecetion);
 m2 = uimenu(m,'Text','assign cells to region','callback', @cell2regionAssign);
 % ---------------------
-m  = uimenu('Text','Extras');
+
+
+m  = uimenu('Text','updates');
 m2 = uimenu(m,'Text','check updates','callback', {@check_updates,1});
 m2 = uimenu(m,'Text','force updates','callback', {@check_updates,2});
 
@@ -134,6 +137,70 @@ else
         
     end
 end
+
+
+function cb_flipTiffUD(e,e2)
+% ==============================================
+%%   
+% ===============================================
+[fis]=bartcb('getsel');
+fis=fis(strcmp(fis(:,2),'file'),:);
+fislist=strjoin(strrep(fis(:,1),{[filesep]},{[filesep filesep]}) ,char(10));
+fislist=strrep(fislist,'_','\_');
+
+options.Resize='on';
+options.WindowStyle='modal';'normal';
+options.Interpreter='tex';
+prompt={['\color{red}\bf Flip up-down original tiff-image.' char(10) ...
+    'It is assumed that images were pre-select in the left Listbox' char(10)...
+    '\color{black}\rm  \bf SELECTED FILES: \rm' char(10)...
+    fislist  char(10) ...
+    '\color{red} ..THESE IMAGE(S) WILL BE FLIPPED!' char(10)  char(10) ... ...
+    '\color{blue}\bf Type "1" to CONFIRM and FLIP THESE IMAGES!' ]};
+name='Flip up-down original tiff-image. ';
+numlines=1;
+defaultanswer={'0','hsv'};
+
+answer=inputdlg(prompt,name,[1 70],defaultanswer,options);
+if isempty(answer) | strcmp(answer{1},'1')~=1
+    disp('..canceled') ;
+    return
+end
+% ==============================================
+%%   
+% ===============================================
+ % suffix='_test';
+ suffix='';%overwrite
+for i=1:size(fis,1)
+   fi=fis{i,1};
+   
+   %info=imfinfo(fi);
+   disp(['fllip up-down: ' fi]);
+   a=imread(fi);
+   a=flipdim(a,1);
+    
+  
+   fi2=stradd(fi,suffix,2);
+   imwrite(a,fi2, 'tif','Compression','none');
+   
+   %---------
+   f2=strrep(fi,'.tif','.jpg');
+   a=imread(f2);
+   a=flipdim(a,1);
+   f22=stradd(f2,suffix,2);
+   imwrite(a,f22, 'jpg','quality',100);
+   
+   % check
+   %a2=imread(f22);
+   %fg,imagesc(a2-a)
+   
+end
+disp(['Done.' ]);
+
+
+
+
+
 
 function cb_pruneTiff(e,e2)
 
@@ -206,8 +273,8 @@ cmenu = uicontextmenu;
 set(hb, 'UIContextMenu', cmenu);
 uimenu(cmenu, 'Label', '<html><b><font color =green> DIR: open DIRECTORY', 'Callback', {@lb1_context, 'opdenDIR'});
 uimenu(cmenu, 'Label', '<html><b><font color =green> DIR: show cutting Image', 'Callback', {@lb1_context, 'showCuttingImage'},'separator','on');
-uimenu(cmenu, 'Label', '<html><b><font color =blue> show resized Tif', 'Callback', {@lb1_context, 'showresizedTif'},'separator','on');
-uimenu(cmenu, 'Label', '<html><b><font color =blue> show Tif and Mask', 'Callback', {@lb1_context, 'showTifandMask'});
+uimenu(cmenu, 'Label', '<html><b><font color =blue> show (cutted) Tif', 'Callback', {@lb1_context, 'showresizedTif'},'separator','on');
+uimenu(cmenu, 'Label', '<html><b><font color =blue> show resized Tif and Mask', 'Callback', {@lb1_context, 'showTifandMask'});
 uimenu(cmenu, 'Label', '<html><b><font color =blue> show warped BestSlice', 'Callback', {@lb1_context, 'showWarpedBestSlice'});
 uimenu(cmenu, 'Label', '<html><b><font color =blue> show final result', 'Callback', {@lb1_context, 'show_finalResult'});
 
