@@ -308,6 +308,7 @@ t={...
     'bestslice_#.mat'      [ 0.4667    0.6745    0.1882]   'best slice selected'
     ['fin' filesep 's#_result.gif']      [1 0 1]   'backtransformed images to histo-space'
     ['cellcounts_a1_#' filesep 'predfus.tif'] [0 0 0] 'cell-detection'
+    ['fin' filesep 's#_cellcountsRegion.mat']      [.5 .5 .5]   'regionwise cellcounts/area calc'
     };
 if exist('r')~=1
     % ==============================================

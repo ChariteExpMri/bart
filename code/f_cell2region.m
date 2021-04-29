@@ -26,8 +26,11 @@ templateDir=fullfile(fileparts(which('bart.m')),'templates');
 para={...
    
     'isparallel'  1   'do parallel processing {0,1}'        'b'
-    'plot'        1   'plot table {0,1}'                    'b'
+    'showTable'   0   'show output table {0,1}'                    'b'
     'save'        1   'save result {0,1}'                   'b'
+    'pruneData'   1   'use "modImg" to prune cells-counting and subtract nonexisting area ' 'b'
+    '' '' '' ''
+    'debug'       0   'just for debugging..show more plots'  'b'
     '' '' '' ''
     '' '____USED FILES_______' '' ''
      'files'                  ''                'select files'                   'mf'

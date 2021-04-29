@@ -299,6 +299,146 @@ if 0
     imoverlay(wa,fix);
 end
 
+
+if 0
+    % ==============================================
+    %%  inverse transform from spline to affine
+    %% this is necessary for area-correction using the modif-image
+    %% this snip is implemented in the cell2region-code
+    % REASON: bring "modified image" to affine space to remove tissue which
+    % does not exist from regions before regional area calculation
+    % ===============================================
+    
+    if 0
+        % ======== get paramter =======================================
+        if 0
+            [pa name ext]=fileparts(file);           %name: "'a1_004'"
+            numberstr    =regexprep(name,'.*_','_'); % such as '_004'
+            elxout     =fullfile(pa,'elx2',['forward' numberstr]);
+            
+            
+            dum=spm_select('FPList',elxout,'^TransformParameters.*.txt')
+        end
+        %
+        %      % ===============================================
+        %———————————————————————————————————————————————
+        %%
+        %———————————————————————————————————————————————
+        elxoutinverse     =strrep(elxout,[filesep 'forward_'],[filesep 'backward_']);
+        elxoutinverseParams=fullfile(elxoutinverse,'params');
+        warning off;
+        mkdir(elxoutinverse);
+        delete(fullfile(elxoutinverse,'*'));
+        mkdir(elxoutinverseParams);
+        delete(fullfile(elxoutinverseParams,'*'));
+        
+        
+        parafiles    =parfile%(end); %use only b-spline
+        parafilesinv =stradd(parafiles,'inv',1);
+        parafilesinv =replacefilepath(parafilesinv, elxoutinverseParams);
+        
+        for i=1:length(parafilesinv)
+            copyfile(parafiles{i},parafilesinv{i},'f');
+            pause(.01)
+            rm_ix(parafilesinv{i},'Metric'); pause(.1) ;
+            set_ix3(parafilesinv{i},'Metric','DisplacementMagnitudePenalty'); %SET DisplacementMagnitudePenalty
+        end
+        
+        
+        %-----TRAFOFILE------------
+        trafofile=outs.TransformParametersFname';
+        trafofileinv=replacefilepath(trafofile, elxoutinverseParams);
+        for i=1:length(trafofileinv)
+            %trafofile=trafofile(end); %Bspline only
+            
+            copyfile(trafofile{i},trafofileinv{i},'f');
+            if i==1
+                set_ix(trafofileinv{1},'InitialTransformParametersFileName','NoInitialTransform'); % no affine-Reg-LINKAGE
+            end
+        end
+        
+        % [im3,trfile3] =      run_elastix(z.movimg,z.movimg,    z.outbackw  ,parafilesinv,[], []       ,   trafofile   ,[],[]);
+        % [~,im3,trfile3]=evalc('run_elastix(z.movimg,z.movimg,    z.outbackw  ,parafilesinv,[], []       ,   trafofile   ,[],[])');
+        
+        %affimgx=outs.transformedImages{2}; % here we use the affine image
+        affimgx=wa;
+        [wainv,outsinv]= elastix2( (affimgx),(affimgx),elxoutinverse,parafilesinv,pa_el,'t0',trafofileinv);
+        
+        
+        trfileInv=outsinv.TransformParametersFname;
+        set_ix(trfileInv{1},'InitialTransformParametersFileName','NoInitialTransform');%% orig
+        
+        
+        [wa2aff,log] = transformix(wa,trfileInv{2}) ;
+        %[wa2aff,log] = transformix(wa,elxoutinverse) ;
+        fg,imagesc(wa2aff)
+        
+        
+        % ==============================================
+        %   transformix inverse test
+        % ===============================================
+        
+        % forwImg=wa;
+        r1 = mhd_read(fullfile(elxout,'result.0.mhd'));
+        r2 = mhd_read(fullfile(elxout,'result.1.mhd'));
+        
+        pawork =pwd;
+        cd(fileparts(which('elastix.exe')));
+        [wa2aff,log] = transformix(wa,trfileInv) ;
+        cd(pawork)
+        
+        cf
+        fg,imagesc(r1)   ;title('aff-saved')
+        %     fg,imagesc(wainv);title('aff-created_elastix')
+        fg,imagesc(wa2aff);title('aff-created_transformix')
+        %     fg,imagesc(wa);title('bspline')
+        %
+        %     cf
+        %     fg,imagesc(r2)   ;title('bspline-saved')
+        %     fg,imagesc(wa);title('bspline-created')
+    end
+    %———————————————————————————————————————————————
+    %%   back from histo to affine registration
+    %———————————————————————————————————————————————
+    
+    warning off
+    cd(fileparts(which('elastix.exe')));
+    % pa_invert=fullfile
+    elxoutinverse     =strrep(elxout,[filesep 'forward_'],[filesep 'backward_']);
+    % elxoutinverseParams=fullfile(elxoutinverse,'params');
+    mkdir(elxoutinverse);
+    delete(fullfile(elxoutinverse,'*'));
+    %———————————————————————————————————————————————
+    %%   THIS WORKS
+    %———————————————————————————————————————————————
+    affix  = outs.transformedImages{1};
+    wamov  = wa;
+    
+    tic
+    % [wa,outs]= elastix2( (mov),(fix),elxoutinverse,parfile(1:end),pa_el);
+    [wa2aff,out2aff]= elastix2( (wamov),(affix),elxoutinverse,parfile(2),pa_el);
+    toc
+    
+    % ----TEST
+    
+    [wa2aff2,log] = transformix(wa,elxoutinverse) ;
+    fg,imagesc(wa2aff2)   ;title('aff-transformed')
+    
+    r1 = mhd_read(fullfile(elxout,'result.0.mhd'));
+    fg,imagesc(r1)   ;title('aff-saved')
+    %———————————————————————————————————————————————
+    %%
+    %———————————————————————————————————————————————
+    
+    
+    
+    
+    %———————————————————————————————————————————————
+    %%
+    %———————————————————————————————————————————————
+    
+end
+
 % ==============================================
 %%
 % ===============================================
