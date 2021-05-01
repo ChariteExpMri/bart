@@ -24,7 +24,7 @@ templateDir=fullfile(fileparts(which('bart.m')),'templates');
 %%   struct
 % ===============================================
 para={...
-    'files'                  ''                'select files'                   'mf'
+    
     
     'inf100'     '===RESIZE IMAGE=========================='                          '' ''
     'channel'               3   'which RGB-channel to use {1,2,3}'                    ''
@@ -51,6 +51,9 @@ para={...
     'plan2_x0'               [nan    0    0   ] 'PLAN2: best guess (slice, pitch, yaw)'      ''
     'plan2_LB'               [nan  -25   -5  ]  'PLAN2: lower boundaries (slice, pitch, yaw)' ''
     'plan2_UB'               [nan  +25   +5  ]  'PLAN2: upper boundaries (slice, pitch, yaw)'  ''
+    
+    '' '_____FILES___________________________'  '' ''
+    'files'                  ''                'select files'                   'mf'
     };
 % ==============================================
 %%   GUI
