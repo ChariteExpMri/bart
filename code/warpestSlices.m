@@ -8,7 +8,7 @@ function warpestSlices(p0)
 p.file=         '' ;%optim-mat file
 p.doplot        =1         ; % plot result
 p.nbest         =50        ; %best n-results
-p.cellsize      =4        ; % HOG-cellSize (larger is rougher/smoother)
+p.cellsize      =8        ; % HOG-cellSize (larger is rougher/smoother)
 p.useSSIM       =1         ; %use use Multiscale structural similarity 
 p.size          =[330 450] ; %resize image (current-atlas-size: 320x456)
 p.nresolutions  =[1 1 ]; %number of resolutions (val1): affine registration (val2) B-spline registration (values>1 takes longer but might be more precise)

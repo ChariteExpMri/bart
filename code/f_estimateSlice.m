@@ -32,7 +32,7 @@ para={...
     
     'inf101'     '===FIND SLICE PLAN-1&2=========================='                          '' ''
     'parallel'              1       'use parallell-computation' 'b'
-    'cellsize'              4      'cellsize of HOG-histogram (larger is rougher )' ''
+    'cellsize'              8      'cellsize of HOG-histogram (larger is rougher )' ''
     'useSSIM'               1       'use Multiscale structural similarity after HOG, otherwise use NORM' 'b'
     'numStartpoints'       100      'number of starting points (recom: 100) of Multistart-optimization' ''
     'doflt'                  0      'Gauss filt altas slice after extraction from 3dvol {0,1}'  'b'
