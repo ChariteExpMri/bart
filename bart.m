@@ -9,6 +9,8 @@ if isempty(which('@dummy.m')) %set paths
     addpath(genpath(fullfile(pabart,'slicedetection')));
     addpath(genpath(fullfile(pabart,'vlfeat-0.9.21\mex')));
     addpath(genpath(fullfile(pabart,'celldetection')));
+	addpath(genpath(fullfile(pabart,'elastix2')));
+
 end
 
 if 0
