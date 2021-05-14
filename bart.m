@@ -132,14 +132,16 @@ if strcmp(which('bart.m'), 'F:\data3\histo2\bart\bart.m')
     msgbox('This is the original version...can''t be updated');
 else
     %just update
+    bartcb('close');
     cd(fileparts(which('bart.m')));
     % ==============================================
     %%   update without deleting new folder
     % ===============================================
     if task==1
         git reset --hard HEAD;git pull;
+        bart();
     elseif task==2
-        
+        disp('not implemented jet!')
     end
 end
 
