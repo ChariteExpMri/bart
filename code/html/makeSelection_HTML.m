@@ -1,0 +1,120 @@
+
+
+function makeSelection_HTML()
+
+%  clear
+warning off;
+clc
+% ==============================================
+%%   
+% ===============================================
+
+
+
+global ak
+
+mix=bartcb('getsel');
+% ==============================================
+%%   
+% ===============================================
+paout=fullfile(fileparts(ak.dat),'selection');
+mkdir(paout);
+subdir='resources';
+pasub=fullfile(paout,subdir);
+try; rmdir(pasub,'s'); end
+mkdir(pasub);
+
+
+
+% ==============================================
+%%   copy images
+% ===============================================
+
+% fis=mix(strcmp(mix(:,2),'file')==1,1);
+pas=mix(strcmp(mix(:,2),'dir')==1,1);
+tb={};
+for i=1:length(pas)
+    pa=pas{i} ;
+    [~,name]=fileparts(pa);
+    
+    [fis] = spm_select('List',pa,'^a1_\d\d\d.jpg');
+    fis=cellstr(fis);
+    
+    imgnames={};
+    if ~isempty(char(fis))
+        for j=1:length(fis)
+            f0=fullfile(pa,fis{j});
+            imgname=[name '__' fis{j} ];
+            f1=fullfile(pasub, imgname );
+            copyfile(f0,f1,'f');
+            imgnames=[imgnames; {imgname}];
+        end
+        tb=[tb; {name imgnames}];
+    end  
+end
+% ==============================================
+%%  copy javascript
+% ===============================================
+pa_resource=fullfile(fileparts(which('bart')),'code','HTML');
+
+jsfile0 =fullfile(pa_resource,'resource.js');
+jsfile1 =fullfile(paout,'resource.js');
+copyfile(jsfile0,jsfile1, 'f' );
+
+% ==============================================
+%%   get html-file, split in twp part
+% ===============================================
+
+htmlfile0=fullfile(pa_resource,'blanko.html');
+a=preadfile(htmlfile0);
+a=a.all;
+
+
+
+sep1=regexpi2(a,'<!--start-->');
+sep2=regexpi2(a,'<!--stop-->');
+p1=a(1:sep1);
+p2=a(sep2:end);
+
+% ==============================================
+%%   create mouse-name, images, checkbox
+% ===============================================
+si=300;
+siz=num2str(si);
+
+s={};
+for i=1:size(tb,1)
+    %---NAME OF ANIMAL
+    s{end+1,1}=['<hr>ANIMAL-' num2str(i)];
+    s{end+1,1}=['<input type="text" name="' tb{i,1} '" value="' tb{i,1} '" disabled  style="color: #C0C0C0;" > '];
+    s{end+1,1}=['<br>'];
+    
+    for j=1:length(tb{i,2})
+        s{end+1,1}=['<img src="' [subdir '/' tb{i,2}{j} ]  '" width="' siz '" height="' siz '">']; 
+    
+    end
+    
+     s{end+1,1}=['BAD SLICES:'];
+    for j=1:length(tb{i,2})
+       s{end+1,1}=['<input type="checkbox" name="'  tb{i,2}{j} '">']; 
+    end
+end
+
+
+% ==============================================
+%%   
+% ===============================================
+
+ms=[p1;s;p2];
+htmlfile1=fullfile(paout,'index.html');
+ pwrite2file(htmlfile1, ms  );
+
+
+
+showinfo2('..show HTMLfile',htmlfile1);
+
+
+
+
+
+
