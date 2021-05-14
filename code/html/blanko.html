@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>    
+<script type="text/javascript" src="resource.js"></script>
+    
+    
+    
+<style>
+body {
+  font-family: "Lato", sans-serif;
+}
+
+.sidenav {
+  height: 100%;
+  width: 100px;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: #111;
+  overflow-x: hidden;
+  padding-top: 20px;
+}
+
+.sidenav a {
+  padding: 6px 8px 6px 16px;
+  text-decoration: none;
+  font-size: 12px;
+  color: #818181;
+  display: block;
+}
+
+.sidenav a:hover {
+  color: #f1f1f1;
+}
+
+.main {
+  margin-left: 100px; /* Same as the width of the sidenav */
+  font-size: 10px; /* Increased text to enable scrolling */
+  padding: 0px 10px;
+}
+
+@media screen and (max-height: 450px) {
+  .sidenav {padding-top: 15px;}
+  .sidenav a {font-size: 18px;}
+}
+
+
+button {
+  background: none!important;
+  border: none;
+  padding: 0!important;
+  /*optional*/
+  font-family: arial, sans-serif;
+  /*input has OS specific font-family*/
+  color: #FFF;
+  cursor: pointer;
+}
+reset{
+  background: none!important;
+  border: none;
+  padding: 0!important;
+  /*optional*/
+  font-family: arial, sans-serif;
+  /*input has OS specific font-family*/
+  color: #069;
+  text-decoration: underline;
+  cursor: pointer;
+}
+</style>
+</head>
+<body>
+
+
+
+
+<div class="main">
+
+
+<form action="#" method="get" id="myForm">
+      
+
+<!-- Write your comments here 
+
+<input type="radio" name="radiofield" value="1" />
+<input type="radio" name="radiofield" value="2" />
+<input type="radio" name="radiofield" value="3" />
+Radiofields
+
+<br/>
+<input type="radio" name="radiofield2" value="1" />
+<input type="radio" name="radiofield2" value="2" />
+<input type="radio" name="radiofield2" value="3" />
+Radiofields
+<br/>
+
+
+<input type="text" name="textfield">
+Textfield
+<br/>
+-->
+
+
+
+<h2>CHECK BAD IMAGES </h2>
+
+
+<!--start-->
+<!--stop-->
+
+
+<!-- _________EXAMPLE_______________________ -->
+<!--
+<hr>ANIMAL
+<input type="text" name="BILD_1" value="X1" disabled >
+<br>
+<input type="checkbox" name="img1">
+<input type="checkbox" name="img2">
+<input type="checkbox" name="img3">
+Checkboxes
+
+<hr>
+ANIMAL
+<input type="text" name="BILD_2" value="X2" disabled >
+<br>
+<input type="checkbox" name="img4">
+<input type="checkbox" name="img5">
+<input type="checkbox" name="img6">
+<input type="checkbox" name="img7">
+<input type="checkbox" name="img8">
+Checkboxes
+<br/>
+ -->
+
+
+
+<hr/>
+
+<!-- <h3>Localstorage controls:</h3>
+
+<button id="_save">Save</button>
+<button id="_load">Load</button>
+
+<input type="reset">
+-->  
+
+<div class="sidenav">
+    <!-- 
+  <a href="#about">About</a>
+  <a href="#services">Services</a>
+  <a href="#clients">Clients</a>
+  <a href="#contact">Contact</a>
+  
+ 
+ <button id="_save">Save</button><br>
+<button id="_load">Load</button><br>
+
+  -->  
+
+<br>
+<a href="javascript:info();">Help</a>  
+<hr>
+<a href="javascript:load();">load</a>    
+<a href="javascript:save();">save</a>    
+<a href="javascript:testoutput();">check output</a>
+<a href="javascript:saveTXTfile();">save TXT-file</a>
+
+
+<br>
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+<hr>
+ <input type="reset" value="clear form" 
+ style=" 
+ background: none!important;
+ border: none;
+ padding: 0!important;
+ /*optional*/
+ font-family: arial, sans-serif;
+ /*input has OS specific font-family*/
+ color: #AAA;
+ cursor: pointer;
+ ">
+<br> 
+<!-- 
+    <br>
+    <button onclick="myFunction1()">Try it</button>  <br>
+<button onclick="myFunction2()">SAVE TO DISK</button>  <br>
+ -->  
+  
+</div>
+
+</form>
+
+
+
+
+
+
+<script>
+    
+function info(){
+  alert(
+  'Hello ! \n  Use check-boxes to select BAD(!) slices. Selected slices will not be used!  \n ' +
+    '\n'+
+    '**load**:  load previous selection (if browser was re-opened)   \n'+
+    '**save**:  save current selection (if browser must be closed...Selection is not finished but I have to do other things now!)  \n'+    
+    '**check output**:   show me  the output  \n'+ 
+    '**save TXT-file**:   save selection as TEXTfile  \n'+ 
+    '   --> when finished, please send me this text-file.  \n'+ 
+    '\n'
+    );
+}    
+    
+<!-- _______________________________________________ -->     
+function load(){
+     if(localStorage['form_data']){
+       console.log("Loading form data...")
+       console.log(JSON.parse(localStorage['form_data']))
+       $("form#myForm").fromJSON(localStorage['form_data'])
+     } else {
+       console.log("Error: Save some data first")
+     }
+  }
+<!-- _______________________________________________ --> 
+function save() { 
+console.log("Saving form data...")
+     var data = $("form#myForm").toJSON()
+     console.log(data);
+     localStorage['form_data'] = data;
+}    
+<!-- _______________________________________________ --> 
+  
+function testoutput() {
+
+
+     console.log("Saving form data...")
+     var data = $("form#myForm").toJSON()
+     console.log(data);
+     localStorage['form_data'] = data;
+
+
+    v=JSON.stringify(localStorage)
+    alert("ww"+v)
+}
+</script>
+
+<!-- 
+<script>
+    function myFunction2() {
+    	
+        // Get the data from each element on the form.
+    	const name = document.getElementById('txtName');
+        const age = document.getElementById('txtAge');
+        const email = document.getElementById('txtEmail');
+        const country = document.getElementById('selCountry');
+        const msg = document.getElementById('msg');
+        
+        // This variable stores all the data.
+        data=JSON.stringify(localStorage)
+        
+        // Convert the text to BLOB.
+        const textToBLOB = new Blob([data], { type: 'text/plain' });
+        const sFileName = 'formData.txt';	   // The file to save the data.
+
+        let newLink = document.createElement("a");
+        newLink.download = sFileName;
+
+        if (window.webkitURL != null) {
+            newLink.href = window.webkitURL.createObjectURL(textToBLOB);
+        }
+        else {
+            newLink.href = window.URL.createObjectURL(textToBLOB);
+            newLink.style.display = "none";
+            document.body.appendChild(newLink);
+        }
+
+        newLink.click(); 
+    }
+</script>
+-->
+</div>
+
+</body> 
+
+</html>

@@ -1,11 +1,12 @@
 
 
 function bart()
-
+pabart=fileparts(which('bart.m'));
+addpath(pabart);
+addpath(genpath(fullfile(pabart,'code')));
+    
 if isempty(which('@dummy.m')) %set paths
-    pabart=fileparts(which('bart.m'));
-    addpath(pabart);
-    addpath(genpath(fullfile(pabart,'code')));
+   
     addpath(genpath(fullfile(pabart,'slicedetection')));
     addpath(genpath(fullfile(pabart,'vlfeat-0.9.21\mex')));
     addpath(genpath(fullfile(pabart,'celldetection')));
@@ -99,6 +100,8 @@ m = uimenu('Text','CellDetection');
 m2 = uimenu(m,'Text','cellDetection','callback', @cellDetecetion);
 m2 = uimenu(m,'Text','assign cells to region','callback', @cell2regionAssign);
 % ---------------------
+m = uimenu('Text','SNIPS');
+m2 = uimenu(m,'Text','make HTMLfile to select bad slices','callback', @selectBadImages_HTML);
 
 
 m  = uimenu('Text','updates');
@@ -243,6 +246,10 @@ fis=fis(existn(fis)==2); %check existence
 x.files=fis;
 f_cell2region(1,x);
 bartcb('update');
+
+function selectBadImages_HTML(e,e2)
+  makeSelection_HTML();
+
 
 
 % ==============================================
