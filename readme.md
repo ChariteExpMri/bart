@@ -14,6 +14,9 @@ calculation of cell density for observed region).
 ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+) Inspect [**last changes/updates**](bartver.md).<br>
 
 
+
+
+## TEMPLATE ##
 - Allen Mouse template can be downloaded from: https://drive.google.com/drive/u/0/folders/1Bod4JqHYkzvGnBS465xfOti2OF89_lL9
 
 

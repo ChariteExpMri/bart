@@ -10,5 +10,5 @@
   __[+]__ added __[bartver]__ version-control available via Bart-gui-button  
     
    __[f_importTiff_single.m]__ and __[importTiff_single.m]__  allows to import single tiff-images  
-  -Use this function, if there is only a single tif-image per animal  
+  -Use this function, if there is only one single tif-image per animal  
 <!---->

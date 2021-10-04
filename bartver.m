@@ -12,7 +12,7 @@
 % [+] added [bartver] version-control available via Bart-gui-button
 % 
 % #k [f_importTiff_single.m] and [importTiff_single.m] #n  allows to import single tiff-images
-% -Use this function, if there is only a single tif-image per animal
+% -Use this function, if there is only one single tif-image per animal
 % 
 % 
 
