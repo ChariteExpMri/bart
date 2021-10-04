@@ -39,6 +39,21 @@ for i=1:length(pas)
     
     [fis] = spm_select('List',pa,'^a1_\d\d\d.jpg');
     fis=cellstr(fis);
+    if isempty(char(fis))  %missing jpg-file --> created one!
+        [fis0] = spm_select('List',pa,'^a1_\d\d\d.tif');
+        if ~isempty(fis0)
+            fis0=cellstr(fis0);
+            for j=1:length(fis0)
+                w=imread(fullfile(pa, fis0{j}));
+                w0=imadjust(imresize(max(w,[],3),[1000 1000]));
+                w1=cat(3,w0,w0,w0);
+                jpgout=fullfile(pa,  strrep(fis0{j},'.tif','.jpg'));
+                imwrite(w1,jpgout);
+            end
+            [fis] = spm_select('List',pa,'^a1_\d\d\d.jpg');
+             fis=cellstr(fis);
+        end
+    end
     
     imgnames={};
     if ~isempty(char(fis))

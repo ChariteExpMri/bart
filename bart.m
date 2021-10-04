@@ -120,17 +120,32 @@ m2 = uimenu(m,'label','cellDetection','callback', @cellDetecetion);
 m2 = uimenu(m,'label','assign cells to region','callback', @cell2regionAssign);
 % ---------------------
 m = uimenu('label','SNIPS');
-m2 = uimenu(m,'label','make HTMLfile to select bad slices','callback', @selectBadImages_HTML);
+m2 = uimenu(m,'label','make HTMLfile to select bad slices [makeSelection_HTML.m]','callback', @selectBadImages_HTML);
 
 
 m  = uimenu('label','updates');
 m2 = uimenu(m,'label','check updates','callback', {@check_updates,1});
 m2 = uimenu(m,'label','force updates','callback', {@check_updates,2});
 
+%% BArthistory
+h = uicontrol('style','pushbutton','units','normalized','position',[0.14107 0.88452 0.034 0.058],...
+    'tag','ant_study_history',...
+    'string','','fontsize',13,   'callback',@openStudyHistory,'tooltip', 'open STUDY-HISTORY',...
+    'backgroundcolor','w');
+% icon=which('profiler.gif');
+icon=fullfile(matlabroot,'toolbox','matlab', 'icons','book_link.gif');
+[e map]=imread(icon)  ;
+e=ind2rgb(e,map);
+% e(e<=0.01)=nan;
+set(h,'cdata',e);
+
 
 % ==============================================
 %%   MENU
 % ===============================================
+function openStudyHistory(e,e2)
+barthistory('select');
+
 function callbartver(e,e2)
 bartver;
 

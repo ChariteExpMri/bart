@@ -96,7 +96,7 @@ global ak;
 ak=x;
 disp(['loaded project: '  projfile  ' ; global: "ak"']);
 set(findobj(0,'tag','bart'),'name',['BART: ' projfile]);
-
+ak.configfile = projfile;
 %listbox2 ------------------
 if 0
     fcn=bart_fcn();
@@ -110,8 +110,13 @@ if 0
     end
 end
 % ------------------
-bartcb('update');
 
+
+bartcb('update');
+% ==============================================
+%%  history
+% ===============================================
+barthistory('update');
 % ==============================================
 %%   
 % ===============================================
