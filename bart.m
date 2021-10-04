@@ -5,14 +5,14 @@ pabart=fileparts(which('bart.m'));
 addpath(pabart);
 addpath(genpath(fullfile(pabart,'code')));
     
-if isempty(which('@dummy.m')) %set paths
+% if isempty(which('@dummy.m')) %set paths
    
     addpath(genpath(fullfile(pabart,'slicedetection')));
     addpath(genpath(fullfile(pabart,'vlfeat-0.9.21\mex')));
     addpath(genpath(fullfile(pabart,'celldetection')));
 	addpath(genpath(fullfile(pabart,'elastix2')));
 
-end
+% end
 
 if 0
     
@@ -84,34 +84,57 @@ set(hb,'string','parallel','tag','isparallel','tooltipstring','use parallel comp
 set(hb,'position',[ 0.2054    0.9202    0.1204    0.0464],'backgroundcolor','w');%,'callback',@update,'');
 
 % ==============================================
-%%
+%%  version
+% ===============================================
+%====INDICATE LAST UPDATE-DATE ========================
+% vstring=strsplit(help('antver'),char(10))';
+% idate=max(regexpi2(vstring,' \w\w\w 20\d\d (\d\d'));
+% dateLU=['ANTx2  vers.' char(regexprep(vstring(idate), {' (.*'  '  #\w\w ' },{''}))];
+dateLU=bartcb('version');
+% dateLU=['v'  datestr(now)];
+h = uicontrol('style','pushbutton','units','normalized','position',[.94 .65 .08 .05],'tag','txtversion',...
+    'string',dateLU,'fontsize',5,'fontweight','normal',...
+    'tooltip',['date of last update' char(10) '..click to see last updates [bartver.m]']);
+% set(h,'position',[.2 .65 .08 .02],'fontsize',6,'backgroundcolor','w','foregroundcolor',[.7 .7 .7])  
+set(h,'position',[0.44107 0.96548 0.25 0.027],'fontsize',7,'backgroundcolor','w','foregroundcolor',[0.9294    0.6941    0.1255],...
+    'horizontalalignment','left','callback',{@callbartver});
+
+% ==============================================
+%%   
 % ===============================================
 
-m = uimenu('Text','File');
-m2 = uimenu(m,'Text','new Project','callback', @newProject);
-m2 = uimenu(m,'Text','import Tiffs','callback', @importTiffs);
-m2 = uimenu(m,'Text','close','callback', @closebart);
+
+m = uimenu('label','File');
+
+m2 = uimenu(m,'label','new Project','callback', @newProject);
+m2 = uimenu(m,'label','import Tiffs','callback', @importTiffs);
+m2 = uimenu(m,'label','import single Tiff from several animals','callback', @importTiffs_single);
+m2 = uimenu(m,'label','close','callback', @closebart);
 % ---------------------
-m = uimenu('Text','Tools');
-m2 = uimenu(m,'Text','flip up-down original tiff','callback', @cb_flipTiffUD);
-m2 = uimenu(m,'Text','prune tiffs','callback', @cb_pruneTiff);
+m = uimenu('label','Tools');
+m2 = uimenu(m,'label','flip up-down original tiff','callback', @cb_flipTiffUD);
+m2 = uimenu(m,'label','prune tiffs','callback', @cb_pruneTiff);
 % ---------------------
-m = uimenu('Text','CellDetection');
-m2 = uimenu(m,'Text','cellDetection','callback', @cellDetecetion);
-m2 = uimenu(m,'Text','assign cells to region','callback', @cell2regionAssign);
+m = uimenu('label','CellDetection');
+m2 = uimenu(m,'label','cellDetection','callback', @cellDetecetion);
+m2 = uimenu(m,'label','assign cells to region','callback', @cell2regionAssign);
 % ---------------------
-m = uimenu('Text','SNIPS');
-m2 = uimenu(m,'Text','make HTMLfile to select bad slices','callback', @selectBadImages_HTML);
+m = uimenu('label','SNIPS');
+m2 = uimenu(m,'label','make HTMLfile to select bad slices','callback', @selectBadImages_HTML);
 
 
-m  = uimenu('Text','updates');
-m2 = uimenu(m,'Text','check updates','callback', {@check_updates,1});
-m2 = uimenu(m,'Text','force updates','callback', {@check_updates,2});
+m  = uimenu('label','updates');
+m2 = uimenu(m,'label','check updates','callback', {@check_updates,1});
+m2 = uimenu(m,'label','force updates','callback', {@check_updates,2});
 
 
 % ==============================================
 %%   MENU
 % ===============================================
+function callbartver(e,e2)
+bartver;
+
+
 function lb1_cb(e,e2)
 bartcb('updateListboxinfo');
 
@@ -120,6 +143,10 @@ f_newproject();
 
 function importTiffs(e,e2)
 f_importTiff();
+bartcb('update');
+
+function importTiffs_single(e,e2)
+f_importTiff_single();
 bartcb('update');
 
 function closebart(e,e2)

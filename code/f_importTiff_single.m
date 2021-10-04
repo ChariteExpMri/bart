@@ -5,7 +5,7 @@
 
 
 
-function f_importTiff(showgui,x )
+function f_importTiff_single(showgui,x )
 
 if 0
     
@@ -31,20 +31,13 @@ if exist('x')~=1;        x=[]; end
 templateDir=fullfile(fileparts(which('bart.m')),'templates');
 %% import 4ddata
 para={...
-    'inf98'      '*** import tifs                '                         '' ''   %    'inf1'      '% PARAMETER         '                                    ''  ''
+    'inf98'      '*** import single tifs      '                         '' ''   %    'inf1'      '% PARAMETER         '                                    ''  ''
     'inf100'     '==================================='                          '' ''
-    'files'                  ''               'select tiff files'  'mf'
-    'format'                'ndpi'            'select tiff files'  {'ndpi','tiff' }
-    'isparallel'             0                'use parallel computing (0,1)'  'b'
-    'deleteFiles'           '_x40;.ndpi'      'delete files '   {'none' ,'_x40' '_x40;.ndpi'}
-%     'template'             templateDir       'select main template folder <required to fill>'  'd'
-%     'keepSubdirStructure'   1          '[0,1]: [0] flattened hierarchy (no subdirs), [1] the destination path contains the subfolders  '    'b'
-%     'animalsubdirs'         1          '[0,1]: [1] preserve SUBFOLDERS WITHIN ANIMAL FOLDERS in either output name or folder hierarchy or [0] do not preserve' 'b'
-%     'prefixDirName'         0          'adds mouse Dir/folder name as prefix to the new filename'      'b'
-%     'renameString'         ''          'replace file name with new file name (no file extention), !NOTE: files might be overwritten (same output name)'  {'mask' 'raw' 'test'}
-%     'addString'            ''          'add string as suffix to the output file name'                                                            ''
-%     'reorient'             ''          ' <9 lement vector> reorient volume, default: []: do nothing; (nb: use [0 0 0 0 0 0 1 -1 1] if data came from DSIstudio)'  {'0 0 0 0 0 0 -1 1 1';'0 0 0 0 0 0 1 -1 1'; '0 0 0 0 0 0 -1 -1 1'}
-     };
+    'files'                  ''              'select TIFF-file(s); '  'mf'
+    'frameNumber'            1               'select the frame number (default is 1) if TIFF contains more than 1 image' {1 2 3 4 5}
+    'copyfoldercontent'      0               'copy the folder content (all files) from original tif-folder'  'b'
+    'isparallel'             0               'use parallel computing (0,1)'  'b'
+    };
 
 p=paramadd(para,x);%add/replace parameter
 %     [m z]=paramgui(p,'uiwait',0,'close',0,'editorpos',[.03 0 1 1],'figpos',[.2 .3 .7 .5 ],'title','PARAMETERS: LABELING');
@@ -68,6 +61,8 @@ cprintf([0 0 1],[' import Tiffs... '  '\n']);
 xmakebatch(z,p, mfilename); % ## BATCH
 
 
+
+
 % ==============================================
 %%   proceed
 % ===============================================
@@ -77,11 +72,11 @@ s=catstruct(z,ak);
 disp(['isparalel: ' num2str(s.isparallel)]);
 if s.isparallel==0
     for i=1:length(z.files)
-        importTiff(z.files{i},s);
+        importTiff_single(z.files{i},s);
     end
 else
     parfor i=1:length(z.files)
-        importTiff(z.files{i},s);
+        importTiff_single(z.files{i},s);
     end
 end
 

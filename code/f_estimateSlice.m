@@ -27,7 +27,7 @@ para={...
     
     
     'inf100'     '===RESIZE IMAGE=========================='                          '' ''
-    'channel'               3   'which RGB-channel to use {1,2,3}'                    ''
+   % 'channel'               3   'which RGB-channel to use {1,2,3}'                    ''
     'usemanualrotation'     1   'do include manual rotation info, if exist {0,1}' 'b'
     
     'inf101'     '===FIND SLICE PLAN-1&2=========================='                          '' ''

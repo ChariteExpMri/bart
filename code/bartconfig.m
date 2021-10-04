@@ -20,8 +20,8 @@ p={...
     'inf100'     '==================================='                          '' ''
     '' '' '' ''
     'dat'         fullfile(pwd,'dat')      'studie''s datapath, MUST BE be specified, and named "dat", such as "c:\b\study1\dat" '  'd'
-    'template'    'UNDEFINED'             'select the template path'  'd'
-    'vv.c'        'UNDEFINED'             'select the template path'  'd'
+    'template'    'UNDEFINED'             'select the template path ("bart_template")'  'd'
+    %'vv.c'        'UNDEFINED'             'select the template path'  'd'
     };
 % p2=p;
 

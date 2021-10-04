@@ -8,7 +8,7 @@ warning off
 
 
 p.file         ='';
-p.channel           = 3;
+% p.channel           = 3;
 p.usemanualrotation = 1;
 
 p.parallel       = 1   ;    % use parallell-comp

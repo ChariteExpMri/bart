@@ -13,14 +13,21 @@ function [fiout s] =resizeTiff(file,p0)
 % ==============================================
 %%   defaults
 % ===============================================
-p.doplot=0; %plot image to screen
+
+p.method=1; %DAPI
+% -----------
+
+p.m2_flt        =  [11 11];   %method-2: medianFilter
+p.m2_otsuclass  =  20;        %method-2:number of otsu-clusses
+% -----------
 p.chan  =3; % blue channel for dapi?
+
+p.doplot=0; %plot image to screen
 p.useRot=1; %useRotationInfo
 p.resize=[2000 2000];
 p.percentSurviveMaxCluster=1;    %percent clusterSize w.r.t largest cluster to survive
 p.imcloseSizeStep=10;   % combine separate clusters using this stepSize
 % file='F:\data3\histo2\josefine\dat\Wildlinge_36_000000000001EADD\a1_001.tif'
-
 
 % ==============================================
 %%   
@@ -54,9 +61,9 @@ p1=imread(file);
 p1=p1(:,:,p.chan);
 p2=imresize(p1, p.resize);
 
-%———————————————————————————————————————————————
-%%  remove vertical stripe in Background
-%———————————————————————————————————————————————
+%�����������������������������������������������
+%%   remove vertical stripe in Background
+%�����������������������������������������������
 ncol=4;
 ps=mean(   p2(:,[1:ncol end-ncol+1])   ,2);
 imaxbord=find(ps==255);
@@ -66,12 +73,29 @@ ME_bg=median(ps);
 sb=(double(p2)-repmat(ps,[1   size(p2,2) ])) +ME_bg  ; %subtract background
 p2=uint8(round(sb));
 
-%———————————————————————————————————————————————
+% ==============================================
+%%   approach-1 (DAPI)
+% ===============================================
+
+if p.method==1
+    
+    % ms=imcomplement(otsu(p2,4)==4);
+    % ms=imcomplement(otsu(p2,4)==4);
+    ms=imcomplement(otsu(p2,7)==7);
+    
+    % ==============================================
+    %%   approach-2 (WFL): Wisteria Floribunda Lectin
+    % ===============================================
+elseif p.method==2
+    p3=medfilt2(p2,p.m2_flt); %[11 11]
+    ms=otsu(imadjust(p3),p.m2_otsuclass)>1; % 20
+    
+end
+
+% ==============================================
 %%   
-%———————————————————————————————————————————————
-% ms=imcomplement(otsu(p2,4)==4);
-% ms=imcomplement(otsu(p2,4)==4);
-ms=imcomplement(otsu(p2,7)==7);
+% ===============================================
+
 ms=imfill(ms,'holes');
 
 ms2=imerode(imopen(ms,strel('disk',7)),strel('disk',5));
@@ -93,7 +117,7 @@ for i=1:size(tab1,1)
 end
 ms4=reshape(ms4,size(ms3));
 % ==============================================
-%%   cobine flusters using imclose
+%%   cobine clusters using imclose
 % ===============================================
 % p.imcloseSizeStep=10;
 if size(tab1,1)>1

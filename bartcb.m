@@ -24,7 +24,18 @@ elseif strcmp(varargin{1},'getsel')
     [varargout{1} varargout{2}]=getsel(varargin);
 elseif strcmp(varargin{1}, 'updateListboxinfo')
    updateListboxinfo();
+elseif strcmp(varargin{1}, 'version')
+   varargout{1} =version(varargin);
 end
+
+
+function out=version(varargin)
+vstring=strsplit(help('bartver'),char(10))';
+idate=max(regexpi2(vstring,' \w\w\w 20\d\d (\d\d'));
+dateLU=['BART vers. ' char(regexprep(vstring(idate), {' (.*'  '  #\w\w ' },{''}))];
+out=dateLU;
+
+
 
 function [ fpdirs dirs] =getsel(arg)
 hf=findobj(0,'tag','bart');

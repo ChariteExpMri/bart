@@ -206,21 +206,23 @@ s=load(fir); s=s.s;
 %%   2.3.1 load infomat
 % rotate back
 % ===============================================
-fi_info=fullfile(pa,['a1_info.mat']);
-info=load(fi_info);
-info=info.v;
-% ==============================================
-%%   2.3.2 check for manual rotations saved in ['a1_info.mat']!!!!
-% rotate back
-% ===============================================
-
-if isfield(info,'rottab')==1
-    ix=find(strcmp(info.rottab(:,1), [ 'a1' numberstr '.jpg' ]));
-    if ~isempty(ix)
-        rotangle=info.rottab{ix,2};
-        s.img  =imrotate(s.img,-rotangle,'crop','nearest');
-        s.mask =imrotate(s.mask,-rotangle,'crop','nearest');
-        disp([' ..rotating slice back: '  num2str(rotangle) '°']);
+try
+    fi_info=fullfile(pa,['a1_info.mat']);
+    info=load(fi_info);
+    info=info.v;
+    % ==============================================
+    %%   2.3.2 check for manual rotations saved in ['a1_info.mat']!!!!
+    % rotate back
+    % ===============================================
+    
+    if isfield(info,'rottab')==1
+        ix=find(strcmp(info.rottab(:,1), [ 'a1' numberstr '.jpg' ]));
+        if ~isempty(ix)
+            rotangle=info.rottab{ix,2};
+            s.img  =imrotate(s.img,-rotangle,'crop','nearest');
+            s.mask =imrotate(s.mask,-rotangle,'crop','nearest');
+            disp([' ..rotating slice back: '  num2str(rotangle) '°']);
+        end
     end
 end
 % ==============================================
@@ -684,10 +686,13 @@ outtag=[strrep(numberstr,'_', 's') '_'];  %PREFIX-outTage ('s001_','s002_', etc)
 fprintf('...load orig. tiff.. ');
 tifname=fullfile(pa,['a1' numberstr '.tif']);
 info=imfinfo(tifname);
+info=info(1);
 size_img=[info.Height info.Width ];
 t=imread(tifname);
 if size(t,3)==3              %---USING BLUE-RGB-DIM
-    t=t(:,:,3);
+    %t=t(:,:,3);
+    t=sum(t,3);
+    t=uint8(round((mat2gray(imadjust(mat2gray(t))))*255));
 end
 fprintf('Done.\n');
 % ==============================================

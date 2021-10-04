@@ -1,10 +1,11 @@
 
 function varargout=f_resizeTiff(showgui,x )
 
+%———————————————————————————————————————————————
+%%    PARAMS
+%———————————————————————————————————————————————
 
-%â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”
-%%   PARAMS
-%â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”
+
 if exist('showgui')==0 || isempty(showgui) ;    showgui=1                   ;end
 if exist('x')==0                           ;    x=[]                        ;end
 
@@ -26,11 +27,21 @@ para={...
  
 'inf1'    'RESIZE TIFF-IMAGE FOR ATLAS-REGISTRATION'  ''  ''
 '' '' '' ''
+'method'                  1     'mask method: [1]DAPI; [2] WSL'                      {1,2}
+'chan'                    3       'RGB-chanel to use (DAPI: 3; WSL: 2)'                                   ''
+
+'inf2'       '___METHOD-SPECIFIC_____________'  ''  ''
+
+'m2_flt'               [11 11] 'method-2 (WSL) ONLY: median filter order'         ''
+'m2_otsuclass'         [20]    'method-2 (WSL) ONLY: number of otsu-classes (higher..more sensitive)'         ''
+
+'inf3'       '___OTHER INPUT_____________'  ''  ''
+
+
 'percentSurviveMaxCluster' 1    'percent clusterSize w.r.t largest cluster to survive'  ''
 'imcloseSizeStep'          10    'stepSize to iterative combine separate clusters'      ''
 'resize'             [2000 2000]  'size of the resized image'                           ''
 'doplot'                  0       'plot image to screen'                                'b'
-'chan'                    3       'RGB-chanel to use'                                   ''
 'isparallel'      x.isparallel    'use parallel processing {0,1}'              'b'
 '' '' '' ''
 'inf5'     '_____ DO THIS FOR THE FOLLOWING FILES _________________________' '' ''
