@@ -47,7 +47,7 @@ bf.file=file;
 
 bf.cmap={'gray' 'hot' 'parula','jet'};
 bf.cmapValue=1;
-bf.sortcolumn=5;
+bf.sortcolumn=6;
 %===================================================================================================
 
 
@@ -81,7 +81,7 @@ ax1=findobj(gcf,'tag','ax1');
 
 global bf
 % if exist('')
-fignum=bf.tb(num,1);
+fignum=bf.tb(num,2);
 cla;
 hc=findobj(gcf,'tag','cmap'); hc=hc(1);
 % % % get(hc)
@@ -233,7 +233,7 @@ end
 % ===============================================
 function makefigure()
 global bf
-delete(findobj(gcf,'tag','selectbest'));
+delete(findobj(0,'tag','selectbest'));
 fg;
 set(gcf,'units','norm','tag','selectbest');
 set(gcf,'position',[  0.2500    0.2267    0.5549    0.6100]);
@@ -248,13 +248,14 @@ axis off;
 % LISTBOX
 hl=uicontrol('style','listbox','units','norm');
 set(hl,'position',[ 0.6300    0.2000    0.3800    0.7500],'tag','lb1');
-set(hl,'callback',@lb1_cb,'fontname','courier','fontsize',8);
+set(hl,'callback',@lb1_cb,'fontname','courier','fontsize',7);
 
 %%  cmap 
 hb=uicontrol('style','popupmenu','units','norm','tag','cmap');
 set(hb,'position', [0.92109 0.965 0.0793 0.0289],'callback',@cmap_cb);
 set(hb,'string',bf.cmap);
 set(hb,'value',bf.cmapValue);
+set(hb,'tooltipstring','select colormap');
 
 if 0
     %overlay
@@ -271,55 +272,108 @@ end
 
 
 %%  sort 
+sortlist={'tag' 'ImgNumber' 'Slice' 'Pitch' 'YAW' 'HOGwarp' 'MIwarp' 'HOGaffine'};
 hb=uicontrol('style','popupmenu','units','norm','tag','sortafter');
 set(hb,'position',[0.63 0.965 0.1 0.0289],'callback',@sortafter);
-set(hb,'string',{'ImgNumber' 'Slice' 'Pitch' 'YAW' 'HOGwarp' 'MIwarp' 'HOGaffine'});
+set(hb,'string',sortlist);
 set(hb,'value',1);
+set(hb,'tooltipstring',[...
+    '<html><b>sort listbox after paramter(columns) </b><br>' ...
+    strjoin(sortlist,',') ...
+    ]);
+
 
 %________________________________________________
-%% to top
-hb=uicontrol('style','pushbutton','units','norm','tag','toTop');
+%% tag slice
+hb=uicontrol('style','pushbutton','units','norm','tag','tag_slice');
 set(hb,'position',[0.68085 0.1612 0.07 0.04]);
-set(hb,'string','to TOP','callback', @totop);
-%________________________________________________
+set(hb,'string','tag slice','callback', {@tag_slice,1},'backgroundcolor',[0.8863    0.9804    0.5490]);
+set(hb,'tooltipstring',[...
+    '<html><b><u>tag</u> this slice as a "favourite" </b>...ADD TO FAVOURITE-LIST <br>'  ...
+    '<font color=blue> shortcut [t] in listbox <font color=black>  <br>' ...
+    'several slices can be tagged as "favourite" (marked as [x] in 1st column of listbox) <br>'  ...
+    'slices can be re-sorted in tagged -->untagged order via pulldown/tag" <br>' ...
+    'FINALLY, select one of the favourites as the best matching slice'
+    ]);
 
+
+%% untag slice
+hb=uicontrol('style','pushbutton','units','norm','tag','untag_slice');
+set(hb,'position',[0.76215 0.16115 0.07 0.04]);
+set(hb,'string','untag slice','callback', {@tag_slice,0},'backgroundcolor',[0.8902    0.7529    0.4627]);
+set(hb,'tooltipstring',[...
+    '<html><b><u>untag </u> this slice</u></b>...REMOVE FROM FAVOURITE-LIST<br>'  ...
+    '<font color=blue> shortcut [u] in listbox <font color=black>  <br>' ...
+     'use this to unselect a slice from the tagged list <br>' ...
+    'several slices can be tagged as "favourite" (marked as [x] in 1st column of listbox) <br>'  ...
+    'slices can be re-sorted in tagged -->untagged order via pulldown/tag" <br>' ...
+    'FINALLY, select one of the favourites as the best matching slice'
+    ]);
+%%________________________________________________
+
+
+msg_warpslice=[...
+    '<html><b>find slice manually </b><br>' ...
+    '  1) select a closely matching slice from the listbox <br>' ...
+    '  2) hit [find-manually]-button <br>' ...
+    '  3) from new figure select the optimal slice <br>' ...
+    '  4) hit [get parameter]-button <br>' ...
+    '  5) hit [warp slice]-button <br>' ...
+    ];
 
 %% find slice manally
 hb=uicontrol('style','pushbutton','units','norm','tag','findslice_manually');
 set(hb,'position',[0.0113    0.1557    0.0793    0.0388]);
 set(hb,'string','find manually','callback', @findslice_manually);
+set(hb,'tooltipstring',msg_warpslice);
 
-
-%AVGT-temlpate
+%% AVGT-temlpate
 hb=uicontrol('style','radio','units','norm','tag','isAVGT');
 set(hb,'position', [0.010012 0.12472 0.07 0.0289]);
 set(hb,'string','AVGT','fontsize',6,'backgroundcolor','w');
 set(hb,'value',0);
+set(hb,'tooltipstring','use AVGT template for manual slice-selection');
+
 
 %% get slicing parameter(from manal)
 hb=uicontrol('style','pushbutton','units','norm','tag','getslice_paramter_manually');
 set(hb,'position',[0.0939    0.1557    0.1000    0.0388]);
 set(hb,'string','get parameter','callback', @getslice_paramter_manually);
+set(hb,'tooltipstring',msg_warpslice);
+
 %% edit new slicing parameter(from manal)
 hb=uicontrol('style','edit','units','norm','tag','edit_slice_paramter_manually');
 set(hb,'position',[0.1965    0.1557    0.2501    0.0363]);
 set(hb,'string','','fontsize',8);
+set(hb,'tooltipstring',msg_warpslice);
+
 %% pb warp slice
 hb=uicontrol('style','pushbutton','units','norm','tag','warp_slice');
 set(hb,'position',[ 0.4480    0.1539    0.0793    0.0403]);
 set(hb,'string','warp slice','callback', @warp_slice,'backgroundcolor',[0.9294    0.6941    0.1255]);
+set(hb,'tooltipstring',msg_warpslice);
 
-
+%% ===============================================
 %% pb accept
 hb=uicontrol('style','pushbutton','units','norm','tag','accept');
 set(hb,'position',[ 0.8898    0.0865    0.0793    0.0403]);
 set(hb,'string','accept','callback', @accept,...
     'backgroundcolor',[ 0.4667    0.6745    0.1882]);
+set(hb,'tooltipstring',[...
+    '<html><b><font color=blue>accept & save the best slice<font color=black> </b><br>' ...
+    'The <font color=red>currently selected <font color=black> slice from the listbox is saved </b><br>' ...
+    'as best matching slice' ...
+    ]);
+
 
 %% pb cancel
 hb=uicontrol('style','pushbutton','units','norm','tag','cancel');
 set(hb,'position',[ 0.8047    0.0865    0.0793    0.0403]);
 set(hb,'string','cancel','callback', @cancel);
+set(hb,'tooltipstring',[...
+    '<html><b><font color=blue>close gui </b><br>' ...
+     '..nothing is stored or updated..' ...
+    ]);
 
 %% filename-pb
 hb=uicontrol('style','pushbutton','units','norm','tag','name');
@@ -355,11 +409,11 @@ set(jSlider, 'Value',0, 'MajorTickSpacing',1, 'PaintLabels',true,'Minimum',1,'Ma
 set(jSlider,'SnapToTicks',1);
 set(jSlider,'value',1);
 % set(jSlider, 'Orientation',jSlider.VERTICAL);
-set(hb,'units','norm','position',[ .74 .95 .12 .07 ]);
+set(hb,'units','norm','position',[ .74 .94 .12 .07 ]);
 
-lab={'OVL' 'SbS' 'con1' 'con2'}
+lab={'OVL' 'SbS' 'con1' 'con2'};
 % ticknum=[0 33 66 99]
-ticknum=[1 2 3 4]
+ticknum=[1 2 3 4];
 labelTable = java.util.Hashtable;
 % font = java.awt.Font('Tahoma',java.awt.Font.PLAIN, 8);
 for i=1:length(lab) 
@@ -377,6 +431,14 @@ set (jbh, 'StateChangedCallback', @sliderPlotType_cb)
 set(jSlider,'Background',java.awt.Color.white);
 set(hb,'tag','sliderPlotType');
 
+uistack(hb,'bottom');
+set(jSlider,'ToolTipText',[...
+    '<html><b><font color=blue> visualization modality </b><br>' ...
+    '[OVL] : overlay<br>' ...
+    '[SbS] : side-by-side<br>' ...
+    '[con1]: contour1<br>' ...
+    '[con2]: contour2<br>' ...
+    ]);
 
 %———————————————————————————————————————————————
 %%   
@@ -386,25 +448,48 @@ function sliderPlotType_cb(e,e2)
 hl=findobj(gcf,'tag','lb1');
 listnum=hl.Value;
 updateplot(listnum);
+drawnow;drawnow;
+uicontrol(findobj(gcf,'tag','lb1')); %focus to LB
 
-function totop(e,e2)
+
+function tag_slice(e,e2,modus)
 hl=findobj(gcf,'tag','lb1');
-listnum=hl.Value
+listnum=hl.Value;
 % li=get(hl,'string');
-
-
+lbtop=get(hl,'ListboxTop');
+% -----
 global bf
-ls=bf.ls;
-ontop=ls(listnum);
-ls(listnum)=[];
-bf.ls=[ontop; ls   ];
-% ------------------
-tb=bf.tb;
-ontop=tb(listnum,:);
-tb(listnum,:)=[];
-bf.tb=[ontop; tb   ];
-% ---------------
+bf.tb(listnum,1) = modus;      %update table
+line=bf.ls(listnum);
+if modus==1                     %update list in listbox
+    line=strrep(line,'[&nbsp;]','[x]');
+else
+   line=strrep(line,'[x]','[&nbsp;]');
+end
+bf.ls(listnum)=line;
 set(hl,'string',bf.ls);
+set(hl,'ListboxTop',lbtop); %set listboxtop to prev.state
+
+uicontrol(findobj(gcf,'tag','lb1')); %focus to LB
+
+% function totop(e,e2)
+% hl=findobj(gcf,'tag','lb1');
+% listnum=hl.Value
+% % li=get(hl,'string');
+% 
+% 
+% global bf
+% ls=bf.ls;
+% ontop=ls(listnum);
+% ls(listnum)=[];
+% bf.ls=[ontop; ls   ];
+% % ------------------
+% tb=bf.tb;
+% ontop=tb(listnum,:);
+% tb(listnum,:)=[];
+% bf.tb=[ontop; tb   ];
+% % ---------------
+% set(hl,'string',bf.ls);
 
 
 
@@ -417,7 +502,10 @@ if strcmp(e2.Key,'o')
     set(hr,'value',~get(hr,'value'));
     drawnow;
     hgfeval(get(hr,'callback'));
-    
+elseif strcmp(e2.Key,'t') 
+    tag_slice([],[],1);
+elseif strcmp(e2.Key,'u') 
+    tag_slice([],[],0);
 end
 
 function dooverlay(e,e2)
@@ -439,6 +527,8 @@ hl=findobj(gcf,'tag','lb1');
 bestID=hl.Value;
 
 row=bf.tb(bestID,:);
+row=row(2:end); %remove tag;
+
 
 slice=bf.ss.q(:,:,row(1));
 ref   =imresize(bf.ss.img,[size(slice)]);
@@ -526,14 +616,33 @@ close(gcf);
 function makelist()
 global bf
 ss=bf.ss;
-%  num  slic, ang1,ang2, hog, mi, hogAffine 
-tb=[ [1:size(ss.q,3)]'  ss.s(:,1:3)    [ss.hog ss.mi  ss.s(:,4)]   ];
+%  num  slic, ang1,ang2, hog, mi, hogAffine
+tagvec=zeros(length([1:size(ss.q,3)]'),1);
+% tagvec([10:13 5])=1; %#TEST
+tb=[tagvec [1:size(ss.q,3)]'  ss.s(:,1:3)    [ss.hog ss.mi  ss.s(:,4)]    ]; %8 columns
+
+
+tbold=[];
+if isfield(bf,'tb')
+    tbold=bf.tb;
+    ixtag=find(tbold(:,1)==1);
+    for i=1:length(ixtag)
+        idold=tbold(ixtag(i),2);
+       tb( find(tb(:,2)==idold),1)=1; 
+    end
+    %  disp(tb(find(tb(:,1)==1),:))  %check
+end
 
 ls=repmat({''},[size(ss.q,3) 1]);
 for i=1:size(ss.q,3)
-    par=sprintf(' <span style="background-color:#FFFFE0;"> %5.1f %5.1f %5.1f</span>',tb(i,2:4));
-    met=sprintf(' %6.3f</b> %6.3f %6.3f',tb(i,5:7));
- ls{i,1} = ['<html><pre><font color=blue><b>' pnum(i,3) ':' '<font color=black>' par ...
+    if tb(i,1)==0
+        tag='[&nbsp;]';
+    else
+        tag='[x]';
+    end
+    par=sprintf(' <span style="background-color:#FFFFE0;"> %5.1f %5.1f %5.1f</span>',tb(i,3:5));
+    met=sprintf(' %6.3f</b> %6.3f %6.3f',tb(i,6:8));
+ ls{i,1} = ['<html><pre>' tag '<font color=blue><b>' pnum(i,3) ':' '<font color=black>' par ...
     '<font color=green>' met  ];
 end
 
@@ -562,14 +671,17 @@ if exist('column')==1
     col2sort=column;
     hr.Value=col2sort;
 else
-    
     col2sort=hr.Value;
 end
 hb=findobj(gcf,'tag','lb1');
 currentString=hb.String{hb.Value};
 global bf
 
-[~,isort]=sort(bf.tb(:,col2sort));
+if strcmp(hr.String{hr.Value},'tag')
+    [~,isort]=sort(bf.tb(:,col2sort),'descend');
+else
+    [~,isort]=sort(bf.tb(:,col2sort));
+end
 bf.ls=bf.ls(isort);
 bf.tb=bf.tb(isort,:);
 newValue=min(find(strcmp(bf.ls,currentString)));
@@ -582,7 +694,7 @@ function findslice_manually(e,e2)
 
 global bf
 hb=findobj(gcf,'tag','lb1');
-cord=bf.tb(hb.Value,[2:4]);
+cord=bf.tb(hb.Value,[3:5]);
 %  cv=getappdata(gcf,'cv');
 
 hx=findobj(gcf,'tag','isAVGT');
@@ -675,4 +787,12 @@ sortafter([],[],previousSortID);
 ix_resorted=find(strcmp(hl.String,line));
 set(hl,'value',ix_resorted);
 updateplot(ix_resorted);
+
+
+uicontrol(hl); %focus to LB
+
+
+
+
+
 

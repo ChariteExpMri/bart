@@ -14,6 +14,9 @@
 % #k [f_importTiff_single.m] and [importTiff_single.m] #n  allows to import single tiff-images
 % -Use this function, if there is only one single tif-image per animal
 % 
+% #ba 05 Oct 2021 (14:35:51)
+% [selectslice.m]: added tag-function + tooltips
+% 
 % 
 
 %----- EOF

@@ -554,6 +554,9 @@ idxfun(inofun)=[];
 fidi=bartcb('getsel');
 w.dirs  =fidi(strcmp(fidi(:,2),'dir'),1);
 w.files =fidi(strcmp(fidi(:,2),'file'),1);
+if ~isempty(find(strcmp(funs,'f_cuttiffs')))
+    w.files={};
+end
 
 
 timeTot=tic;

@@ -58,7 +58,9 @@ end
 disp([' ..resizing img']);
 
 p1=imread(file);
-p1=p1(:,:,p.chan);
+if size(p1,3)>1
+    p1=p1(:,:,p.chan);
+end
 p2=imresize(p1, p.resize);
 
 %———————————————————————————————————————————————

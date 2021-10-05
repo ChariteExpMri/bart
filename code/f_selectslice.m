@@ -20,7 +20,8 @@ for i=1:length(files)
         disp([' not found: ' file]);
     else
         selectslice(file);
-        drawnow;uiwait(gcf);
+        drawnow;
+        uiwait(gcf);
     end
 end
 
