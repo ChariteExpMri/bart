@@ -195,6 +195,7 @@ load(p.fhist);
 % ===============================================
 setpixunits=1;
 doshrinkGui=1;
+showuniquestudies=1;
 
 % ==============================================
 %%   
@@ -203,7 +204,7 @@ doshrinkGui=1;
 figpos=[ 0.1139    0.2044    0.8014    0.5711];
 
 delete(findobj(0,'tag','barthistory'));
-hf=figure('units','norm','menubar','none','color','w','tag','barthistory',...
+hf=figure('visible','off','units','norm','menubar','none','color','w','tag','barthistory',...
     'name','barthistory','numbertitle','off');
 % set(hf,'position',[0.3937    0.4011    0.3542    0.1544])
 set(hf,'position',figpos);
@@ -436,10 +437,22 @@ if doshrinkGui==1
     set(findobj(hf,'tag','shrinkGUI'),'value',1);
     shrinkGUI();
 end
+if showuniquestudies==1
+   set(findobj(hf,'tag','uniqueStudies'),'value',1);
+   uniquestudies();
+end
 
 % set(gcf,'CloseRequestFcn',[]); %forced to be closed ..>> "closereq"
 
+%% adjust figure-size
+hb=findobj(gcf,'tag','table');
+if size(hb.Data,1)<5
+    posf=get(hf,'position');
+    set(hf,'position',[posf(1:3) .24  ]);
+end
+%     0.1139    0.2044    0.4007    0.2600
 
+set(hf,'visible','on');
 
 
 

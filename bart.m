@@ -1,12 +1,16 @@
 
 
 function bart()
+if isempty(which('ant.m'))
+    msgbox({'ANTx2-TBX not found in path-list.' 'BART needs ANTx2..'},'warning');
+    return
+end
+
 pabart=fileparts(which('bart.m'));
 addpath(pabart);
 addpath(genpath(fullfile(pabart,'code')));
     
 % if isempty(which('@dummy.m')) %set paths
-   
     addpath(genpath(fullfile(pabart,'slicedetection')));
     addpath(genpath(fullfile(pabart,'vlfeat-0.9.21\mex')));
     addpath(genpath(fullfile(pabart,'celldetection')));
