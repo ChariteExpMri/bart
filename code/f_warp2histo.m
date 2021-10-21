@@ -56,10 +56,10 @@ para={...
 'filesTP'    tb 'Files to transform from Template-path: NAME + INTERPOLATION (0:NN; 1:linear) ' {@fileselection }
 '' '' '' ''
 'inf4'     '_____ ELASTIX PARAMETER _________________________' '' ''
-'useModFile'                 1           'use modFile "a2_XXXmod.tif" if exist'  'b'
-'NumResolutions'             [2 2     ]  'number of resolutions for affine(arg1) & B-spline(arg2) transformation'   ''
-'MaximumNumberOfIterations'  [1250 1000]  'number of iterations within each resolution for affine(arg1) & B-spline(arg2) transformation' ''
-'FinalGridSpacingInVoxels'   100          'control point spacing of the bspline transformation (lower value: improve accuracy but may cause unrealistic deformations)' ''
+'useModFile'                 1               'use modFile "a2_XXXmod.tif" if exist'  'b'
+'NumResolutions'             [2     6     ]  'number of resolutions for affine(arg1) & B-spline(arg2) transformation'   ''
+'MaximumNumberOfIterations'  [1250 1000]     'number of iterations within each resolution for affine(arg1) & B-spline(arg2) transformation' ''
+'MaximumStepLength'          1               'maximum voxel displacement step between two iterations. The larger this parameter, the more aggressive the optimization. ' ''
 
 % 'inf5'    '_____ MISC _________________________'  ''  ''
 % 'isparallel'           0   'parallel processing {0,1}' 'b'

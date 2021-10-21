@@ -10,11 +10,14 @@ warning off
 p.file         ='';
 % p.channel           = 3;
 p.usemanualrotation = 1;
+p.method         = 2   ;   %[1]multistart [2] surrogate
+p.numIterations  = 500 ;  %surrogate-only
+p.numStartpoints = 100 ;    % number of starting points (recom: 100)
+
 
 p.parallel       = 1   ;    % use parallell-comp
 p.cellsize       = 4   ;    % HOG-cellSize (larger is rougher/smoother)
 p.useSSIM        = 1   ;   % use Multiscale structural similarity' 
-p.numStartpoints = 100 ;    % number of starting points (recom: 100)
 p.doflt          = 1   ;    % gaus filt altas slice after extraction from 3dvol
 % -------------------
 p.plot           = 1   ;    % plot update for each iteration (slow)
@@ -146,7 +149,7 @@ s=load(filename2); s=s.s;
 % ==============================================
 %%   modified version (pruning)
 % ===============================================
-modfile=fullfile(pat,[ strrep(name,'a1_','a2_') 'mod.tif'])
+modfile=fullfile(pat,[ strrep(name,'a1_','a2_') 'mod.tif']);
 if exist(modfile)==2
    d=imread(modfile) ;
     
@@ -179,13 +182,19 @@ if 0
     plan1=[x0; LB; UB];
 end
 
+
+
+% ==============================================
+%%  1) METHOD: MULTISTART
+% ===============================================
+if p.method==1
 % ============================================================================================
 %%   PLAN-1 : find slice
 % =============================================================================================
 
 timeplan1=tic;
 
-
+p2.method          =p.method           ;%used method
 p2.parallel       = p.parallel         ;% use parallell-comp
 p2.cellsize       = p.cellsize         ;% HOG histogram (larger is finer scaled  )
 p2.useSSIM        = p.useSSIM;
@@ -254,12 +263,64 @@ best2=xx;
 xx2  =xx;
 sol2=[cell2mat({sol.X}') [sol.Fval]'];
 % histview(cv,sol2(1,:))
+cprintf([0 1 1],[' TIME_PLAN-2 (min): [' num2str(toc(timeplan2)/60) ']  '  '\n']);
 
-if p.plotresult==1
-    plotslice(xx2,fvel,cv, s.img,{p.file ['PLAN-2']});
+
+elseif p.method==2
+    % ==============================================
+    %% surrogate
+    % ===============================================
+    timeplan1=tic;
+    
+    p2.method          =p.method           ;%used method
+    p2.numIterations   =p.numIterations;
+
+    p2.parallel       = p.parallel         ;% use parallell-comp
+    p2.cellsize       = p.cellsize         ;% HOG histogram (larger is finer scaled  )
+    p2.useSSIM        = p.useSSIM;
+    p2.numStartpoints = p.numStartpoints   ;% number of starting points (recom: 100)
+    p2.doflt          = p.doflt            ;% gauss-filt altas slice after extraction from 3dvol
+    p2.plot           = p.plot             ;% plot update for each iteration (slow)
+    p2.plotresult     = 0;%p.plotresult       ;% plot result best "solution" (image)
+    
+    
+    x0=p.plan1_x0;
+    LB=p.plan1_LB;
+    UB=p.plan1_UB;
+    
+    plan1=[x0; LB; UB];
+    p2.planno=1;
+    
+    [xx,fvel,flag,outp,sol]=func_call_angles5(s, cv,plan1,  p2 );
+    best2=xx;
+    xx2  =xx;
+    sol2=sortrows([cell2mat({sol.X}') [sol.Fval(:)]],4);
+    sol3=sol2;
+    sol4=sortrows([cell2mat({sol.X}') [sol.Fval(:)]],1);
+    ix=peakseek(-sol4(:,4),5);
+    sol2=sortrows(sol4(ix,:),4);
+    if size(sol2,1)>100  %reduce table to most likely
+        sol2=sol2(1:100,:);
+    end
+    
+    plan2=plan1;
+    
 end
 
-cprintf([0 1 1],[' TIME_PLAN-2 (min): [' num2str(toc(timeplan2)/60) ']  '  '\n']);
+% ==============================================
+%%   plot result
+% ===============================================
+
+
+if p.plotresult==1
+    if exist('sol3')==1
+        plotslice(xx2,fvel,cv, s.img,{p.file ['PLAN-2']},sol3);
+    else
+        plotslice(xx2,fvel,cv, s.img,{p.file ['PLAN-2']},sol2);
+    end
+end
+
+cprintf([0 1 1],[' TIME_PLAN-total (min): [' num2str(toc(timeplan1)/60) ']  '  '\n']);
 
 % ============================================================================================
 %%   save result

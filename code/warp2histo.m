@@ -159,7 +159,9 @@ elseif p.approach ==3 %50sec!
         %            fullfile(pa_el,'par_bspline033_Ncorr.txt')};
         %         fullfile(pa_el,'par_bspline033CD1_2d.txt')};
         %         fullfile(pa_el, 'parameters_BSpline_default2.txt') }; %####LAST one
-        fullfile(pa_el, 'Par0034bspline.txt') };
+        % fullfile(pa_el, 'Par0034bspline.txt') 
+        fullfile(pa_el, 'Par0063_BSpline.txt') 
+        };
     
 end
 
@@ -266,7 +268,9 @@ if 1
     set_ix(parfile{1},'MaximumNumberOfIterations',p.MaximumNumberOfIterations(1)); %default:250
     set_ix(parfile{2},'MaximumNumberOfIterations',p.MaximumNumberOfIterations(2)); %default:1500
     
-    set_ix(parfile{2},'FinalGridSpacingInVoxels',p.FinalGridSpacingInVoxels); %control point spacing of the bspline transformation (lower value: improve accuracy but may cause unrealistic deformations) (org default: 70)
+    set_ix(parfile{2},'MaximumStepLength',p.MaximumStepLength(1)); %default:1
+    
+    %set_ix(parfile{2},'FinalGridSpacingInVoxels',p.FinalGridSpacingInVoxels); %control point spacing of the bspline transformation (lower value: improve accuracy but may cause unrealistic deformations) (org default: 70)
     % rm_ix(parfile{2},'FinalGridSpacingInVoxels');
 end
 % -------------------------
@@ -278,8 +282,8 @@ if 0
 end
 if 1
     % ### image to atlas-Size (320x456) before warping  (t=70s) -->ok!!!
-    mov =imresize(tatlas,[1000 1000]);
-    fix =imresize(histo ,[size(mov)]);
+    mov =imresize(double(tatlas),[1000 1000],'bilinear');
+    fix =imresize(double(histo) ,[size(mov)],'bilinear');
 end
 % -------------------------
 % ### atlas to image size (2000x2000) before warping  (t=90s) --> not that good!
@@ -289,17 +293,34 @@ end
 % end
 % -------------------------
 % ==============================================
-%%
+%% ELATIX call
 % ===============================================
+if 0  % change original paramfiles and reload!!!!!
+    parfile=strrep(parfile0,pa_el,path_paramfile);                      %forward
+    %parfileinv=stradd(strrep(parfile0,pa_el,savepath),'inv',1);   %backward
+    for i=1:length(parfile)
+        copyfile(parfile0{i},parfile{i}    ,'f');
+        %copyfile(parfile0{i},parfileinv{i} ,'f')
+    end
+end
+
+
 warning off;
 delete(fullfile(elxout,'*'));
-[wa,outs]= elastix2( (mov),(fix),elxout,parfile(1:end),pa_el);
+[wa,outs]= elastix2(  (mov), (fix),elxout,parfile(1:end),pa_el);
 fprintf(['Done. (t_registration: '  sprintf('%2.2fs',toc(time_warp) ) ')\n']);
 % cprintf([0 .5 0],['  ..t_registEstimation: ' sprintf('%2.2f',toc(time_warp) )  ' s\n']);
 
 if 0
     imoverlay(wa,fix);
 end
+
+if 0
+  fg,imagesc(wa)  
+end
+% ==============================================
+%%   
+% ===============================================
 
 
 if 0
@@ -536,6 +557,11 @@ for i=1:size(tb,1)
     end
     w2=obliqueslice(w, vol_center, [Y -X 90],'Method',interpx);
     
+    if 0
+        %CRITICAL !! mask here
+        msk=imfill(imerode(tatlas>0,strel(ones(7))),'holes');
+        w2=w2.*msk;
+    end
     %---------------RESIZE---
     if any(size(w2)-size(fix))
         if tb{i,2}==0
@@ -574,6 +600,39 @@ fprintf(['Done. (t_transformImages: '  sprintf('%2.2fs',toc(time_transform) ) ')
 % cprintf([0 .5 0],['  ..t_transformImages: ' sprintf('%2.2f',toc(time_transform) )  ' s\n']);
 
 
+% ==============================================
+%%   interim mask image
+% ===============================================
+[refPa, refName]=fileparts(p.refImg);
+file_mask=fullfile(refPa, ['AVGTmask.nii' ]);
+[ cvmask]=p_getfromHistvolspace(file_mask) ;
+ w2=obliqueslice(cvmask, vol_center, [Y -X 90],'Method','nearest');
+%  w2=imerode(imclose(w2,strel(ones(15))),ones(11));
+wm2=imresize(w2,[size(fix)],'nearest');
+
+trafofile2=fullfile(elxout,'TransformParameters.1.txt');
+set_ix(trafofile2,'FinalBSplineInterpolationOrder',0); %default:1500
+
+% wm2=double(mov>0);
+
+pawork =pwd;
+cd(fileparts(which('elastix.exe')));
+%[w3,log] = transformix(w2,elxout) ;
+[msg,wm3,log]=evalc('transformix(wm2,elxout)');
+cd(pawork);
+%% ===============================================
+% [mf1,bf]=clean_data_function2(wm3);
+[mf,bf]=clean_data_function2(imerode(imfill(wm3,'holes'),ones(5)));
+% [mf,bf]=clean_data_function2(wm3-imbothat(wm3,ones(15)));
+% mf=imdilate(mf,ones(5));
+%  fg,imagesc(w3)
+% fg,imagesc(mf.*w3)
+ob=o;
+for i=1:size(ob,1)
+    ob{i,2}=ob{i,2}.*mf;
+    %fg, imagesc([ o{i,2} ob{i,2} ; 0.*[ o{i,2} ob{i,2} ]])
+end
+o=ob;
 
 % ==============================================
 %%  [3.2B] AFFINE TRANSFORM IMAGES     [a]-cell
@@ -683,17 +742,34 @@ outtag=[strrep(numberstr,'_', 's') '_'];  %PREFIX-outTage ('s001_','s002_', etc)
 % ==============================================
 %%   [4.2] load original tif
 % ===============================================
-fprintf('...load orig. tiff.. ');
+
 tifname=fullfile(pa,['a1' numberstr '.tif']);
 info=imfinfo(tifname);
 info=info(1);
 size_img=[info.Height info.Width ];
-t=imread(tifname);
-if size(t,3)==3              %---USING BLUE-RGB-DIM
-    %t=t(:,:,3);
-    t=sum(t,3);
-    t=uint8(round((mat2gray(imadjust(mat2gray(t))))*255));
+
+if p.useModFile==1
+    disp('...using mod-file..');
+    if exist(fmodif)==2
+        disp('..warp onto modified Histo-image');
+        err_modif=0;
+        t=imresize(uint8(s3),[size_img]); %replace image
+    else
+        err_modif=1;
+    end
 end
+
+if p.useModFile==0 || err_modif==1
+     %fprintf('...load orig. tiff.. ');
+     disp('..warp onto original Histo-image');
+    t=imread(tifname);
+    if size(t,3)==3              %---USING BLUE-RGB-DIM
+        %t=t(:,:,3);
+        t=sum(t,3);
+        t=uint8(round((mat2gray(imadjust(mat2gray(t))))*255));
+    end
+end
+
 fprintf('Done.\n');
 % ==============================================
 %%   [4.3A] resize images +save as mat  NON-LINEAR-IMAGES

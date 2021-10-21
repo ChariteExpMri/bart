@@ -1,4 +1,5 @@
-function [hogdiff2 ]=compute_hog_single_v3(experimental_file,maskfile,tatlas,p)
+function [hogdiff2 sq]=compute_hog_single_v3(experimental_file,maskfile,tatlas,p)
+
 
 % try
 %     % prevVers: compute_hog_single_
@@ -54,10 +55,12 @@ function [hogdiff2 ]=compute_hog_single_v3(experimental_file,maskfile,tatlas,p)
         if p.useSSIM==0
             hog_diff=hog_hi-hog_at;
             hogdiff2=norm(reshape(hog_diff,1,numel(hog_at))) ;
-        else
+        elseif p.useSSIM==1
             %hogdiff2= 1-ssim(single(warpedatlas),single(small_exp));
             hogdiff2= 1-multissim3(hog_at,hog_hi);
-           % disp('useSSIM');
+        elseif p.useSSIM==2
+            %'mi'
+            hogdiff2=3-calcMI(imresize(tatlas,[size(experimental_file)]),experimental_file);
         end
         %      hogdiff2=100-((mi(hog_diff,hog_at))*30);
         %     hogdiff2=100-mi(small_exp,warpedatlas);
@@ -82,8 +85,12 @@ function [hogdiff2 ]=compute_hog_single_v3(experimental_file,maskfile,tatlas,p)
 %     hogdiff2  =222;
 %     
 % end
-
-
+sq=[];
+if nargout>1
+    sq.tatlas =tatlas;
+    sq.ef     =experimental_file;
+end
+    
 
 
 

@@ -114,7 +114,6 @@
 // Make sure that the number of elements equals the number
 // of resolutions times the image dimension.
 
-//(NumberOfResolutions 8)
 //(ImagePyramidSchedule 128 128  64 64  32 32  16 16  8 8  4 4  3 3   2 2  )
 
 

@@ -615,10 +615,18 @@ close(gcf);
 % ===============================================
 function makelist()
 global bf
+if size(bf.ss.s,1)>length(bf.ss.mi) % less warped than 
+   bf.ss.s= bf.ss.s(1:length(bf.ss.mi),:); % same size
+end
+
+
 ss=bf.ss;
 %  num  slic, ang1,ang2, hog, mi, hogAffine
 tagvec=zeros(length([1:size(ss.q,3)]'),1);
 % tagvec([10:13 5])=1; %#TEST
+
+
+
 tb=[tagvec [1:size(ss.q,3)]'  ss.s(:,1:3)    [ss.hog ss.mi  ss.s(:,4)]    ]; %8 columns
 
 

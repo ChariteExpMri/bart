@@ -18,6 +18,12 @@
 % [selectslice.m]: added tag-function + tooltips
 % 
 % 
+% #ba 21 Oct 2021 (11:27:06)
+% added surrogate-method for slice-estimation
+% 
+% 
+% 
+% 
 
 %----- EOF
 % make bartver.md for GIT: bartver('makebartver')

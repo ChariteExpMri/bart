@@ -6,6 +6,7 @@ function [xx,fvel,exitflag,output,solutions]=func_call_angles5(s, cv,plan,p0)
 % ==============================================
 %%   PARAMS
 % ===============================================
+p.method         = 2   ; %used method [1]multistart [2] surrogate
 p.parallel       = 0   ;    % use parallell-comp
 p.cellsize       = 16  ;    % HOG histogram (larger is finer scaled  )
 p.numStartpoints = 5   ;    % number of starting points (recom: 100)
@@ -28,6 +29,8 @@ end
 % ==============================================
 %%
 % ===============================================
+res.tb=[];
+res.best=[];
 
 
 % ==============================================
@@ -40,7 +43,7 @@ end
 if exist('vl_hog')~=3
     %run('vlfeat-0.9.21/toolbox/vl_setup.m')
     run(fullfile(fileparts(which('bart.m')), 'vlfeat-0.9.21/toolbox/vl_setup.m' ));
-
+    
 end
 
 
@@ -115,7 +118,7 @@ end
 % opts = optimoptions(@fmincon,'Algorithm','interior-point');
 % optimizer='active-set';
 % optimizer='active-set';
-optimizer='interior-point'
+optimizer='interior-point';
 opts = optimoptions(@fmincon,'Algorithm',optimizer);
 
 
@@ -132,7 +135,7 @@ if 0
     %             'OptimalityTolerance', 1e-10, 'UseParallel',true);
     opts = optimoptions(@fmincon,'Algorithm',optimizer,'OptimalityTolerance', 1e-10);
 end
-cprintf([1 0 1],['  optimizer  : ' optimizer '\n']);
+% cprintf([1 0 1],['  optimizer  : ' optimizer '\n']);
 
 
 problem = createOptimProblem('fmincon','x0',x0,...
@@ -144,50 +147,158 @@ problem = createOptimProblem('fmincon','x0',x0,...
 %% ==============================================
 %%   surrogatopt
 % ===============================================
-
-if 0
+if p.method==2
+    cprintf([0 .5 1],[' Method: surrogate'  '\n']);
+    
+    % ==============================================
+    %%
+    % ===============================================
     
     %     tic
     % %     opts = optimoptions('surrogateopt');
     %     opts = optimoptions('surrogateopt','PlotFcn','surrogateoptplot');
     %     problem = createOptimProblem('fmincon','x0',x0,...
     %     'objective',@func_y_opim,'lb',LB,'ub',UB,'options',opts);%,...
-    opts = optimoptions('surrogateopt','Display','final','PlotFcn',[],...%''surrogateoptplot',...);
-        'UseParallel',true,'PlotFcn','surrogateoptplot','MaxFunctionEvaluations',100);
-    tic
+    
     doPlot=0;
-   [xsur,fsur,flgsur,osur,trials] = surrogateopt(@func_y_opim,[80 -20 -5],[400 20 5],[1 2 3],opts)
-   %  [xsur,fsur,flgsur,osur,trials] = surrogateopt(@func_y_opim,[80 -1 -1],[400 1 1],[1 2 3],opts)
-    xsur
-    toc
+    p0.planno=-1;
+    nIter=p0.numIterations;
+    %tic
+    LB(2:3)=[-25 -5];
+    UB(2:3)=[ 25  5];
+    opts = optimoptions('surrogateopt','Display','final','PlotFcn',[],...%''surrogateoptplot',...);
+        'UseParallel',false,'PlotFcn','surrogateoptplot','MaxFunctionEvaluations',nIter)
+    initialslicegap=10000;
+    if (UB(1)-LB(1))>initialslicegap
+        startpoints=[[LB(1):initialslicegap:UB(1)]' ];
+        startpoints=[startpoints zeros(length(startpoints),2)];
+        opts= optimoptions(opts,'InitialPoints',startpoints);
+    end
+    %p3.cellsize       = 6
+   
+    
+%     LB(2:3)=[-1  -3];
+%     UB(2:3)=[ 40  3];
+    [xsur,fsur,flgsur,osur,trials] = surrogateopt(@func_y_opim,LB,UB,opts);
+    
+    
+ %    [xsur,fsur,flgsur,osur,trials] = surrogateopt(@func_y_opim,LB,UB,[1 2 3],opts);
+    %inipoints=[ 120]
+    %[xsur,fsur,flgsur,osur,trials] = surrogateopt(@func_y_opim,[40 0 0],[400 0 0],[1 2 3],opts);
+    
+    
+    
+     % [xsur,fsur,flgsur,osur,trials] = surrogateopt(@func_y_opim,LB,UB,[1 2 3],opts);
+    
+    
+    %toc
+    xx        =xsur;
+    fvel      =fsur;
+    exitflag  =flgsur;
+    output    =osur;
+    solutions =trials;
+    
+    if 0
+        
+        %tic
+        [xsur,fsur,flgsur,osur,trials] = surrogateopt(@func_y_opim,[40 -20 -5],[400 20 5],[1 2 3],opts)
+        toc
+        
+        keyboard
+        
+        %run-2______
+        tic
+        [xsur,fsur,flgsur,osur,trials] = surrogateopt(@func_y_opim,[xsur(1)-20 -20 -5],[xsur(1)+20 20 5],[1 2 3],opts)
+        toc
+        %---------------
+        if 0
+            [xsur,fsur,flgsur,osur,trials] = surrogateopt(@func_y_opim,[80 0 0],[80 00],[1 2 3],opts)
+        end
+        
+        
+        
+        opts = optimoptions('surrogateopt',...%''surrogateoptplot',...);
+            'UseParallel',false,'MaxFunctionEvaluations',500);
+        tic
+        doPlot=0;
+        %[xsur,fsur,flgsur,osur,trials] = surrogateopt(@func_y_opim,[65 -20 -5],[90 20 5],[1 2 3],opts)
+        [xsur,fsur,flgsur,osur,trials] = surrogateopt(@func_y_opim,[40 -20 -5],[400 20 5],[1 2 3],opts)
+        xsur
+        toc
+       
+        
+        
+        
+        plotter(23,xsur);
+        fg,imagesc(experimental_file)
+        btab=sortrows([trials.Fval trials.X],1);
+    end
+    % ==============================================
+    %%
+    % ===============================================
+    
+    
+    
+    if 0
+        % ==============================================
+        %%
+        % ===============================================
+        
+        %     tic
+        % %     opts = optimoptions('surrogateopt');
+        %     opts = optimoptions('surrogateopt','PlotFcn','surrogateoptplot');
+        %     problem = createOptimProblem('fmincon','x0',x0,...
+        %     'objective',@func_y_opim,'lb',LB,'ub',UB,'options',opts);%,...
+        opts = optimoptions('surrogateopt','Display','final','PlotFcn',[],...%''surrogateoptplot',...);
+            'UseParallel',true,'PlotFcn','surrogateoptplot','MaxFunctionEvaluations',100);
+        tic
+        doPlot=0;
+        [xsur,fsur,flgsur,osur,trials] = surrogateopt(@func_y_opim,[80 -20 -5],[400 20 5],[1 2 3],opts)
+        %  [xsur,fsur,flgsur,osur,trials] = surrogateopt(@func_y_opim,[80 -1 -1],[400 1 1],[1 2 3],opts)
+        xsur
+        toc
+        % ==============================================
+        %%
+        % ===============================================
+        
+    end
+    
+    
+    
+    
+elseif p.method==1
+    % ==============================================
+    %%   method-1: multistart
+    % ===============================================
+    cprintf([0 .5 1],[' Method: multistart'  '\n']);
+    
+    % delete(gcp('nocreate'));
+    poolobj = gcp;
+    % addAttachedFiles(poolobj,{'vl_hog.mexw64',which('vl_hog'), [mfilename '.m']});%,'elastix.m'
+    
+    addAttachedFiles(poolobj,{fileparts(which('vl_hog')), 'compute_hog_single_v4.m'  });
+    updateAttachedFiles(poolobj);
+    % ==============================================
+    %%   start
+    % ===============================================
+    if p.plot==1; doPlot=1; end
+    
+    if p.parallel==0
+        ms=MultiStart('UseParallel',0);
+    else
+        p.plot=0;    doPlot=0;
+        ms=MultiStart('UseParallel',1);
+    end
+    % [xx fvel]=run(ms, problem,20); %20
+    % [xx,fvel,exitflag,output,solutions]=run(ms, problem,100); %20
+    
+    
+    % p.numStartpoints=1 %###TEST
+    
+    
+    [xx,fvel,exitflag,output,solutions]=run(ms, problem,p.numStartpoints); %20
     
 end
-
-% delete(gcp('nocreate'));
-poolobj = gcp;
-% addAttachedFiles(poolobj,{'vl_hog.mexw64',which('vl_hog'), [mfilename '.m']});%,'elastix.m'
-
-addAttachedFiles(poolobj,{fileparts(which('vl_hog')), 'compute_hog_single_v4.m'  });
-updateAttachedFiles(poolobj);
-% ==============================================
-%%   start
-% ===============================================
-if p.plot==1; doPlot=1; end
-
-if p.parallel==0
-    ms=MultiStart('UseParallel',0);
-else
-    p.plot=0;    doPlot=0;
-    ms=MultiStart('UseParallel',1);
-end
-% [xx fvel]=run(ms, problem,20); %20
-% [xx,fvel,exitflag,output,solutions]=run(ms, problem,100); %20
-
-
-% p.numStartpoints=1 %###TEST
-
-
-[xx,fvel,exitflag,output,solutions]=run(ms, problem,p.numStartpoints); %20
 
 % ==============================================
 %%
@@ -205,7 +316,7 @@ end
 
 % poolobj = gcp;
 %  addAttachedFiles(poolobj,{'readWholeTextFile.m' ,'elastix2.m', [mfilename '.m'],'mhd_read.m'});%,'elastix.m'
-% 
+%
 
 %===================================================================================================
 %===================================================================================================
@@ -256,18 +367,20 @@ end
         end
         
         fib=uint8(obliqueslice(p0.fb, vol_center, [Y -X 90]));
-%         disp('fib');
+        %         disp('fib');
         
         %tatlas=imadjust(uint8(dat),[0 .25],[0 1]);
         % ==============================================
         %%   hog diff
         % ===============================================
         if p0.planno==1
-          [hogval ]=compute_hog_single_v3(experimental_file,maskfile,tatlas,p3); 
-        else
-           [hogval ]=compute_hog_single_v4(experimental_file,maskfile,tatlas,fib,p3);  
+            [hogval ]=compute_hog_single_v3(experimental_file,maskfile,tatlas,p3);
+        elseif p0.planno==0
+            [hogval ]=compute_hog_single_v4(experimental_file,maskfile,tatlas,fib,p3);
+        elseif p0.planno==-1
+            [hogval ]=compute_siftflow(experimental_file,maskfile,tatlas,p3);
         end
-       
+        
         %         hogval=compute_hog_single(cellsize,experimental_file,tatlas,experimental_thickness,...
         %             thick_thresh,maskfile,expresolution);
         hogval=double(hogval);
@@ -278,6 +391,17 @@ end
             cprintf([1 0 1],['HOG:' num2str(hogval) ' ...'  ...
                 num2str(xx(1)) ','   num2str(xx(2))  ','  num2str(xx(3)) ,...
                 ' T(s): ' num2str(toc(timex1a)) '\n']);
+        end
+        
+        try
+            res.tb=[res.tb; [ xx hogval ] ];
+
+            if isempty(res.best)
+                res.best=res.tb(end,:);
+            elseif hogval<res.best(4)
+                res.best=res.tb(end,:);
+            end
+           xlabel([ ['best: [' num2str(res.best(4)) '] ' num2str(res.best(1)) ','   num2str(res.best(2))  ','  num2str(res.best(3))]    ]); drawnow;
         end
         
     end% nested
@@ -314,9 +438,12 @@ end
         end
         
         
-        dat=obliqueslice(cv, vol_center, [Y -X 90]);
-        figure;
-        imagesc(imadjust(dat)); colormap gray
+        
+        tatlas=obliqueslice(cv, vol_center, [Y -X 90]);
+        [hogval sr]=compute_hog_single_v3(experimental_file,maskfile,tatlas,p3);
+        %         figure;
+        %         imagesc(imadjust(dat)); colormap gray
+        imoverlay(sr.tatlas,sr.ef);
         title(['[' num2str(fvel) ']' regexprep(num2str(xx),'\s+',' ' ) ],'fontsize',7); drawnow
     end
 end %function
