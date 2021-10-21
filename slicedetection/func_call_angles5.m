@@ -179,7 +179,7 @@ if p.method==2
     
 %     LB(2:3)=[-1  -3];
 %     UB(2:3)=[ 40  3];
-    [xsur,fsur,flgsur,osur,trials] = surrogateopt(@func_y_opim,LB,UB,opts);
+    [xsur,fsur,flgsur,osur,trials] = surrogateopt(@func_y_opim,LB,UB,[1 2 3],opts);
     
     
  %    [xsur,fsur,flgsur,osur,trials] = surrogateopt(@func_y_opim,LB,UB,[1 2 3],opts);

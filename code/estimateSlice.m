@@ -297,11 +297,29 @@ elseif p.method==2
     sol2=sortrows([cell2mat({sol.X}') [sol.Fval(:)]],4);
     sol3=sol2;
     sol4=sortrows([cell2mat({sol.X}') [sol.Fval(:)]],1);
-    ix=peakseek(-sol4(:,4),5);
-    sol2=sortrows(sol4(ix,:),4);
-    if size(sol2,1)>100  %reduce table to most likely
-        sol2=sol2(1:100,:);
+    
+    if size(sol4,1)>100
+        %% ===============================================
+        sor=round(sol4(:,1:3));
+        uni=unique(sor(:,1));
+        sol5=[];
+        for i=1:length(uni)
+            is=find(sor(:,1)==uni(i));
+            is2=min(find(sol4(is,4)==min(sol4(is,4))));
+            sol5(end+1,:)=sol4(is(is2),:);
+        end
+        ip=peakfinder(sol5(:,4),(max(sol5(:,4))-min(sol5(:,4)))/6 ,mean(sol5(:,4)),-1);
+        sol4=sortrows(sol5(ip,:),4);
+        % length(ip)
+        %% ===============================================
     end
+    sol2=sol4;
+    
+%     ix=peakseek(-sol4(:,4),5);
+%     sol2=sortrows(sol4(ix,:),4);
+%     if size(sol2,1)>100  %reduce table to most likely
+%         sol2=sol2(1:100,:);
+%     end
     
     plan2=plan1;
     
