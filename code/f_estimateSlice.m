@@ -33,7 +33,7 @@ para={...
     'inf101'     '===FIND SLICE PLAN-1&2=========================='                          '' ''
     'method'                2       '[1]multistart/multisolution, [2]surrogate '   ''
     'numStartpoints'       100      'multistart only: number of starting points (recom: 100 for Multistart-optimization' ''
-    'numIterations'        250        'surrogate only: number of iterations (recom: 500 for surrogate' ''
+    'numIterations'        750        'surrogate only: number of iterations (recom: 500 for surrogate' ''
 
     '' '' '' ''
     
