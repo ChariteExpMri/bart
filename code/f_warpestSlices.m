@@ -26,7 +26,7 @@ templateDir=fullfile(fileparts(which('bart.m')),'templates');
 para={...
 
   'doplot'          1          'plot result {0,1}'  'b'
-  'nbest'           inf        'warp nbest-slices (i.e. the n-best canditates), "inf": warp all available slices (defined by "f_estimateSlice.m" ) '  {inf,100}
+  'nbest'           20        'warp nbest-slices (i.e. the n-best canditates), "inf": warp all available slices (defined by "f_estimateSlice.m" ) '  {inf,100}
   'cellsize'        8           'HOG-cellSize (larger is rougher)' ''
   'useSSIM'         1          'use Multiscale structural similarity' 'b'
   'size'           [330 450]   'image-size to calculate HOG..do not change!'  ''

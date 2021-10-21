@@ -1,4 +1,6 @@
 
+%% main gui
+% right-side functions: bart_fcn.m
 
 function bart()
 if isempty(which('ant.m'))
