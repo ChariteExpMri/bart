@@ -61,6 +61,11 @@ function [hogdiff2 sq]=compute_hog_single_v3(experimental_file,maskfile,tatlas,p
         elseif p.useSSIM==2
             %'mi'
             hogdiff2=3-calcMI(imresize(tatlas,[size(experimental_file)]),experimental_file);
+        elseif p.useSSIM==3
+            
+           hogdiff2= 1-UIQ(montageout(permute(hog_hi,[1 2 4 3])),...
+            montageout(permute(hog_at,[1 2 4 3])) );
+            
         end
         %      hogdiff2=100-((mi(hog_diff,hog_at))*30);
         %     hogdiff2=100-mi(small_exp,warpedatlas);

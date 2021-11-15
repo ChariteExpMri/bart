@@ -1,6 +1,6 @@
 % histview(cv,[90 3 3],[5 5 5])
 
-function histview(cv,sul,step)
+function histview(cv,sul,step,ovl)
 warning off;
 % ==============================================
 %%   tests
@@ -17,6 +17,12 @@ end
 
 if exist('cv')==1
     p.cv=cv;
+end
+% if exist('step')~=1
+%     step=[1 1 1];
+% end
+if exist('ovl')==1
+  p.ovl=ovl;
 end
 
 
@@ -280,8 +286,15 @@ if isempty(ax1)
 end
 axes(ax1);
 
-him=imagesc(imadjust(mat2gray(d)));
-colormap gray
+
+if isfield(p,'ovl')
+    r=imfuse(p.ovl,imadjust(mat2gray(d))  );
+     him=imagesc(r);
+else
+    him=imagesc(imadjust(mat2gray(d)));
+    colormap gray
+end
+
 set(him,'ButtonDownFcn',@imageclick)
 xlim=[1 size(d,2)];
 ylim=[1 size(d,1)];

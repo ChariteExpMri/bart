@@ -31,11 +31,13 @@ para={...
     'usemanualrotation'     1   'do include manual rotation info, if exist {0,1}' 'b'
     
     'inf101'     '===FIND SLICE PLAN-1&2=========================='                          '' ''
-    'method'                2       '[1]multistart/multisolution, [2]surrogate '   ''
+    'method'                3       '[1]multistart/multisolution, [2]surrogate '   ''
     'numStartpoints'       100      'multistart only: number of starting points (recom: 100 for Multistart-optimization' ''
     'numIterations'        750        'surrogate only: number of iterations (recom: 500 for surrogate' ''
 
     '' '' '' ''
+    'filterHisto'          1       'filter histoSlice {0,1}' ,'b'
+    'filterHistoParam'     'm11'   'filter parameter,{type,width}, type:"m"-medianFilter+width: filterWidth '  {'m11' 'm15' 'm20'}
     
     'parallel'              1       'use parallell-computation' 'b'
     'cellsize'              8      'cellsize of HOG-histogram (larger is rougher )' ''
@@ -49,7 +51,7 @@ para={...
     'plot'                   1       'plot update for each iteration (slow)' 'b'
     'plotresult'             1       'plot result best "solution" (image)'   'b'
     % ----------
-    'plan1_x0'              [200   0   0  ]  'PLAN1: best guess (slice, pitch, yaw)'        ''
+%     'plan1_x0'              [200   0   0  ]  'PLAN1: best guess (slice, pitch, yaw)'        ''
     'plan1_LB'              [40    0   0  ]  'PLAN1: lower boundaries (slice, pitch, yaw)' ''''
     'plan1_UB'              [400   0   0  ]  'PLAN1: upper boundaries (slice, pitch, yaw)'  ''
     %     'plan1_x0'              [200   0   0  ]  'PLAN1: best guess (slice, pitch, yaw)'        ''
@@ -57,7 +59,7 @@ para={...
     %     'plan1_UB'              [450   0   0  ]  'PLAN1: upper boundaries (slice, pitch, yaw)'  ''
     %-----------
     'plan2_tol'             40                  'PLAN2 +/-slice-tolerance'                    ''
-    'plan2_x0'               [nan    0    0   ] 'PLAN2: best guess (slice, pitch, yaw)'      ''
+%     'plan2_x0'               [nan    0    0   ] 'PLAN2: best guess (slice, pitch, yaw)'      ''
     'plan2_LB'               [nan  -15   -5  ]  'PLAN2: lower boundaries (slice, pitch, yaw)' ''
     'plan2_UB'               [nan  +15   +5  ]  'PLAN2: upper boundaries (slice, pitch, yaw)'  ''
     

@@ -1,0 +1,50 @@
+(FixedImageDimension 2)
+(MovingImageDimension 2)
+(UseDirectionCosines "true")
+(Registration "MultiResolutionRegistration")
+(Interpolator "BSplineInterpolator")
+(ResampleInterpolator "FinalBSplineInterpolator")
+(Resampler "DefaultResampler")
+(Optimizer "StandardGradientDescent")
+
+// __________________ TRANSFORM __________________
+(Transform "BSplineTransform")
+// _______________________________________________
+
+// ############  IMPORTANT PARAMETER ####################################
+
+(NumberOfResolutions 5)
+(ImagePyramidSchedule 8 8 4 4 2 2 1 1)
+(MaximumNumberOfIterations 10000)
+(MaximumStepLength .5)
+
+// ########################################################################
+(Metric "AdvancedMattesMutualInformation")
+(AutomaticScalesEstimation "true")
+(AutomaticTransformInitializationMethod "CenterOfGravity")
+(HowToCombineTransforms "Compose")
+(NumberOfMovingHistogramBins 32)
+(NumberOfFixedHistogramBins 32)
+(ErodeMask "true")
+
+(NumberOfSpatialSamples 2000)
+(NewSamplesEveryIteration "true")
+(ImageSampler "Random")
+(BSplineInterpolationOrder 1)
+(FinalBSplineInterpolationOrder 3)
+(DefaultPixelValue 0)
+(WriteResultImage "true")
+(ResultImagePixelType "short")
+(ResultImageFormat "mhd")
+
+(AutomaticParameterEstimation "true")  //instead of SP_a
+(SP_a 10000)
+(SP_alpha 0.600000)
+(SP_A 50)
+
+(WriteTransformParametersEachIteration "false")
+(WriteTransformParametersEachResolution "false")
+(ShowExactMetricValue "false")
+(FixedInternalImagePixelType "float")
+(MovingInternalImagePixelType "float")
+(CompressResultImage "false")

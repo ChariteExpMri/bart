@@ -57,11 +57,14 @@ end
 %     
 %     im1=im2double(im1);
 %     im2=im2double(im2);
+%% ===============================================
 
 % tic
- im1=im2double(experimental_file);   
- im2=im2double(imresize(tatlas,[size(experimental_file)]));
+%  im1=mat2gray(im2double(experimental_file));   
+%  im2=mat2gray(imresize(tatlas,[size(experimental_file)]));
  
+ im2=mat2gray(im2double(experimental_file));   
+ im1=mat2gray(imresize(tatlas,[size(experimental_file)]));
 %  -------
 if 0
     small_mask=logical(maskfile);
@@ -76,10 +79,12 @@ end
 %  -------
 %     im1=im2double(imresize(atlasslice,[size(experimental_file)]));
 %     im2=im2double(experimental_file);
+if 1
     siz=100;
     %siz=200;
-    im1=imresize(im1,[siz siz],'nearest');
-    im2=imresize(im2,[siz siz],'nearest');
+    im1=mat2gray(imresize(im1,[siz siz],'bicubic'));
+    im2=mat2gray(imresize(im2,[siz siz],'bicubic'));
+end
     
 %      im1=imresize(imfilter(im1,fspecial('gaussian',7,1.),'same','replicate'),[100 100],'bicubic');
 %     im2=imresize(imfilter(im2,fspecial('gaussian',7,1.),'same','replicate'),[100 100],'bicubic');
@@ -91,19 +96,27 @@ end
     
     %figure;imshow(im1);figure;imshow(im2);
     
-    cellsize=1; %prev: 3
-    gridspacing=1;
+
     
 %     addpath(fullfile(paSF,'mexDenseSIFT'));
 %     addpath(fullfile(paSF,'mexDiscreteFlow'));
+  %% ===============================================
+%   size(im1),class(im1),min(im1(:)),max(im1(:))
+%  [  450   416     3], double,    0.0392 --     0.9373
+%   sift1 = mexDenseSIFT(im1,cellsize,gridspacing);
+%     sift2 = mexDenseSIFT(im2,cellsize,gridspacing);
     
-    sift1 = mexDenseSIFT(im1,cellsize,gridspacing);
-    sift2 = mexDenseSIFT(im2,cellsize,gridspacing);
+% tic
+    cellsize=1; %prev: 3
+    gridspacing=15;
+    
+    sift1 = mexDenseSIFT(im1,cellsize,1);
+    sift2 = mexDenseSIFT(im2,cellsize,1);
     
     SIFTflowpara.alpha=2*255;
     SIFTflowpara.d=40*255;
     SIFTflowpara.gamma=0.005*255;
-    SIFTflowpara.nlevels=4;
+    SIFTflowpara.nlevels=10;
     SIFTflowpara.wsize=2;
     SIFTflowpara.topwsize=10;
     SIFTflowpara.nTopIterations = 60;
@@ -114,24 +127,20 @@ end
     [vx,vy,energylist]=SIFTflowc2f(sift1,sift2,SIFTflowpara);
 %     toc
     
-    warpI2=warpImage(im2,vx,vy);
-%     imoverlay(im1,warpI2);
-    
-    % display flow
+     warpI2=warpImage(im2,vx,vy);
+%     toc
+    %imoverlay(warpI2,im1);
+    %% ===============================================
     if 0
         figure;imagesc(im1);figure;imagesc(warpI2);
-        clear flow;
-        flow(:,:,1)=vx;
-        flow(:,:,2)=vy;
-        
-        
+        flow(:,:,1)=vx; flow(:,:,2)=vy;
         figure;imagesc(flowToColor(flow));
     end
     
+    hogdiff2=min([energylist(end).data]);
+    %hogdiff2=5-calcMI(warpI2,im1);
     
-     % hogdiff2=min([energylist(:).data]);
-  %hogdiff2=5-calcMI(warpI2,im1);
-    
+    hogdiff2=FeatureSIM(im1, warpI2);
     if 1
         hog_at= vl_hog(single(im1),p.cellsize);
         hog_hi= vl_hog(single(warpI2 ),p.cellsize);
@@ -141,7 +150,7 @@ end
         %hogdiff2= 1-multissim3(hog_at,hog_hi);
     end
     sq=[];
-%     if nargout>1
+    %     if nargout>1
 %         sq.tatlas =tatlas;
 %         sq.ef     =experimental_file;
 %     end

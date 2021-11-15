@@ -115,6 +115,8 @@ m = uimenu('label','File');
 m2 = uimenu(m,'label','new Project','callback', @newProject);
 m2 = uimenu(m,'label','import Tiffs','callback', @importTiffs);
 m2 = uimenu(m,'label','import single Tiff from several animals','callback', @importTiffs_single);
+m2 = uimenu(m,'label','import multiple Tiff (several tiffs per folder)','callback', @importTiffs_multi);
+
 m2 = uimenu(m,'label','close','callback', @closebart);
 % ---------------------
 m = uimenu('label','Tools');
@@ -168,6 +170,10 @@ bartcb('update');
 
 function importTiffs_single(e,e2)
 f_importTiff_single();
+bartcb('update');
+
+function importTiffs_multi(e,e2)
+f_importTiff_multi();
 bartcb('update');
 
 function closebart(e,e2)

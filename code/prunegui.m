@@ -34,6 +34,12 @@ u.imb=s.img;
 u.stepnum=1;
 u.ismodfile=0;
 
+u.maxteps=200;
+u.rotstp                     =  zeros(1,u.maxteps)                   ; %rotation per step   #### ROTATION
+u.bordstp                    =  zeros(1,u.maxteps)                   ; %rotation per step   #### ROTATION
+
+
+
 im=s.img;
 
 makefig();
@@ -214,9 +220,21 @@ set(hb,'tooltipstring','[0]do not replace tissue within ROI [1]replace tissue wi
 
 
 %% ===============================================
+%% at border
+hb=uicontrol('style','pushbutton','units','norm','tag','rotateImage','string','addBorder');
+set(hb,'position',[[0.90338 0.42206 0.072464 0.02809]],'fontsize',6);
+set(hb,'callback',@addborder);
+set(hb,'tooltipstring',...
+    ['<html><b>add border around image/padarray </b><br>' ...
+    'if the image is to large or does not fit into the image <br>'...
+    ' shortcut: none']);
+%% ===============================================
+
+
+%% ===============================================
 %% rotate image
 hb=uicontrol('style','pushbutton','units','norm','tag','rotateImage','string','rotateImage');
-set(hb,'position',[0.90217 0.41082 0.072464 0.02809],'fontsize',6);
+set(hb,'position',[[0.90459 0.38975 0.072464 0.02809]],'fontsize',6);
 set(hb,'callback',@rotateImage);
 set(hb,'tooltipstring',...
     ['<html><b>rotate slice </b>--> rotate image <br>'...
@@ -598,7 +616,7 @@ if hb.Value==0
 else
     m2=m;
 end
-d(m2)=255;
+d(m2)=50;
 % #####################
 u=get(gcf,'userdata');
 u.stepnum=u.stepnum+1;
@@ -840,6 +858,111 @@ if strcmp(arg,'reset')
     set(hp,'xdata',ur.xy(:,1),'ydata',ur.xy(:,2),'zdata',[]);
 end
 
+
+% ==============================================
+%%   add border
+% ===============================================
+
+function addborder(e,e2)
+
+ub  =get(gcf,'userdata');
+d   =ub.im;
+dbk =d;
+
+delete(findobj(gcf,'tag','bord_frame'));
+him=findobj(gcf,'tag','him');
+% d=get(him,'Cdata');
+% dbk=d;
+defval=300;
+
+
+%% ----setup controls
+%frame   -------------
+colbg=[0.4667    0.6745    0.1882];
+h=uipanel('units','norm','position',[0 .5 1 .01]);
+set(h,'position',[0 .2 1 .09],'backgroundcolor',colbg);
+set(h,'title','add border','HighlightColor','w','tag','bord_frame');
+set(h,'position',[0.2 0.01 .3 .07]);
+uistack(h,'bottom');
+%edit   -------------
+hb=uicontrol(h, 'style','edit','units','norm','string',num2str(defval));
+set(hb,'fontsize',7,'tag','bord_ed','callback',{@bord_cb,'edit'});
+set(hb,'position',[0.1   0.1    0.25  0.5]);
+set(hb,'tooltipstring','rows/columns to add as border on all sides')
+%show   -------------
+hb=uicontrol(h, 'style','pushbutton','units','norm','string','show');
+set(hb,'fontsize',7,'tag','bord_show','callback',{@bord_cb,'show'});
+set(hb,'position',[0.4   0.1    0.15  0.5],'backgroundcolor',[1 .5 0]);
+set(hb,'tooltipstring','show result');
+%ok   -------------
+hb=uicontrol(h, 'style','pushbutton','units','norm','string','OK');
+set(hb,'fontsize',7,'tag','bord_ok','callback',{@bord_cb,'ok'});
+set(hb,'position',[0.6   0.1    0.15  0.5]);
+set(hb,'tooltipstring','accept result');
+%cancel   -------------
+hb=uicontrol(h, 'style','pushbutton','units','norm','string','Cancel');
+set(hb,'fontsize',7,'tag','bord_cancel','callback',{@bord_cb,'cancel'});
+set(hb,'position',[0.75   0.1    0.15  0.5]);
+set(hb,'tooltipstring','dismiss');
+%    -------------   -------------
+u.dbk   =d;
+u.defval=defval;
+set(h,'userdata',u);
+d2=(imresize(padarray(d,[u.defval u.defval],0,'both'),[size(d) ]));
+set(him,'Cdata',d2);
+
+function bord_cb(e,e2,arg)
+h=findobj(gcf,'tag','bord_frame');
+u=get(h,'userdata');
+if strcmp(arg,'edit') || strcmp('task','show')
+    he=findobj(gcf,'tag','bord_ed');
+    val=str2num(get(he,'string'));
+    d2=(imresize(padarray( u.dbk ,[val val],0,'both'),[size(u.dbk) ]));
+    him=findobj(findobj(0,'tag','prune'),'tag','him');
+    set(him,'Cdata',d2);
+    
+elseif strcmp(arg,'ok') || strcmp(arg,'cancel') 
+    if strcmp(arg,'ok')
+        %--update userdata-main--
+       
+       
+        
+        
+        u=get(gcf,'userdata');
+        nextstep=u.stepnum+1;
+         he=findobj(gcf,'tag','bord_ed');
+        val=str2num(get(he,'string'));
+        %         disp(val)
+        if val~=0
+            u.bordstp(nextstep)=val;
+        end
+        set(gcf,'userdata',u);
+        
+        % -----------------------;
+        him=findobj(gcf,'tag','him');
+        d=get(him,'Cdata');
+        u=get(gcf,'userdata');
+        u.stepnum=u.stepnum+1;
+        u.imb(:,:,u.stepnum)=d;
+        set(gcf,'userdata',u);
+        showimage(u.stepnum);
+        
+        
+        
+    elseif strcmp(arg,'cancel')
+        hr=findobj(gcf,'tag','bord_frame');
+        u=get(hr,'userdata');
+        him=findobj(gcf,'tag','him');
+        set(him,'Cdata',u.dbk);
+    end
+    delete(h);
+    
+end
+
+    
+
+
+
 % ==============================================
 %%   ROTATE SLICE
 % ===============================================
@@ -922,6 +1045,18 @@ elseif strcmp(arg,'edit')
     rotsl_cb([],[],'rotate',val);
 elseif strcmp(arg,'ok') || strcmp(arg,'cancel') 
     if strcmp(arg,'ok')
+        u=get(gcf,'userdata');
+        nextstep=u.stepnum+1;
+        val=str2num(get(findobj(gcf,'tag','rotsl_edit'),'string'));
+%         disp(val)
+        if val~=0
+            u.rotstp(nextstep)=val;
+        end
+        set(gcf,'userdata',u);
+        
+%         disp([u.rotstp(1:10)])
+        
+        
         % -----------------------;
         him=findobj(gcf,'tag','him');
         d=get(him,'Cdata');
@@ -948,6 +1083,8 @@ elseif strcmp(arg,'rotate')
         e=ur.dbk;
         set(findobj(gcf,'tag','rotsl_edit'),'string',num2str(0));
     else
+        %
+        %disp(['rot-GUI: ' num2str(value)]);
         e=imrotate(ur.dbk,value,'bilinear','crop');
     end
     set(him,'Cdata',e);
@@ -1638,17 +1775,69 @@ end
 showinfo2('saved modified image',fout);
 
 set(e,'backgroundcolor',[ 1 1 0]);
+
+%% ===============================================
+%save rotation vector
 % ==============================================
-%%   
+%%   update-s.structure
 % ===============================================
-u.imb=d;
-u.stepnum=1;
-set(gcf,'userdata',u);
+
+
+s=load(u.file);
+s=s.s;
+s.rotationmod = sum(u.rotstp(  1:u.stepnum));
+s.bordermod   = max(u.bordstp( 1:u.stepnum));
+save(u.file, 's');
+
+disp(['  rotation    : ' num2str(s.rotationmod) ]);
+disp(['  add border  : ' num2str(s.bordermod)   ]);
+
+% ==============================================
+%%   reset
+% ===============================================
+% u.imb=d;
+% u.stepnum=1;
+% set(gcf,'userdata',u);
 changeINfo();
 
 
 
+% ==============================================
+%%   update image-thumpbnail
+% ===============================================
+thumpname=[ name '.jpg' ];
+fthump=fullfile(pa,thumpname);
 
+t =imread(fthump);
+if size(t,2)>4000
+    t=t(:,1:4000,:);
+end
+
+d2=255.*mat2im(d,parula);
+
+txt=(text2im([ newname]));
+txt=imcomplement(txt);
+resfac=round((size(t,2).*.4)./size(txt,2));
+txt=uint8(round(mat2gray(imresize(txt,[resfac]))*255));
+txt3=cat(3,round(txt.*1) ,round(txt.*0.8),round(txt.*0) ); %color Red
+% txt3=repmat(txt,[1 1 3]);
+txt4=padarray([txt3],[1 size(d2,2)-size(txt3,2) ],'post');
+bm=[txt4;d2];
+% fg,image(bm)
+
+b2=[ t [bm;zeros(size(t,1)-size(bm,1) ,size(bm,2),3)] ];
+% fg,image(b2)
+
+
+imwrite(b2,fthump);%'horst.jpg')
+
+
+
+
+
+% ==============================================
+%%   
+% ===============================================
 
 
 

@@ -4813,7 +4813,8 @@ return
 function setdata(varargin);
 inp=varargin{1};
 
-hp=findobj(gcf,'tag','paramgui');
+hp=findobj(0,'tag','paramgui');
+figure(hp);
 us=get(hp,'userdata');
 r=us.jCodePane;
 tx=char(r.getText);

@@ -23,11 +23,11 @@ p.doflt          = 1   ;    % gaus filt altas slice after extraction from 3dvol
 p.plot           = 1   ;    % plot update for each iteration (slow)
 p.plotresult     = 1   ;    % plot result best "solution" (image)
 %-----------
-p.plan1_x0= [200   0   0  ];  % PLAN1: best guess (slice, pitch, yaw)
+% p.plan1_x0= [200   0   0  ];  % PLAN1: best guess (slice, pitch, yaw)
 p.plan1_LB= [80    0   0  ];  % PLAN1: lower boundaries (slice, pitch, yaw)
 p.plan1_UB= [400   0   0  ];  % PLAN1: upper boundaries (slice, pitch, yaw)
 %-----------
-p.plan2_tol=40;               % PLAN2 +/- slice-tolerance
+% p.plan2_tol=40;               % PLAN2 +/- slice-tolerance
 p.plan2_x0= [nan    0    0   ];  % PLAN2: best guess (slice, pitch, yaw)
 p.plan2_LB= [nan  -25   -5  ];  % PLAN2: lower boundaries (slice, pitch, yaw)
 p.plan2_UB= [nan  +25   +5  ];  % PLAN2: upper boundaries (slice, pitch, yaw)
@@ -161,25 +161,27 @@ if exist(modfile)==2
     
 end
 
-
-
-
-if 0
-    % ==============================================
-    %%   PARAMS
-    % ===============================================
-    p.parallel       = 1   ;    % use parallell-comp
-    p.cellsize       = 16  ;    % HOG histogram (larger is finer scaled  )
-    p.numStartpoints = 100 ;    % number of starting points (recom: 100)
-    p.doflt          = 1   ;    % gauss-filt altas slice after extraction from 3dvol
-    % -------------------
-    p.plot           = 1   ;    % plot update for each iteration (slow)
-    p.plotresult     = 1   ;    % plot result best "solution" (image)
+% ==============================================
+%%   filter HISTO-SLICE
+% ===============================================
+if p.filterHisto==1
+    isrounded=any((s.img(:))==round(s.img(:)));
+    maxval=max(s.img(:));
+    s.img=imadjust(mat2gray(s.img));
     
-    x0=[200   0   0  ];
-    LB=[80    0   0  ];
-    UB=[400   0   0  ];
-    plan1=[x0; LB; UB];
+    
+    
+    if  regexpi(p.filterHistoParam,'^m')==1
+        wid=str2num(regexprep(p.filterHistoParam,'m',''));
+        s.img=medfilt2(s.img,[wid wid]);
+    elseif  regexpi(p.filterHistoParam,'^g')==1
+        wid=str2num(regexprep(p.filterHistoParam,'g',''));
+        s.img=imgaussfilt(s.img,[wid]);
+    end
+    if isrounded==1
+        s.img=round(s.img.*maxval);
+    end
+    
 end
 
 
@@ -187,7 +189,7 @@ end
 % ==============================================
 %%  1) METHOD: MULTISTART
 % ===============================================
-if p.method==1
+if p.method==1 || p.method==3
 % ============================================================================================
 %%   PLAN-1 : find slice
 % =============================================================================================
@@ -203,68 +205,114 @@ p2.doflt          = p.doflt            ;% gauss-filt altas slice after extractio
 p2.plot           = p.plot             ;% plot update for each iteration (slow)
 p2.plotresult     = 0;%p.plotresult       ;% plot result best "solution" (image)
 
-
-x0=p.plan1_x0;
-LB=p.plan1_LB;
-UB=p.plan1_UB;
-
-plan1=[x0; LB; UB];
-p2.planno=1;
-% xx=func_call_angles5(s, cv,plan1,  struct('parallel',0,'cellsize',16) );
-[xx1,fvel1,flag1,outp1,solx1]=func_call_angles5(s, cv,plan1,  p2 );
-best1=[xx1 fvel1] ;%-198.4362
-sol1=[cell2mat({solx1.X}') [solx1.Fval]'];
-%     outp1
-
-
-if p.plotresult==1
-    plotslice(xx1,fvel1,cv, s.img,{p.file ['PLAN-1']});
+if p.method==1
+    x0=mean([p.plan1_LB; p.plan1_UB],1);
+    LB=p.plan1_LB;
+    UB=p.plan1_UB;
+    
+    plan1=[x0; LB; UB];
+    p2.planno=1;
+    [xx1,fvel1,flag1,outp1,solx1,imgout]=func_call_angles5(s, cv,plan1,  p2 );
+    best1=[xx1 fvel1] ;%-198.4362
+    sol1=[cell2mat({solx1.X}') [solx1.Fval]'];
+    
+    if p.plotresult==1
+        %plotslice(xx1,fvel1,cv, s.img,{p.file ['PLAN-1']});
+        %plotslice(xx1,fvel1,cv, s.img,{p.file ['PLAN-1']},sol1);
+    end
+else
+    % ==============================================
+    %%   METHOD-3
+    % ===============================================
+    %---SLICE---------------------
+    LB=[p.plan1_LB(1) 0 0];     UB=[p.plan1_UB(1) 0 0];  x0=mean([LB;UB],1); plan1=[x0; LB; UB];
+    p2.planno=1;
+    p2.method=1;
+    [xx1,fvel1,flag1,outp1,solx1,imgout]=func_call_angles5(s, cv,plan1,  p2 );
+    %---ANGLE-pitch-----------------
+    slice=round(xx1(1));
+    LB=[slice -15 0];     UB=[slice 15 0];  x0=mean([LB;UB],1); plan1=[x0; LB; UB];
+    [xx1,fvel1,flag1,outp1,solx1,imgout]=func_call_angles5(s, cv,plan1,  p2 );
+    %---ANGLE-yaw-----------------
+    pitch=round(xx1(2));
+    LB=[slice pitch-10 -15];     UB=[slice pitch+10 15];  x0=mean([LB;UB],1); plan1=[x0; LB; UB];
+    [xx1,fvel1,flag1,outp1,solx1,imgout]=func_call_angles5(s, cv,plan1,  p2 );
+    %--------------------
+    %---AGGREGATE PARAMETER-----------------
+    pitch2=round(xx1(2));
+    yaw   =round(xx1(3));
+    
+    LB=[slice-20 pitch-10 yaw-10];   
+    UB=[slice+20 pitch+10 yaw+10];  
+    x0=mean([LB;UB],1); 
+    plan1=[x0; LB; UB];
+    [xx1,fvel1,flag1,outp1,solx1,imgout]=func_call_angles5(s, cv,plan1,  p2 );
+    
+    best1=[xx1 fvel1] ;%-198.4362
+    sol1=[cell2mat({solx1.X}') [solx1.Fval]'];
+    
+    if p.plotresult==1
+        %plotslice(xx1,fvel1,cv, s.img,{p.file ['PLAN-1']});
+        %plotslice(xx1,fvel1,cv, s.img,{p.file ['PLAN-1']},sol1);
+    end
+    
 end
 
 
-cprintf([0 1 1],[' TIME_PLAN-1 (min): [' num2str(toc(timeplan1)/60) ']  '  '\n']);
 
+
+% one run only
+xx   =xx1;
+best2=xx1;
+xx2  =xx1;
+fvel =fvel1;
+outp=outp1;
+sol2=[cell2mat({solx1.X}') [solx1.Fval]'];
+plan2=plan1;
+% histview(cv,sol2(1,:))
+cprintf([0 1 1],[' TIME_PLAN-1 (min): [' num2str(toc(timeplan1)/60) ']  '  '\n']);
 % ============================================================================================
 %%   plan2
 % =============================================================================================
-timeplan2=tic;
 if 0
-    tol=40;
-    x0=[best1(1)        5   0  ];
-    LB=[best1(1)-tol  -25  -6  ];
-    UB=[best1(1)+tol  +25  +6  ];
+    timeplan2=tic;
+    if 0
+        tol=40;
+        x0=[best1(1)        5   0  ];
+        LB=[best1(1)-tol  -25  -6  ];
+        UB=[best1(1)+tol  +25  +6  ];
+        plan2=[x0; LB; UB];
+    end
+    
+    x0=p.plan2_x0;
+    LB=p.plan2_LB;
+    UB=p.plan2_UB;
     plan2=[x0; LB; UB];
+    plan2(:,1)=[best1(1) best1(1)-p.plan2_tol  best1(1)+p.plan2_tol]';
+    
+    if 0
+        [ cv    ]=p_getHIstvol(fullfile(pa_template, 'AVGT.nii' ),0) ;
+        [ cvmask]=p_getfromHistvolspace(fullfile(pa_template, 'AVGTmask.nii' )) ;
+        cv2=cv.*uint8(cvmask);
+        disp(['Template: AVGT']);
+    end
+    
+    %  cv2=uint8(smooth3(cv,'box',3));
+    %cv2=cv;
+    %  cv2=uint8(imgaussfilt3(cv,1));
+    % s2.img=imadjust(imgaussfilt(imadjust(s.img),3));
+    % [xx sol]=func_call_angles4(s2, cv,plan2,struct('parallel',1,'cellsize',16) );%!!!!
+    % [xx,fvel,flag,outp,sol]=func_call_angles4(s, cv2,plan2,struct('parallel',1,'cellsize',25) );%!!!!
+    p2.planno=1;
+    [xx,fvel,flag,outp,sol]=func_call_angles5(s, cv,plan2,p2);%!!!!
+    
+    
+    best2=xx;
+    xx2  =xx;
+    sol2=[cell2mat({sol.X}') [sol.Fval]'];
+    % histview(cv,sol2(1,:))
+    cprintf([0 1 1],[' TIME_PLAN-2 (min): [' num2str(toc(timeplan2)/60) ']  '  '\n']);
 end
-
-x0=p.plan2_x0;
-LB=p.plan2_LB;
-UB=p.plan2_UB;
-plan2=[x0; LB; UB];
-plan2(:,1)=[best1(1) best1(1)-p.plan2_tol  best1(1)+p.plan2_tol]';
-
-if 0
-    [ cv    ]=p_getHIstvol(fullfile(pa_template, 'AVGT.nii' ),0) ;
-    [ cvmask]=p_getfromHistvolspace(fullfile(pa_template, 'AVGTmask.nii' )) ;
-    cv2=cv.*uint8(cvmask);
-    disp(['Template: AVGT']);
-end
-
-%  cv2=uint8(smooth3(cv,'box',3));
-%cv2=cv;
-%  cv2=uint8(imgaussfilt3(cv,1));
-% s2.img=imadjust(imgaussfilt(imadjust(s.img),3));
-% [xx sol]=func_call_angles4(s2, cv,plan2,struct('parallel',1,'cellsize',16) );%!!!!
-% [xx,fvel,flag,outp,sol]=func_call_angles4(s, cv2,plan2,struct('parallel',1,'cellsize',25) );%!!!!
-p2.planno=1;
-[xx,fvel,flag,outp,sol]=func_call_angles5(s, cv,plan2,p2);%!!!!
-
-
-best2=xx;
-xx2  =xx;
-sol2=[cell2mat({sol.X}') [sol.Fval]'];
-% histview(cv,sol2(1,:))
-cprintf([0 1 1],[' TIME_PLAN-2 (min): [' num2str(toc(timeplan2)/60) ']  '  '\n']);
-
 
 elseif p.method==2
     % ==============================================

@@ -28,7 +28,17 @@ p.resize=[2000 2000];
 p.percentSurviveMaxCluster=1;    %percent clusterSize w.r.t largest cluster to survive
 p.imcloseSizeStep=10;   % combine separate clusters using this stepSize
 % file='F:\data3\histo2\josefine\dat\Wildlinge_36_000000000001EADD\a1_001.tif'
+p.imadjust=1  ;%adjust Adjust image intensity values {0,1}
+p.fastload=1  ;%force tiff-fast-reading (if image size is >5000pix in width&high, read only each 2nd pixel)' 
+% ==============================================
+%%   pass extra paras
+% ===============================================
 
+if nargin>1
+    warning off;
+    p=catstruct(p,p0);
+    
+end
 % ==============================================
 %%   
 % ===============================================
@@ -41,23 +51,25 @@ end
 
 
 
-% ==============================================
-%%   pass extra paras
-% ===============================================
 
-if nargin>1
-    warning off;
-    p=catstruct(p,p0);
-    
+
+% ==============================================
+%%    rad image +resize
+% ===============================================
+disp([' ..resizing img']);
+hi=imfinfo(file);
+if p.fastload==1
+    if sum([hi.Width hi.Height]>5000)==2 %above 5000
+        p1=imread(file,'PixelRegion',{[1 2 inf],[1 2 inf]});
+    else
+        p1=imread(file);
+    end
+else
+    p1=imread(file);
 end
 
 
-% ==============================================
-%%
-% ===============================================
-disp([' ..resizing img']);
 
-p1=imread(file);
 if size(p1,3)>1
     p1=p1(:,:,p.chan);
 end
@@ -68,34 +80,56 @@ p2=imresize(p1, p.resize);
 %———————————————————————————————————————————————
 ncol=4;
 ps=mean(   p2(:,[1:ncol end-ncol+1])   ,2);
-imaxbord=find(ps==255);
-% p2(imaxbord,:)=mean(ps);
-
-ME_bg=median(ps);
-sb=(double(p2)-repmat(ps,[1   size(p2,2) ])) +ME_bg  ; %subtract background
-p2=uint8(round(sb));
+if find(ps>220)
+    
+    imaxbord=find(ps==255);
+    % p2(imaxbord,:)=mean(ps);
+    
+    ME_bg=median(ps);
+    sb=(double(p2)-repmat(ps,[1   size(p2,2) ])) +ME_bg  ; %subtract background
+    p2=uint8(round(sb));
+end
 
 % ==============================================
-%%   approach-1 (DAPI)
+%%   masking approach
 % ===============================================
 
 if p.method==1
-    
+    % ==============================================
+    %  approach-1 (DAPI)
+    % ===============================================
     % ms=imcomplement(otsu(p2,4)==4);
     % ms=imcomplement(otsu(p2,4)==4);
     ms=imcomplement(otsu(p2,7)==7);
     
-    % ==============================================
-    %%   approach-2 (WFL): Wisteria Floribunda Lectin
-    % ===============================================
+    
 elseif p.method==2
+    % ==============================================
+    %   approach-2 (WFL): Wisteria Floribunda Lectin
+    % ===============================================
     p3=medfilt2(p2,p.m2_flt); %[11 11]
     ms=otsu(imadjust(p3),p.m2_otsuclass)>1; % 20
+    
+    
+elseif p.method==3
+    % ==============================================
+    %   threshold
+    % ===============================================
+    TR=0;
+    v=p2>p.m3_TR;
+    ms=imfill(imgaussfilt(double(v),[1])>0,'holes');
+    
+    %     ms2=imerode(imopen(ms,strel('disk',7)),strel('disk',5));
+    %     ms2=imfill(imdilate(ms2,strel('disk',5)),'holes');
+    %     ms3=bwlabeln(ms2);
+    %     fg,imagesc(ms3)
+    % ===============================================
+    
     
 end
 
 % ==============================================
-%%   
+%%   fill mask, count clusters
 % ===============================================
 
 ms=imfill(ms,'holes');
@@ -145,9 +179,17 @@ ms4=imfill(ms4,'holes');
 % ==============================================
 %%   multiplay by mask
 % ===============================================
-img=mat2gray(p2).*ms4;
+
+p3=uint8(ms4)+p2;%add mask-value(1) to image
+p3(p3>255)=1;
 
 
+img=mat2gray(p3).*ms4;
+
+img=medfilt2(img,[5 5]);
+if p.imadjust==1
+    img=imadjust(img);
+end
 % [mv,bf]=clean_data_function2(img);
 
 % ==============================================
@@ -180,7 +222,7 @@ if 0
 end
 
 % ==============================================
-%%
+%%  fuse mask
 % ===============================================
 
 [maskfile,brainfile]=clean_data_function2(img);
@@ -234,12 +276,15 @@ bm=[[q0 q1]; [q2 fus]];
 [~,mouse]=fileparts(pa);
 txt=(text2im([fullfile( mouse, [fi ext]) ]));
  txt=imcomplement(txt);
-resfac=round((size(bm,2).*.9)./size(txt,2));
+resfac=round((size(bm,2).*.4)./size(txt,2));
 txt=round(mat2gray(imresize(txt,[resfac]))*255);
 txt3=cat(3,round(txt.*1) ,round(txt.*0.8),round(txt.*0) ); %color Red
 txt4=padarray([txt3],[1 size(bm,2)-size(txt3,2) ],'post');
 bm=[txt4;bm];
-% fg,image(bm)
+%  fg,image(bm)
+% ===============================================
+ 
+ 
 imwrite((bm),fiout2);
 
 

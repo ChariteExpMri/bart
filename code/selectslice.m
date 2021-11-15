@@ -108,9 +108,12 @@ elseif plotmode==2%sideBySide
     linstp=20;
     lin= 1:linstp:size(b,1);
     hl=hline(lin,'color',[0 .5 1]);
+ elseif plotmode==3
+    imagesc(imfuse(bf.ss.hi,bf.ss.q(:,:,fignum),'falsecolor','Scaling','joint'));
+    xlim([1 size(  bf.ss.hi ,2)]);    ylim([1 size(bf.ss.hi,1)]); drawnow
     
-elseif plotmode==3 || plotmode==4 %contour
-    if plotmode==3
+elseif plotmode==4 || plotmode==5 %contour
+    if plotmode==4
         c1=imadjust(mat2gray(bf.ss.q(:,:,fignum)))  ;
         c2=imadjust(mat2gray(bf.ss.hi));
     else
@@ -128,6 +131,8 @@ elseif plotmode==3 || plotmode==4 %contour
     linstp=20;
     lin= 1:linstp:size(c1,1);
     hl=hline(lin,'color',[0 .5 1]); 
+
+    
 end
  set(gca,'tag','ax1');
 axis off;   
@@ -405,15 +410,15 @@ end
 jSlider = javax.swing.JSlider;
 [hg hb]=javacomponent(jSlider,[10,70,200,45]);
 set(hb,'units','norm');%,'position',[ .01 .4 .2 .06 ]);
-set(jSlider, 'Value',0, 'MajorTickSpacing',1, 'PaintLabels',true,'Minimum',1,'Maximum',4);  % with labels, no ticks
+set(jSlider, 'Value',0, 'MajorTickSpacing',1, 'PaintLabels',true,'Minimum',1,'Maximum',5);  % with labels, no ticks
 set(jSlider,'SnapToTicks',1);
 set(jSlider,'value',1);
 % set(jSlider, 'Orientation',jSlider.VERTICAL);
-set(hb,'units','norm','position',[ .74 .94 .12 .07 ]);
+set(hb,'units','norm','position',[ .74 .94 .15 .07 ]);
 
-lab={'OVL' 'SbS' 'con1' 'con2'};
+lab={'OVL' 'SbS' 'fus' 'con1' 'con2'};
 % ticknum=[0 33 66 99]
-ticknum=[1 2 3 4];
+ticknum=[1 2 3 4 5];
 labelTable = java.util.Hashtable;
 % font = java.awt.Font('Tahoma',java.awt.Font.PLAIN, 8);
 for i=1:length(lab) 
@@ -436,6 +441,7 @@ set(jSlider,'ToolTipText',[...
     '<html><b><font color=blue> visualization modality </b><br>' ...
     '[OVL] : overlay<br>' ...
     '[SbS] : side-by-side<br>' ...
+    '[fus] : fuse image<br>' ...
     '[con1]: contour1<br>' ...
     '[con2]: contour2<br>' ...
     ]);
@@ -715,7 +721,7 @@ if isAVGT==0
         pa_template=ak.template;
         [ cv]=p_getHIstvol(fullfile(pa_template, 'HISTOVOL.nii' ),1) ;
     end
-    histview(cv,cord);
+    histview(cv,cord,[1 1 1],bf.ss.hi);
 elseif isAVGT==1
     global cv2
     if isempty(cv2)
@@ -727,7 +733,7 @@ elseif isAVGT==1
         %         [ cvmask]=p_getfromHistvolspace(fullfile(pa_template, 'AVGTmask.nii' )) ;
         %         cv=cv.*uint8(cvmask);
     end
-    histview(cv2,cord);
+    histview(cv2,cord,[1 1 1],bf.ss.hi);
 end
  
     

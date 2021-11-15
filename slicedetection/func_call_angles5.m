@@ -1,6 +1,6 @@
 
 
-function [xx,fvel,exitflag,output,solutions]=func_call_angles5(s, cv,plan,p0)
+function [xx,fvel,exitflag,output,solutions,imgout]=func_call_angles5(s, cv,plan,p0)
 
 
 % ==============================================
@@ -32,7 +32,8 @@ end
 res.tb=[];
 res.best=[];
 
-
+% counts=1;
+imgout={};
 % ==============================================
 %%
 % ===============================================
@@ -117,8 +118,9 @@ end
 
 % opts = optimoptions(@fmincon,'Algorithm','interior-point');
 % optimizer='active-set';
-% optimizer='active-set';
-optimizer='interior-point';
+ %optimizer='active-set';
+ %optimizer='interior-point';
+optimizer='sqp';
 opts = optimoptions(@fmincon,'Algorithm',optimizer);
 
 
@@ -126,8 +128,20 @@ opts = optimoptions(@fmincon,'Algorithm',optimizer);
 opts.MaxIterations=10050;
 % opts.Display='iter'
 opts.OptimalityTolerance= 1e-14;
-opts.ConstraintTolerance=1e-9;
+% opts.ConstraintTolerance=1e-9;
 % opts.FiniteDifferenceStepSize=1e-9
+if 1
+    %opts.FiniteDifferenceStepSize=1e-9
+    opts.OptimalityTolerance=.1;
+    opts.StepTolerance=.1;
+    % opts.ConstraintTolerance=.1;
+end
+if 0
+   opts.ConstraintTolerance=1e-9; 
+   opts.FinDiffRelStep=1
+   opts.FiniteDifferenceStepSize=1;
+end
+
 
 if 0
     optimizer='sqp';
@@ -164,8 +178,8 @@ if p.method==2
     p0.planno=-1;
     nIter=p0.numIterations;
     %tic
-    LB(2:3)=[-25 -5];
-    UB(2:3)=[ 25  5];
+    LB(2:3)=[-35 -5];
+    UB(2:3)=[ 35  5];
     opts = optimoptions('surrogateopt','Display','final','PlotFcn',[],...%''surrogateoptplot',...);
         'UseParallel',false,'PlotFcn','surrogateoptplot','MaxFunctionEvaluations',nIter)
     initialslicegap=10000;
@@ -356,9 +370,14 @@ end
         
         
         tatlas=uint8(obliqueslice(cv, vol_center, [Y -X 90]));
-        if doPlot==1
+        if doPlot==1 && p.parallel==0
             figure(1000);
-            imagesc(tatlas); colormap gray;
+            try
+                %imagesc([tatlas experimental_file])
+                imagesc([tatlas round(imadjust(mat2gray(experimental_file)).*255)])
+            catch
+                imagesc(tatlas); colormap gray;
+            end
             title('M1'); drawnow
         end
         
@@ -366,8 +385,11 @@ end
             tatlas=imgaussfilt(tatlas,1);
         end
         
-        fib=uint8(obliqueslice(p0.fb, vol_center, [Y -X 90]));
-        %         disp('fib');
+        %% ===============================================
+        
+        if 0
+            fib=uint8(obliqueslice(p0.fb, vol_center, [Y -X 90]));
+        end
         
         %tatlas=imadjust(uint8(dat),[0 .25],[0 1]);
         % ==============================================
@@ -375,8 +397,11 @@ end
         % ===============================================
         if p0.planno==1
             [hogval ]=compute_hog_single_v3(experimental_file,maskfile,tatlas,p3);
+            %[hogval im]=compute_hog_single_v3(experimental_file,maskfile,tatlas,p3);
+            %imgout(end+1,:)={ [xx hogval] im};
         elseif p0.planno==0
-            [hogval ]=compute_hog_single_v4(experimental_file,maskfile,tatlas,fib,p3);
+            [hogval ]=compute_hog_single_v3(experimental_file,maskfile,tatlas,p3);
+            %[hogval ]=compute_hog_single_v4(experimental_file,maskfile,tatlas,fib,p3);
         elseif p0.planno==-1
             [hogval ]=compute_siftflow(experimental_file,maskfile,tatlas,p3);
         end

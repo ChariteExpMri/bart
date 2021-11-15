@@ -33,6 +33,7 @@ tb(:,1)=stradd(tb0(:,1),[pa_template filesep],1); %fullpath
 
 
 p.outDirName                 = 'fin'                           ; %outPutDir
+p.saveIMG                    = 1                               ;%do save images
 p.refImg                     = fullfile(pa_template,'AVGT.nii'); %reference image for registration
 p.filesTP                    =  tb                             ; %mandatory files to transform
 p.NumResolutions             = [2 4     ]                      ; %previous: [2 6]
@@ -139,7 +140,7 @@ end
 pa_el=strrep(which('bart.m'),'bart.m','elastix2');
 addpath(genpath(pa_el));
 % ===============================================
-p.approach =3 ;
+p.approach =5 ;
 
 % ===============================================  USE ONE OF THE PARAMETER-files
 if p.approach ==1  %5min
@@ -162,6 +163,14 @@ elseif p.approach ==3 %50sec!
         % fullfile(pa_el, 'Par0034bspline.txt') 
         fullfile(pa_el, 'Par0063_BSpline.txt') 
         };
+elseif p.approach ==4 %50sec!
+    parfile0={...
+        fullfile(pa_el, 'a1_affine.txt')
+        fullfile(pa_el, 'a2_warping.txt')
+        };
+ elseif p.approach ==5 
+     parfile0=p.parameterFiles;
+    % pa_el=fileparts(parfile0{1});
     
 end
 
@@ -170,9 +179,10 @@ elxout     =fullfile(pa,'elx2',['forward' numberstr]);
 mkdir(elxout);
 
 path_paramfile=fullfile(elxout,'params');   %make subfolder for parameters (mandatory: no self-copying allowed)
+try; rmdir(path_paramfile,'s'); end
 mkdir(path_paramfile);
 % ===============================================  COPY PARAMETER-files
-parfile=strrep(parfile0,pa_el,path_paramfile);                      %forward
+parfile=strrep(parfile0, fileparts(parfile0{1}) ,path_paramfile);                      %forward
 %parfileinv=stradd(strrep(parfile0,pa_el,savepath),'inv',1);   %backward
 for i=1:length(parfile)
     copyfile(parfile0{i},parfile{i}    ,'f');
@@ -230,7 +240,9 @@ end
 % ==============================================
 %%   2.3.2 use mod_image
 % ===============================================
-histo=s.img;
+histo     =s.img;
+histo_orig=s.img;
+so=s;
 
 % useModFile=1;
 
@@ -262,7 +274,7 @@ fprintf('..warping...');
 % set_ix(parfile{1},'MaximumNumberOfIterations',MaximumNumberOfIterations(1)); %default:250
 % set_ix(parfile{2},'MaximumNumberOfIterations',MaximumNumberOfIterations(2)); %default:1500
 % -------------------------
-if 1
+if 0
     set_ix(parfile{1},'NumberOfResolutions',p.NumResolutions(1)); %default:2
     set_ix(parfile{2},'NumberOfResolutions',p.NumResolutions(2)); %default:6
     set_ix(parfile{1},'MaximumNumberOfIterations',p.MaximumNumberOfIterations(1)); %default:250
@@ -295,14 +307,14 @@ end
 % ==============================================
 %% ELATIX call
 % ===============================================
-if 0  % change original paramfiles and reload!!!!!
-    parfile=strrep(parfile0,pa_el,path_paramfile);                      %forward
-    %parfileinv=stradd(strrep(parfile0,pa_el,savepath),'inv',1);   %backward
-    for i=1:length(parfile)
-        copyfile(parfile0{i},parfile{i}    ,'f');
-        %copyfile(parfile0{i},parfileinv{i} ,'f')
-    end
-end
+% % % % % if 0  % change original paramfiles and reload!!!!!
+% % % % %     parfile=strrep(parfile0,pa_el,path_paramfile);                      %forward
+% % % % %     %parfileinv=stradd(strrep(parfile0,pa_el,savepath),'inv',1);   %backward
+% % % % %     for i=1:length(parfile)
+% % % % %         copyfile(parfile0{i},parfile{i}    ,'f');
+% % % % %         %copyfile(parfile0{i},parfileinv{i} ,'f')
+% % % % %     end
+% % % % % end
 
 
 warning off;
@@ -519,6 +531,8 @@ if ~isempty(char(tb))
     tb(:,2)=cellfun(@(a){[ str2num(num2str(a)) ]},tb(:,2)); %inperpol Value as numeric
 end
 
+
+
 % ==============================================
 %%  [3.2A] NONLINEAR TRANSFORM IMAGES     [o]-cell
 % ===============================================
@@ -629,7 +643,7 @@ cd(pawork);
 % fg,imagesc(mf.*w3)
 ob=o;
 for i=1:size(ob,1)
-    ob{i,2}=ob{i,2}.*mf;
+    ob{i,2}=double(ob{i,2}).*double(mf);
     %fg, imagesc([ o{i,2} ob{i,2} ; 0.*[ o{i,2} ob{i,2} ]])
 end
 o=ob;
@@ -776,25 +790,61 @@ fprintf('Done.\n');
 % ===============================================
 time_save=tic;
 fprintf('saving(nonlinear): ');
+thumb={};
+o(4,:)={'REF'  single(wa) };
 for i=1:size(o,1)
     %%%%nameout=[ o{i,1}  numberstr '.mat' ];
     nameout=[outtag o{i,1} '.mat' ];
     fprintf([ '(' num2str(i) ') "' nameout '"; ']);
     if 1
+        try
         if tb{i,2}==0
             interpy                        ='nearest';
         else
             interpy                       ='bilinear';%'bicubic' ;  % 'bilinear';
         end
-        v=imresize(o{i,2},[size_img],interpy);
-        if (length(unique(o{i,2})))/(numel(o{i,2})) >.4  % convert to uint8 ---file to large for intensbased images
-            v=round((mat2gray(v).*255));
-            %disp('..intensIMG..conv-to uin8');
+        catch
+           interpy                        ='nearest'; 
         end
+        % ============================================================================================
+        % ---unsing border and rotation--info ------------------------------------------
+        % ============================================================================================
+        %cf
+        %fg,imagesc(s.img); title('orig')
+   
+        u2=imresize(o{i,2},[size(so.img)],interpy);
+        if isfield(so,'rotationmod')
+            u2=imrotate(u2,-so.rotationmod  ,'nearest','crop');
+        end
+        if isfield(so,'bordermod')
+            border=so.bordermod;
+            k=u2;
+            k=imresize(k,[size(so.img,1)+2*border  size(so.img,2)+2*border ],interpy);
+            k(  [ 1:border  end-border+1:end ],:)=[];
+            k(:,[ 1:border  end-border+1:end ]  )=[];
+            u2=k;
+            if any(size(u2)~=size(so.img,1))
+                u2=imresize(u2,[size(so.img) ],interpy);
+            end
+        end
+        
+        thumb{i,1}=u2;
+        %fg; imagesc(u2); title('crap')
+        
+        % -----------------------------------------------------------------------------
+        
+        
+        v=imresize(   u2      ,[size_img],interpy);
+%         if (length(unique(o{i,2})))/(numel(o{i,2})) >.4  % convert to uint8 ---file to large for intensbased images
+%             v=round((mat2gray(v).*255));
+%             %disp('..intensIMG..conv-to uin8');
+%         end
         % ------------------------------------------------------ save  [imageName_###.mat]
         
         fi_out=fullfile(outdir, nameout);
-        save(fi_out, 'v');
+        if p.saveIMG==1
+            save(fi_out, 'v','-v7.3');
+        end
     end
 end
 % ==============================================
@@ -819,7 +869,9 @@ for i=1:size(a,1)
     end
     % ------------------------------------------------------ save  [imageName_###.mat]
     fi_out=fullfile(outdir, nameout);
-    save(fi_out, 'v');
+    if p.saveIMG==1
+        save(fi_out, 'v','-v7.3');
+    end
     
 end
 
@@ -834,7 +886,7 @@ nameout=[outtag 'HISTO' '.mat' ] ;
 fi_out=fullfile(outdir, nameout);
 v=t;
 fprintf([ '(' num2str(i+1) ') "' nameout '"; ']);
-save(fi_out, 'v');
+save(fi_out, 'v','-v7.3');
 
 fprintf('Done.\n');
 try
@@ -844,87 +896,180 @@ catch
 end
 
 % ==============================================
-%%   [4.5] make plot (all necessary steps are done now!)
+%%   [4.5] make summary plot 
 % ===============================================
 fprintf(['...create image ' [ '"res'  numberstr '.gif"...' ] ]);
 sizp=[500 500];
-v2=uint8(zeros([ sizp length(o) ]));
-for i=1:size(o,1)
-    if tb{i,2}==0
-        interpy                        ='nearest';
-    else
-        interpy                       ='bilinear';%'bicubic' ;  % 'bilinear';
+
+% ==============================================
+%   layout images
+% ===============================================
+% ========== IMAGES-B1 =====================================
+B=uint8([]);
+%----REF
+n=4;
+q=uint8(round(255*(imadjust(mat2gray(imresize(thumb{ [n ] ,1},sizp,'nearest'))))));
+q2=uint8(255*imcomplement(text2im(o{n,1})));
+q(1:size(q2,1),1:size(q2,2))=q2;%    fg,imagesc(q);
+B(:,:,1)=q;
+%----AVGT
+n=1;
+q=uint8(round(255*(imadjust(mat2gray(imresize(thumb{ [n ] ,1},sizp,'nearest'))))));
+q2=uint8(255*imcomplement(text2im(o{n,1})));
+q(1:size(q2,1),1:size(q2,2))=q2;%    fg,imagesc(q);
+B(:,:,n+1)=q;
+%----HEMI
+n=2;
+q=uint8(round(255*(imadjust(mat2gray(imresize(thumb{ [n ] ,1},sizp,'nearest'))))));
+q2=uint8(255*imcomplement(text2im(o{n,1})));
+q(1:size(q2,1),1:size(q2,2))=q2;%    fg,imagesc(q);
+B(:,:,n+1)=q;
+%----ANO
+n=3;
+q=uint8(round((pseudocolorize(((imresize(thumb{ [n ] ,1},sizp,'nearest')))))));
+q2=uint8(255*imcomplement(text2im(o{n,1})));
+q(1:size(q2,1),1:size(q2,2))=q2;%    fg,imagesc(q);
+B(:,:,n+1)=q;
+
+% ========= BACKGROUND-B2 ======================================
+q=uint8(round(255*(imadjust(mat2gray(imresize(s.img,sizp,'nearest'))))));
+q2=uint8(255*imcomplement(text2im('HISTO-orig')));
+q(1:size(q2,1),1:size(q2,2))=q2;%    fg,imagesc(q);
+B2=q;
+B2=repmat(B2,[1 1 4]);
+
+% ========fix&warped image=======================================
+%----movIMG
+q=uint8(round(255*(imadjust(mat2gray(imresize(mov,sizp,'nearest'))))));
+q2=uint8(255*imcomplement(text2im('movedIMG (source)'   )));
+q(1:size(q2,1),1:size(q2,2))=q2;%    fg,imagesc(q);
+B(:,:,5)=q;
+%----fixIMG
+q=uint8(round(255*(imadjust(mat2gray(imresize(fix,sizp,'nearest'))))));
+q2=uint8(255*imcomplement(text2im('fixedIMG (target)'   )));
+q(1:size(q2,1),1:size(q2,2))=q2;%    fg,imagesc(q);
+B(:,:,6)=q;
+% ======== moved image=======================================
+
+% warped
+q=uint8(round(255*(imadjust(mat2gray(imresize(wa,sizp,'nearest'))))));
+q2=uint8(255*imcomplement(text2im('warpedIMG'   )));
+q(1:size(q2,1),1:size(q2,2))=q2;%    fg,imagesc(q);
+
+B2(:,:,5)=B(:,:,5); %same moved-image appear static
+B2(:,:,6)=q;
+% ===============================================
+% make2d+RGBconvert
+r1=montageout(permute(B ,[1 2 4 3]));
+r2=montageout(permute(B2,[1 2 4 3]));
+% r1=mat2im(montageout(permute(B ,[1 2 4 3])),gray);
+% r2=mat2im(montageout(permute(B2,[1 2 4 3])),gray);
+
+
+
+
+
+% ==============================================
+%   ADD INFO
+% ===============================================
+bi=[];
+sih=round(size(r1,2)/2);
+q=imcomplement(text2im(['IMG: ' name ])); %IMG
+q(:,size(q,2)+1:sih) = 0;
+bi=[bi;q];
+
+[~,mdir,~]=fileparts(pa);
+q=imcomplement(text2im(['DIR: ' mdir ]));   %MDIR
+q(:,size(q,2)+1:sih) = 0;
+bi=[bi;q];
+
+[~,mdir,~]=fileparts(pa);                  % PARAMETER
+q=imcomplement(text2im(['PAR (S,p,y): ' sprintf('%2.1f , %2.2f , %2.2f', parameter(1),parameter(2),parameter(3)) ]));   %PARAMETER
+q(:,size(q,2)+1:sih) = 0;
+bi=[bi;q];
+
+if p.useModFile==1; usemodfileSTR='yes'; else usemodfileSTR='no'; end
+q=imcomplement(text2im(['use modfile: ' usemodfileSTR ]));   %use mod-file
+q(:,size(q,2)+1:sih) = 0;
+bi=[bi;q];
+if p.useModFile==1
+    try
+        q=imcomplement(text2im(['rotation   : ' num2str(so.rotationmod) ]));   %rotation
+        q(:,size(q,2)+1:sih) = 0;
+        bi=[bi;q];
     end
     
-    v=imresize(o{i,2},[sizp],interpy);
-    if strcmp(o{i,1},'ANO')
-        v=pseudocolorize(v);
+    try
+        q=imcomplement(text2im(['border     : ' num2str(so.bordermod) ]));   %add border
+        q(:,size(q,2)+1:sih) = 0;
+        bi=[bi;q];
     end
-    v=imadjust(mat2gray(v));
-    v=uint8(round(v*255));
-    v2(:,:,i)=v;
+    
 end
 
-vh=imresize(t,[sizp],'nearest');
-vh=uint8(round(255*imadjust(mat2gray(vh))));
-v2=cat(3,vh,v2);
-v3=repmat(vh,[1 1 size(v2,3)]);
+q=imcomplement(text2im(['TIME       : ' datestr(now) ]));   %time
+q(:,size(q,2)+1:sih) = 0;
+bi=[bi;q];
+
+
+
+% ================PARAMETER-FILE INFO ===============================
+bi2=[];
+% ---------------- NUMBER OF REOLUTIONS ---------------- 
+dum=[nan nan];
+try;dum(1)=get_ix2(parfile{1},'NumberOfResolutions');end
+try;dum(2)=get_ix2(parfile{2},'NumberOfResolutions');end
+dum=regexprep(num2str(dum),'\s+','/');
+q=imcomplement(text2im(['numRESOLUTIONS(af/w): ' dum ]));   
+q(:,size(q,2)+1:sih) = 0;
+bi2=[bi2;q];
+% ---------------- NUMBER OF ITERATIONS ---------------- 
+dum=[nan nan];
+try;dum(1)=get_ix2(parfile{1},'MaximumNumberOfIterations');end
+try;dum(2)=get_ix2(parfile{2},'MaximumNumberOfIterations');end
+dum=regexprep(num2str(dum),'\s+','/');
+q=imcomplement(text2im(['numITERARIONS(af/w): ' dum ]));   
+q(:,size(q,2)+1:sih) = 0;
+bi2=[bi2;q];
+% ---------------- MaximumStepLength ----------------
+dum=[nan nan];
+try;dum(1)=get_ix2(parfile{1},'MaximumStepLength');end
+try;dum(2)=get_ix2(parfile{2},'MaximumStepLength');end
+dum=regexprep(num2str(dum),'\s+','/');
+q=imcomplement(text2im(['maxStepLength(af/w): ' dum ]));  
+q(:,size(q,2)+1:sih) = 0;
+bi2=[bi2;q];
+% same-sizes of bi/bi2
+bis=[size(bi,1) size(bi2,1)];
+imin=find(bis==min(bis));
+if imin==1
+    bi=[bi; zeros(size(bi2,1)-size(bi,1), size(bi,2)  )];
+else
+    bi2=[bi2; zeros(size(bi,1)-size(bi2,1), size(bi,2)  )];
+end
+
+
+q2=uint8(round(255.*[bi bi2]));
+r1=[r1;q2];
+r2=[r2;q2];
+
+if 0
+    % fg,imagesc([r1])
+    % fg,imagesc([r2])
+    fg, image(repmat(r1,[1 1 3]))
+    fg, image(repmat(r2,[1 1 3]))
+end
+
 % ==============================================
-%   add unwarped image
+%%   write IMAGE
 % ===============================================
-% fixr=uint8(round(255*imadjust(mat2gray(imresize(fix,[sizp])))));
-movr=uint8(round(255*imadjust(mat2gray(imresize(mov,[sizp])))));
-warp =uint8(round(255*imadjust(mat2gray(imresize(wa,[sizp])))));
-
-
-% tx_fix=uint8(round(imcomplement(text2im([ 'Histo-resized' ]))*255));
-tx_mov=uint8(round(imcomplement(text2im([ 'refImg_unregistered' ]))*255));
-tx_war=uint8(round(imcomplement(text2im([ 'refImg_warped' ]))*255));
-
-
-% fixr(1:size(tx_fix,1),1:size(tx_fix,2))=tx_fix;
-movr(1:size(tx_mov,1),1:size(tx_mov,2))=tx_mov;
-warp(1:size(tx_war,1),1:size(tx_war,2))=tx_war;
-% ==============================================
-%
-% ===============================================
-
-% v2=cat(3,fixr,movr,v2);
-% v3=cat(3,fixr,movr,v3);
-% v2=cat(3,movr,fixr,v2);
-% v3=cat(3,movr,fixr,v3);
-v2=cat(3,movr,warp,v2);
-v3=cat(3,movr,vh,v3);
-
-r1=montageout(permute(v2,[1 2 4 3]));
-r2=montageout(permute(v3,[1 2 4 3]));
-% fg,imagesc(r1)
-% fg,imagesc(r2)
-% ==============================================
-%   write GIF
-% ===============================================
-% r1=montageout(permute(v2,[1 2 4 3]));
-% r2=montageout(permute(v3,[1 2 4 3]));
-
-step=round(sizp(1)/10);
-val=90;
-r1(1:step:end,:)         =90;
-r1(:         ,1:step:end)=90;
-r2(1:step:end,:)         =90;
-r2(:         ,1:step:end)=90;
-
-
-tx=text2im([ 'SLICE'  numberstr '.mat'  ' (' sprintf('SL=%2.1f; a1=%2.1f; a2=%2.1f',parameter) ')' ]);
-tx=imcomplement(tx);
-tx2=uint8(  zeros([size(tx,1)  size(r1,2) 1])   )  ;
-tx2(:, 1:size(tx,2),1 )=round(tx.*255);
-
-r1=[tx2; r1 ];
-r2=[tx2; r2 ];
-
 
 nameout=[outtag 'result' '.gif' ];
 fileout2=fullfile(outdir, nameout);
+if exist(fileout2)==2
+    delete(fileout2);
+end
+    
 dollop=1;
 while dollop==1
     try
@@ -949,11 +1094,129 @@ showinfo2('final image',fileout2);
 
 
 % ==============================================
-%%
+%%   msg
 % ===============================================
 try
     cprintf([0 .5 0],['  [' mfilename '] DONE.  (dT: ' sprintf('%2.2f',toc(timeTot)/60 )  'min)\n']);
 catch
     fprintf(['  [' mfilename '] DONE.  (dT: ' sprintf('%2.2f',toc(timeTot)/60 )  'min)\n']);
 end
+
+% % % fprintf(['...create image ' [ '"res'  numberstr '.gif"...' ] ]);
+% % % sizp=[500 500];
+% % % 
+% % % o2=o;
+% % % v2=uint8(zeros([ sizp size(o2,1)-1 ]));
+% % % o2(:,2)=thumb;
+% % % for i=1:3%size(o2,1)
+% % % %     if tb{i,2}==0
+% % %         interpy                        ='nearest';
+% % % %     else
+% % % %         interpy                       ='bilinear';%'bicubic' ;  % 'bilinear';
+% % % %     end
+% % %     
+% % %     v=imresize(o2{i,2},[sizp],interpy);
+% % %     if strcmp(o2{i,1},'ANO')
+% % %         v=pseudocolorize(v);
+% % %     end
+% % %     v=imadjust(mat2gray(v));
+% % %     v=uint8(round(v*255));
+% % %     v2(:,:,i)=v;
+% % % end
+% % % 
+% % % % vh=imresize(o2{end,2},[sizp],'nearest')  ; %imresize(t,[sizp],'nearest');
+% % % vh=imresize(so.img,[sizp],'nearest')  ; %imresize(t,[sizp],'nearest');
+% % % 
+% % % vh=uint8(round(255*imadjust(mat2gray(vh))));
+% % % v2=cat(3,vh,v2);
+% % % % 
+% % % 
+% % % 
+% % % v3=repmat(vh,[1 1 size(v2,3)]);
+% % % 
+% % % v3(:,:,1)=imresize(o2{end,2},[sizp],interpy);
+% % % 
+% % % % ==============================================
+% % % %   add unwarped image
+% % % % ===============================================
+% % % % fixr=uint8(round(255*imadjust(mat2gray(imresize(fix,[sizp])))));
+% % % movr=uint8(round(255*imadjust(mat2gray(imresize(fix,[sizp])))));
+% % % warp =uint8(round(255*imadjust(mat2gray(imresize(wa,[sizp])))));
+% % % 
+% % % % imresize(o2{end,2},[sizp],interpy);
+% % % movr=uint8(round(255*imadjust(mat2gray(imresize(o2{end,2},[sizp])))));
+% % % warp=uint8(round(255*imadjust(mat2gray(imresize(o2{end,2},[sizp])))));
+% % % 
+% % % % tx_fix=uint8(round(imcomplement(text2im([ 'Histo-resized' ]))*255));
+% % % tx_mov=uint8(round(imcomplement(text2im([ 'refImg_unregistered' ]))*255));
+% % % tx_war=uint8(round(imcomplement(text2im([ 'refImg_warped' ]))*255));
+% % % 
+% % % 
+% % % % fixr(1:size(tx_fix,1),1:size(tx_fix,2))=tx_fix;
+% % % movr(1:size(tx_mov,1),1:size(tx_mov,2))=tx_mov;
+% % % warp(1:size(tx_war,1),1:size(tx_war,2))=tx_war;
+% % % % ==============================================
+% % % %
+% % % % ===============================================
+% % % 
+% % % % v2=cat(3,fixr,movr,v2);
+% % % % v3=cat(3,fixr,movr,v3);
+% % % % v2=cat(3,movr,fixr,v2);
+% % % % v3=cat(3,movr,fixr,v3);
+% % % v2=cat(3,movr,warp,v2);
+% % % v3=cat(3,movr,vh,v3);
+% % % 
+% % % r1=montageout(permute(v2,[1 2 4 3]));
+% % % r2=montageout(permute(v3,[1 2 4 3]));
+% % % % fg,imagesc(r1)
+% % % % fg,imagesc(r2)
+% % % % ==============================================
+% % % %   write GIF
+% % % % ===============================================
+% % % % r1=montageout(permute(v2,[1 2 4 3]));
+% % % % r2=montageout(permute(v3,[1 2 4 3]));
+% % % 
+% % % step=round(sizp(1)/10);
+% % % val=90;
+% % % r1(1:step:end,:)         =90;
+% % % r1(:         ,1:step:end)=90;
+% % % r2(1:step:end,:)         =90;
+% % % r2(:         ,1:step:end)=90;
+% % % 
+% % % 
+% % % tx=text2im([ 'SLICE'  numberstr '.mat'  ' (' sprintf('SL=%2.1f; a1=%2.1f; a2=%2.1f',parameter) ')' ]);
+% % % tx=imcomplement(tx);
+% % % tx2=uint8(  zeros([size(tx,1)  size(r1,2) 1])   )  ;
+% % % tx2(:, 1:size(tx,2),1 )=round(tx.*255);
+% % % 
+% % % r1=[tx2; r1 ];
+% % % r2=[tx2; r2 ];
+% % % 
+% % % 
+% % % nameout=[outtag 'result' '.gif' ];
+% % % fileout2=fullfile(outdir, nameout);
+% % % dollop=1;
+% % % while dollop==1
+% % %     try
+% % %         imwrite(r1  ,fileout2,'gif', 'Loopcount',inf);
+% % %         imwrite(r2  ,fileout2,'gif','WriteMode','append');
+% % %         disp('image written.');
+% % %         dollop=0;
+% % %     catch ME
+% % %         uiwait(msgbox({ME.message '---> CLOSE IMAGE-VIEWER to proceed!!'},'ERROR','modal'));
+% % %         %     try
+% % %         %         imwrite(r1  ,fileout2,'gif', 'Loopcount',inf);
+% % %         %         imwrite(r2  ,fileout2,'gif','WriteMode','append');
+% % %         %         disp('image written.');
+% % %         %     catch
+% % %         %         disp('..could not write gif-image.')
+% % %         %     end
+% % %     end
+% % % end
+% % % fprintf('Done.\n');
+% % % showinfo2('final image',fileout2);
+
+
+
+
 

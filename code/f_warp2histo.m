@@ -32,7 +32,7 @@ global ak
 pa_template=ak.template;
 % pa_template=strrep(which('bart.m'),'bart.m','templates');
 tb0={...%Name__________INterpol
-    'AVGT.nii'          '1'
+    'AVGT.nii'          '0'
     'AVGThemi.nii'      '0'
     'ANO.nii'           '0'
 %     '_b1grey.nii'       0
@@ -40,6 +40,17 @@ tb0={...%Name__________INterpol
 tb=tb0;
 tb(:,1)=stradd(tb0(:,1),[pa_template filesep],1); %fullpath
 % templateDir=fullfile(fileparts(which('bart.m')),'templates');
+
+
+refimage=fullfile(pa_template,'HISTOVOL.nii');
+%% =============================================== elastix-paramter
+pa_el=strrep(which('bart.m'),'bart.m','elastix2');
+parfile0={...
+        fullfile(pa_el, 'a1_affine.txt')
+        fullfile(pa_el, 'a2_warping.txt')
+        };
+
+% refimage=tb{1,1} ;
 % ==============================================
 %%   struct
 % ===============================================
@@ -47,19 +58,27 @@ para={...
  
 'inf1'    'TRANSFORM IMAGES BACK TO HISTO-SPACE'  ''  ''
 '' '' '' ''
-'outDirName'   'fin'   'Name of the output Directory: ("fin": folder with output images)'      ''
+% 'outDirName'   'fin'   'Name of the output Directory: ("fin": folder with output images)'      ''
+'useModFile'                 1               'use modFile "a2_XXXmod.tif" if exist'  'b'
+'saveIMG'        1  'save output images {0|1}; [0]is for testing only [1]yes save images'      'b'
+
 '' '' '' ''
 'inf2'    '_____ REFERENCE IMAGE _________________________'  ''  ''
-'refImg'     tb{1,1}                'Reference image for registration'                   'f'
+'refImg'     refimage               'Reference image for registration'                   'f'
+
 '' '' '' ''
 'inf3'    '_____ FILES TO TRANSFORM FROM TEMPLATE-FOLDER _________________________'  ''  ''
 'filesTP'    tb 'Files to transform from Template-path: NAME + INTERPOLATION (0:NN; 1:linear) ' {@fileselection }
+
 '' '' '' ''
 'inf4'     '_____ ELASTIX PARAMETER _________________________' '' ''
-'useModFile'                 1               'use modFile "a2_XXXmod.tif" if exist'  'b'
-'NumResolutions'             [2     6     ]  'number of resolutions for affine(arg1) & B-spline(arg2) transformation'   ''
-'MaximumNumberOfIterations'  [1250 1000]     'number of iterations within each resolution for affine(arg1) & B-spline(arg2) transformation' ''
-'MaximumStepLength'          1               'maximum voxel displacement step between two iterations. The larger this parameter, the more aggressive the optimization. ' ''
+'parameterFiles'    parfile0      'Elastix paramter files (affine&Bspline)'    {@getElestixfiles}
+'changeParameter'  'HIT BUTTON'              'change elastix Parameter using a local copy of parameterfiles'       {@changeElastixparameter}
+
+% 
+% 'NumResolutions'             [2     6     ]  'number of resolutions for affine(arg1) & B-spline(arg2) transformation'   ''
+% 'MaximumNumberOfIterations'  [1250 1000]     'number of iterations within each resolution for affine(arg1) & B-spline(arg2) transformation' ''
+% 'MaximumStepLength'          1               'maximum voxel displacement step between two iterations. The larger this parameter, the more aggressive the optimization. ' ''
 
 % 'inf5'    '_____ MISC _________________________'  ''  ''
 % 'isparallel'           0   'parallel processing {0,1}' 'b'
@@ -135,6 +154,71 @@ timex=tic;
 %     end 
 % end
 cprintf([0 0 1],[' done... dT=' sprintf('%2.2f min',toc(timex)/60)  '\n']);
+
+function getElestixfiles(e,e2)
+he=[];
+pa_el=strrep(which('bart.m'),'bart.m','elastix2');
+msg='select 1x affine and 1x bspline parameterFile (in that order!)';
+[t,sts] = spm_select(inf,'any',msg,'',pa_el,'.*.txt','');
+if isempty(t);
+    [r1 r2]=paramgui('getdata');
+    t=r2.parameterFiles;
+else
+    t=cellstr(t);
+end
+paramgui('setdata','x.parameterFiles',t);
+return
+
+
+function changeElastixparameter(e,e2)
+
+he=[];
+[r1 r2]=paramgui('getdata');
+paramfiles0=r2.parameterFiles;
+%% make local dir ---------------
+warning off
+global ak
+elparamDirLocal=fullfile(fileparts(ak.dat),'Elastixparameter');
+mkdir(elparamDirLocal);
+
+paramfiles1=replacefilepath(paramfiles0,elparamDirLocal);
+try
+    copyfilem(paramfiles0,paramfiles1);
+end
+
+edit(paramfiles1{1});
+edit(paramfiles1{2});
+
+
+
+hm=msgbox({...
+    '(1)local copies of selected ParamterFiles created in "yourstudy"/Elastixparameter-folder'
+    ''
+    '(2) modify these ParamterFiles in the EDITOR now! '
+    '(3) don''t forget to hit the "save"-button'
+    '(4) if possible..close parameter-files in editor'
+    },'IMPORTANT');
+uiwait(hm);
+
+
+paramgui('setdata','x.parameterFiles', paramfiles1); %update paramterFiles
+
+
+%% ===============================================
+
+
+
+
+return
+
+
+
+
+
+
+
+
+
 
 
 
