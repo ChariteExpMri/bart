@@ -15,18 +15,27 @@ pa=px{1};
 
 [~ , outdirShort ]=fileparts(pa);
 
-outDir0=outdirShort;
-outDir=regexprep(outDir0,{'\.', '\s+' ,'#'},{'_' ,'_',''});
-fpoutDir=fullfile(s.dat ,outDir);
-mkdir(fpoutDir);
+if s.SliceInOwnDir==0  % don't use own DIR
+    outDir0=outdirShort;
+    outDir=regexprep(outDir0,{'\.', '\s+' ,'#'},{'_' ,'_',''});
+    fpoutDir=fullfile(s.dat ,outDir);
+    mkdir(fpoutDir);
+end
 
 for i=1:length(tiffgrp)
-    
-    
-    
     file=tiffgrp{i};
     disp(['*** prosessing: ' file]);
     [pa, fi ,ext]=fileparts(file);
+    
+    if s.SliceInOwnDir==1  %use own DIR 
+        outDir=regexprep(fi,{'\.', '\s+' ,'#'},{'_' ,'_',''});
+        fpoutDir=fullfile(s.dat ,outDir);
+         mkdir(fpoutDir);
+    end
+    
+    
+   
+   
     
     %
     % ==============================================
@@ -34,39 +43,41 @@ for i=1:length(tiffgrp)
     % ===============================================
  
     disp(['copying....[' fi ext ']' ]);
-    
     filog=fullfile(fpoutDir,'importlog.txt');
-    if exist(filog)==2
-        lg0=importdata(filog);
-        iorig=find(~cellfun(@isempty,strfind(lg0,'[origin]')));
-        or={}; im={};
-        for j=1:length(iorig)
-            or{j,1}=regexprep(lg0{iorig(j)},'#import_TIFF \[origin]: ','');
-            im{j,1}=regexprep(lg0{iorig(j)+1},'#import_TIFF \[BART]  : ','');
-        end
-        [~, nameIM ,~]=fileparts2(im);
-        maxnum=max(str2num(char(regexprep(nameIM,'a1_',''))));
-        num=maxnum+1;
-        
-        %OK, FILE ALREADY COPIED
-       is=find(strcmp(or,file));
-       if ~isempty(is)
-           ix=or{is(1)};
-           nameimp=im{is(1)};
-           [~, nameIM ,~]=fileparts2(nameimp);
-           num=str2num(char(regexprep(nameIM,'a1_','')));
-       end 
-    else %NO LOGFILE
-        k=dir(fpoutDir);
-        isfilesInDir=find(([k.isdir])==0);
-        if isempty(isfilesInDir)
-            num=1;
-        else
-            num=10;
+    if s.SliceInOwnDir==1  %use own DIR
+        num=1;
+        lg0=[];
+    else
+        if exist(filog)==2
+            lg0=importdata(filog);
+            iorig=find(~cellfun(@isempty,strfind(lg0,'[origin]')));
+            or={}; im={};
+            for j=1:length(iorig)
+                or{j,1}=regexprep(lg0{iorig(j)},'#import_TIFF \[origin]: ','');
+                im{j,1}=regexprep(lg0{iorig(j)+1},'#import_TIFF \[BART]  : ','');
+            end
+            [~, nameIM ,~]=fileparts2(im);
+            maxnum=max(str2num(char(regexprep(nameIM,'a1_',''))));
+            num=maxnum+1;
+            
+            %OK, FILE ALREADY COPIED
+            is=find(strcmp(or,file));
+            if ~isempty(is)
+                ix=or{is(1)};
+                nameimp=im{is(1)};
+                [~, nameIM ,~]=fileparts2(nameimp);
+                num=str2num(char(regexprep(nameIM,'a1_','')));
+            end
+        else %NO LOGFILE
+            k=dir(fpoutDir);
+            isfilesInDir=find(([k.isdir])==0);
+            if isempty(isfilesInDir)
+                num=1;
+            else
+                num=10;
+            end
         end
     end
-    
-    
     fiout=fullfile(fpoutDir, ['a1_' pnum(num,3) ext]);
     
    
@@ -91,54 +102,30 @@ for i=1:length(tiffgrp)
     % b=imread(fout);
     % ib=imfinfo(fout);
     % ==============================================
-    %%
-    % ===============================================
-    
-    
-  
-    
+    %%  log file
     % ===============================================
   
-    
         lg={[ 'DATE: '  timestr(now) ]};
         lg(end+1,1) ={['#import_TIFF [origin]: '  file]};
         lg(end+1,1) ={['#import_TIFF [BART]  : '  fiout]};
     
     
-    
-    % disp(char(lg))
-    
     % ==============================================
     %%   save log
     % ===============================================
     
-   
-    if exist(filog)==0
-        pwrite2file(filog,lg);
+    if s.SliceInOwnDir==1
+        pwrite2file(filog,[lg]);
     else
-        %lg0=importdata(filog);
-        pwrite2file(filog,[lg0; lg]);
+        if exist(filog)==0
+            pwrite2file(filog,lg);
+        else
+            %lg0=importdata(filog);
+            pwrite2file(filog,[lg0; lg]);
+        end
     end
     
-    
-    
-    % ==============================================
-    %  if copyfoldercontent
-    % ===============================================
-%     if s.copyfoldercontent==1
-%         [files] = spm_select('FPList',pa,'.*');
-%         files=cellstr(files);
-%         
-%         for i=1:length(files)
-%             try
-%                 [~, namex,extx]=fileparts(files{i});
-%                 f2=files{i};
-%                 f3=fullfile( fpoutDir, [namex,extx] );
-%                 lg(end+1,1) ={['#import_other: [origin] '  f2 '  [BART] '  f3 ] };
-%                 copyfile(f2,f3,'f');
-%             end
-%         end
-%     end
+  
 
     
     
@@ -150,9 +137,7 @@ end %all TIFFS
 % ===============================================
 
 if s.copyfoldercontent==1
-    
-    [filesaux] = spm_select('FPList',pa,'.*'); filesaux=cellstr(filesaux);
-    
+    [filesaux] = spm_select('FPList',pa,'.*'); filesaux=cellstr(filesaux); 
     [py name ext]=fileparts2(filesaux);
     idel=find(strcmp(ext,'.tif'));
     py(idel)=[];

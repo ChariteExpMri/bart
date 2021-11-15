@@ -26,6 +26,8 @@ para={...
     'inf100'     '==================================='                          '' ''
     'files'                  ''              'select TIFF-file(s); '  'mf'
     'frameNumber'            1               'select the frame number (default is 1) if TIFF contains more than 1 image' {1 2 3 4 5}
+    'SliceInOwnDir'          1               'import each slice in its own folder (use filename of slice as new Dir-name) '   'b'     
+
     'copyfoldercontent'      0               'copy the folder content (all files) from original tif-folder'  'b'
     'isparallel'             0               'use parallel computing (0,1)'  'b'
     };
