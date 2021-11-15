@@ -37,6 +37,7 @@ for i=1:length(pas)
     pa=pas{i} ;
     [~,name]=fileparts(pa);
     
+    fastload=1;
     [fis] = spm_select('List',pa,'^a1_\d\d\d.jpg');
     fis=cellstr(fis);
     if isempty(char(fis))  %missing jpg-file --> created one!
@@ -44,8 +45,22 @@ for i=1:length(pas)
         if ~isempty(fis0)
             fis0=cellstr(fis0);
             for j=1:length(fis0)
-                w=imread(fullfile(pa, fis0{j}));
-                w0=imadjust(imresize(max(w,[],3),[1000 1000]));
+                file=fullfile(pa, fis0{j});
+                [pax namex extx]=fileparts(file);
+                disp([ num2str(i) '/'  num2str(length(pas))  ': ' namex]   );
+               % w=imread(fullfile(pa, fis0{j}));
+                hi=imfinfo(file);
+                if fastload==1
+                    if sum([hi.Width hi.Height]>5000)==2 %above 5000
+                        w=imread(file,'PixelRegion',{[1 20 inf],[1 20 inf]});
+                    else
+                        w=imread(file);
+                    end
+                else
+                    w=imread(file);
+                end
+                
+                w0=imadjust(imresize(max(w,[],3),[400 400]));
                 w1=cat(3,w0,w0,w0);
                 jpgout=fullfile(pa,  strrep(fis0{j},'.tif','.jpg'));
                 imwrite(w1,jpgout);

@@ -155,6 +155,7 @@ end
 
 
 function update(var)
+warning off
 drawnow;
 %% ===============================================
 hf=findobj(0,'tag','bart');
@@ -196,9 +197,82 @@ catch
 end
 
 tooltip=html_dirs();
+us.tooltip=tooltip;
+set(hb,'userdata',us);
 set(hb,'tooltipstring',['<html>' strjoin(tooltip,'<br>') ]);
 updateListboxinfo;
 drawnow;
+
+
+
+jScrollPane = findjobj(hb);
+jListbox = jScrollPane.getViewport.getComponent(0);
+set(jListbox, 'MouseMovedCallback', {@mouseMovedCallback,hb});
+
+function mouseMovedCallback(jListbox, jEventData, hListbox)
+try
+    
+    % Get the currently-hovered list-item
+    mousePos = java.awt.Point(jEventData.getX, jEventData.getY);
+    hoverIndex = jListbox.locationToIndex(mousePos) + 1;
+    listValues = get(hListbox,'string');
+    hoverValue = listValues{hoverIndex};
+    % Modify the tooltip based on the hovered item
+    msgStr = sprintf('<html>item #%d: <b>%s</b></html>', hoverIndex, hoverValue);
+    us=get(hListbox,'userdata');
+    %    img={'<img src="file:/F:\data5_histo\MRE_anna1\dat\DAPI_Naive2\a1_001.jpg" alt="Girl in a jacket"><br>'}
+    t1=[hoverValue;{'<font size="5" face="arial" color="red">'} ;us.tooltip];
+    t1=strjoin(t1,'<br>');
+    set(hListbox, 'Tooltip',t1);
+    
+    
+    %    s=get(hListbox,'string')
+    global ak
+    f1= ak.list1{hoverIndex};
+    [pa name ext]=fileparts(f1);
+    f2=fullfile(pa,[name '.jpg']);
+    if exist(f2)==2
+        hr=findobj(findobj(0,'tag','bart'),'tag','currentImage');
+        if isempty(hr)
+            hr=uicontrol('style','pushbutton','units','norm','tag','currentImage') ;
+            set(hr,'position',[  0.501 0  .2 .2],'backgroundcolor','w');
+        end
+        set(hr,'tooltipstring',[strrep(msgStr,'<html>','<html>image under cursor<br>') ]);
+        set(hr,'visible','on');
+        set(hr,'units','pixels');
+        pos=get(hr,'position');
+        img=imread(f2);
+        mn=min([pos(3) pos(4)]);
+        img=imresize(img,[mn mn]);
+        set(hr,'Cdata',img);
+    else
+        hr=findobj(gcf,'tag','currentImage');
+        set(hr,'visible','off');
+        
+        
+    end
+end
+      
+  
+
+%    filePath='F:\data5_histo\MRE_anna1\dat\DAPI_Naive2\a1_001.jpg';
+%    filePath = strrep(['file://' filePath],'\','\');
+%    t2 = ['<html><center><img src="' filePath '"><br />' ...
+%        '<b><font color="blue">' filePath];
+%  t2=['<html>  <img src="file://F:/data5_histo/MRE_anna1/dat/DAPI_Naive2/a1_001.jpg" alt="img" style="width:50px;height:50px;"><br></html>' ];
+%   t2=['<html>  <img src="F:\\data5_histo\\MRE_anna1\\dat\\DAPI_Naive2\\a1_001.jpg" alt="Girl" style="width:250px;height:250px;"/><br></html>' ];
+
+
+
+% TT = "<html>" + "This is the "  + "<img src=\"file:cut.gif\">" + " tool tip text." + "</html>";
+
+%   filePath = '"F:\data5_histo\MRE_anna1\table.png"';
+%   filePath = strrep(['file:/' filePath],'\','/');
+%   t2 = ['<html><img src=\' filePath '><br /></html>']
+% %   t2=['<html><img src\="https://www.w3schools.com/images/picture.jpg" alt="Mountain" style="width:250px;height:250px;>']
+%  jListbox.setToolTipText(t2)
+%  <img src="C:\\wamp\\www\\site\\img\\mypicture.jpg"/>
+%   set(hListbox, 'Tooltip',t2);
 
 %% ===============================================
 function [slices fpslices]=getslices(dirs)
