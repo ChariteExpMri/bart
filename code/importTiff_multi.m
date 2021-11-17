@@ -1,6 +1,6 @@
 
 % only a single tiff is imported from an animal folder
-function importTiff_singleTiff(tiffgrp, s)
+function importTiff_multi(tiffgrp, s)
 warning off;
 % disp(['*** prosessing:' file]);
 
@@ -125,18 +125,44 @@ for i=1:length(tiffgrp)
         end
     end
     
-  
+    % ==============================================
+    %%   thumbnail
+    % ===============================================
+    
+    a2=imresize(a,[400 400]);
+    a2=imadjust(mean(mat2gray(a2),3));
+    a2=uint8(round(255.*a2 ));
+    
+    F2=fullfile(fpoutDir, ['a1_' pnum(num,3) '.jpg']);
+    imwrite(a2,F2);
+    
 
+    % ==============================================
+    %%   copy other dir-content stuff
+    % ===============================================
     
-    
+    if s.copyfoldercontent==1 && s.SliceInOwnDir==1
+        [filesaux] = spm_select('FPList',pa,'.*'); filesaux=cellstr(filesaux);
+        [py name ext]=fileparts2(filesaux);
+        idel=find(strcmp(ext,'.tif'));
+        py(idel)=[];
+        name(idel)=[];
+        ext(idel)=[];
+        if ~isempty(name)
+            fx1=cellfun(@(a,b,c){[a filesep [b c]]}, py,name,ext );
+            fx2=replacefilepath(fx1,fpoutDir);
+            copyfilem(fx1,fx2);
+        end
+    end
+
     
 end %all TIFFS
 
 % ==============================================
-%%   copy other stuff
+%%   copy other dir-content stuff
 % ===============================================
 
-if s.copyfoldercontent==1
+if s.copyfoldercontent==1 && s.SliceInOwnDir==0
     [filesaux] = spm_select('FPList',pa,'.*'); filesaux=cellstr(filesaux); 
     [py name ext]=fileparts2(filesaux);
     idel=find(strcmp(ext,'.tif'));

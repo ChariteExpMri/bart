@@ -76,7 +76,7 @@ end
 %%   add paths
 % ===============================================
 
-pa_template=strrep(which('bart.m'),'bart.m','templates');
+% pa_template=strrep(which('bart.m'),'bart.m','templates');
 if isempty(which('@slicedetection.m')) %set paths
     pabart=fileparts(which('bart.m'));
     addpath(pabart);
@@ -96,6 +96,70 @@ end
 s2       =load(fib);
 s2       =s2.s2;
 parameter=s2.param;
+
+
+% ==============================================
+%%  [0.3]   get orig resized image [a2_##.mat]
+% ===============================================
+% fir=regexprep(file,{[filesep filesep 'a1_'], '.tif$'},{[filesep filesep 'a2_'],'.mat'});
+fir=fullfile(pa,['a2' numberstr '.mat']);
+if exist(fir)~=2
+    disp(['missing file: ' fir ]);
+    return
+end
+s=load(fir); s=s.s;
+
+
+
+% ==============================================
+%%   0.3.1 load infomat
+% rotate back
+% ===============================================
+try
+    fi_info=fullfile(pa,['a1_info.mat']);
+    info=load(fi_info);
+    info=info.v;
+    % ==============================================
+    %%   2.3.2 check for manual rotations saved in ['a1_info.mat']!!!!
+    % rotate back
+    % ===============================================
+    
+    if isfield(info,'rottab')==1
+        ix=find(strcmp(info.rottab(:,1), [ 'a1' numberstr '.jpg' ]));
+        if ~isempty(ix)
+            rotangle=info.rottab{ix,2};
+            s.img  =imrotate(s.img,-rotangle,'crop','nearest');
+            s.mask =imrotate(s.mask,-rotangle,'crop','nearest');
+            disp([' ..rotating slice back: '  num2str(rotangle) '°']);
+        end
+    end
+end
+% ==============================================
+%%   0.3.2 use mod_image
+% ===============================================
+histo     =s.img;
+histo_orig=s.img;
+so=s;
+
+% useModFile=1;
+
+if p.useModFile==1
+    disp('...using mod-file..');
+    fmodif=fullfile(pa,[strrep(name,'a1_','a2_') 'mod.tif']);
+    if exist(fmodif)==2
+        s3=(mat2gray(imread(fmodif)).*255);
+        paint=s3==255;
+        brain=single(s3>0)-single(paint);
+        val=median(s3(brain(:)==1));
+        s3(paint)=val;
+        histo=uint8(s3);
+    end
+end
+
+
+
+
+
 % ==============================================
 %%   get reference image(CV)
 % ===============================================
@@ -122,7 +186,19 @@ if exist('cv')~=1
         
         fprintf('Done.\n');
     end
-    
+end
+
+if isfield(s,'hemi')==1
+    [ cvmask]=p_getfromHistvolspace(fullfile(pa_template, 'AVGThemi.nii' )) ;
+    if strcmp(lower(s.hemi),'r') || strcmp(lower(s.hemi),'right')
+        cvmask=single(cvmask==2);
+        cv=cv.*uint8(cvmask);
+        disp('---using right hemisphere template only');
+    elseif strcmp(lower(s.hemi),'l') || strcmp(lower(s.hemi),'left')
+        cvmask=single(cvmask==2);
+        cv=cv.*uint8(cvmask);
+         disp('---using left hemisphere template only');
+    end
 end
 
 % ==============================================
@@ -204,60 +280,63 @@ tatlas     =uint8(obliqueslice(cv, vol_center, [Y -X 90]));
 
 
 
-% ==============================================
-%%  [2.3]   get orig resized image [a2_##.mat]
-% ===============================================
-% fir=regexprep(file,{[filesep filesep 'a1_'], '.tif$'},{[filesep filesep 'a2_'],'.mat'});
-fir=fullfile(pa,['a2' numberstr '.mat']);
-if exist(fir)~=2
-    disp(['missing file: ' fir ]);
-    return
-end
-s=load(fir); s=s.s;
-% ==============================================
-%%   2.3.1 load infomat
-% rotate back
-% ===============================================
-try
-    fi_info=fullfile(pa,['a1_info.mat']);
-    info=load(fi_info);
-    info=info.v;
-    % ==============================================
-    %%   2.3.2 check for manual rotations saved in ['a1_info.mat']!!!!
-    % rotate back
-    % ===============================================
-    
-    if isfield(info,'rottab')==1
-        ix=find(strcmp(info.rottab(:,1), [ 'a1' numberstr '.jpg' ]));
-        if ~isempty(ix)
-            rotangle=info.rottab{ix,2};
-            s.img  =imrotate(s.img,-rotangle,'crop','nearest');
-            s.mask =imrotate(s.mask,-rotangle,'crop','nearest');
-            disp([' ..rotating slice back: '  num2str(rotangle) '°']);
-        end
-    end
-end
-% ==============================================
-%%   2.3.2 use mod_image
-% ===============================================
-histo     =s.img;
-histo_orig=s.img;
-so=s;
-
-% useModFile=1;
-
-if p.useModFile==1
-    disp('...using mod-file..');
-    fmodif=fullfile(pa,[strrep(name,'a1_','a2_') 'mod.tif']);
-    if exist(fmodif)==2
-        s3=(mat2gray(imread(fmodif)).*255);
-        paint=s3==255;
-        brain=single(s3>0)-single(paint);
-        val=median(s3(brain(:)==1));
-        s3(paint)=val;
-        histo=uint8(s3);
-    end
-end
+% % ==============================================
+% %%  [2.3]   get orig resized image [a2_##.mat]
+% % ===============================================
+% % fir=regexprep(file,{[filesep filesep 'a1_'], '.tif$'},{[filesep filesep 'a2_'],'.mat'});
+% fir=fullfile(pa,['a2' numberstr '.mat']);
+% if exist(fir)~=2
+%     disp(['missing file: ' fir ]);
+%     return
+% end
+% s=load(fir); s=s.s;
+% 
+% 
+% 
+% % ==============================================
+% %%   2.3.1 load infomat
+% % rotate back
+% % ===============================================
+% try
+%     fi_info=fullfile(pa,['a1_info.mat']);
+%     info=load(fi_info);
+%     info=info.v;
+%     % ==============================================
+%     %%   2.3.2 check for manual rotations saved in ['a1_info.mat']!!!!
+%     % rotate back
+%     % ===============================================
+%     
+%     if isfield(info,'rottab')==1
+%         ix=find(strcmp(info.rottab(:,1), [ 'a1' numberstr '.jpg' ]));
+%         if ~isempty(ix)
+%             rotangle=info.rottab{ix,2};
+%             s.img  =imrotate(s.img,-rotangle,'crop','nearest');
+%             s.mask =imrotate(s.mask,-rotangle,'crop','nearest');
+%             disp([' ..rotating slice back: '  num2str(rotangle) '°']);
+%         end
+%     end
+% end
+% % ==============================================
+% %%   2.3.2 use mod_image
+% % ===============================================
+% histo     =s.img;
+% histo_orig=s.img;
+% so=s;
+% 
+% % useModFile=1;
+% 
+% if p.useModFile==1
+%     disp('...using mod-file..');
+%     fmodif=fullfile(pa,[strrep(name,'a1_','a2_') 'mod.tif']);
+%     if exist(fmodif)==2
+%         s3=(mat2gray(imread(fmodif)).*255);
+%         paint=s3==255;
+%         brain=single(s3>0)-single(paint);
+%         val=median(s3(brain(:)==1));
+%         s3(paint)=val;
+%         histo=uint8(s3);
+%     end
+% end
 
 
 
@@ -556,6 +635,12 @@ for i=1:size(tb,1)
         end
         
     end
+  
+    %%%w=w.*cast(cvmask,'like','w'); %%
+    %w=w.*double(cvmask);
+    %fg,imagesc(w(:,:,200))
+    
+    
     % ------------------------------------------------------ get slice
     slicenum=parameter(1);
     X       =parameter(2);
@@ -886,7 +971,9 @@ nameout=[outtag 'HISTO' '.mat' ] ;
 fi_out=fullfile(outdir, nameout);
 v=t;
 fprintf([ '(' num2str(i+1) ') "' nameout '"; ']);
-save(fi_out, 'v','-v7.3');
+if p.saveIMG==1
+    save(fi_out, 'v','-v7.3');
+end
 
 fprintf('Done.\n');
 try
@@ -982,6 +1069,22 @@ bi=[bi;q];
 q=imcomplement(text2im(['DIR: ' mdir ]));   %MDIR
 q(:,size(q,2)+1:sih) = 0;
 bi=[bi;q];
+
+
+try
+    flog=fullfile(pa,'importlog.txt');               %log-file
+    lg=importdata(flog);
+    %ix=find(~cellfun('isempty',strfind(lg,'[origin]')));
+    ix=find(~cellfun('isempty',regexpi(lg, [ name ext '$' ]))); % search for numericName
+    if length(ix)==1
+        rawfile=regexprep(lg{ix-1}, '.*\[origin]: ','' );
+        [~,nameRaw,extRaw]=fileparts(rawfile);
+        q=imcomplement(text2im(['RAW: ' [nameRaw,extRaw] ]));   
+        q(:,size(q,2)+1:sih) = 0;
+        bi=[bi;q];
+    end
+end
+
 
 [~,mdir,~]=fileparts(pa);                  % PARAMETER
 q=imcomplement(text2im(['PAR (S,p,y): ' sprintf('%2.1f , %2.2f , %2.2f', parameter(1),parameter(2),parameter(3)) ]));   %PARAMETER

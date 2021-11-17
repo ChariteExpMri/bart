@@ -100,7 +100,8 @@ elseif p.approach ==2
         fullfile(pa_el,'par_bspline033_Ncorr.txt')};
 elseif p.approach ==3 %50sec!
     parfile0={...
-        fullfile(pa_el, 'parameters_Affine_default.txt')
+        fullfile(pa_el, 'a1_affine.txt')
+        %fullfile(pa_el, 'parameters_Affine_default.txt')
         fullfile(pa_el, 'parameters_BSpline_default.txt') };
 end
 

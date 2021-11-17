@@ -1,13 +1,19 @@
 ## **BART Modifications**
- ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   21 Oct 2021 (11:27:06)  
+ ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   % 17 Nov 2021 (00:27:12)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/bart">https://github.com/ChariteExpMri/bart</a>  
     
     
     
 ------------------  
+  % ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**17 Nov 2021 (00:27:12)**</ins>  
+   __[HTMLreport.m ]__   make HTMLreport: finalResult (registration)  
+  available via BART-main-gui: snips/makeHTMLreport  
+<!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**21 Oct 2021 (11:27:06)**</ins>  
   added surrogate-method for slice-estimation  
+    
+    
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**05 Oct 2021 (14:35:51)**</ins>  
   __[selectslice.m]__: added tag-function + tooltips  

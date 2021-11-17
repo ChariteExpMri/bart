@@ -22,6 +22,11 @@
 % added surrogate-method for slice-estimation
 % 
 % 
+% % #ba 17 Nov 2021 (00:27:12)
+% #k [HTMLreport.m ] #n   make HTMLreport: finalResult (registration)
+% available via BART-main-gui: snips/makeHTMLreport
+% 
+% 
 % 
 % 
 

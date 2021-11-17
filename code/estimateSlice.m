@@ -111,36 +111,9 @@ if 0
     end
 end
 
-% ==============================================
-%%   get histoVolume
-% ===============================================
-% p.useHistVol=0;
-if p.useHistVol==1
-    [ cv]=p_getHIstvol(fullfile(pa_template, 'HISTOVOL.nii' ),1) ;
-    disp(['Template: HISTOVOL']);
-else
-    if 1
-        [ cv    ]=p_getHIstvol(fullfile(pa_template, 'AVGT.nii' ),0) ;
-        [ cvmask]=p_getfromHistvolspace(fullfile(pa_template, 'AVGTmask.nii' )) ;
-        cv=cv.*uint8(cvmask);
-        disp(['Template: AVGT']);
-    end
-end
-
-%———————————————————————————————————————————————
-%%  using  FIB
-%———————————————————————————————————————————————
-fb     =p_getfromHistvolspace(fullfile(pa_template, 'FIBT.nii' )) ;
-cvmask =p_getfromHistvolspace(fullfile(pa_template, 'AVGTmask.nii' )) ;
-fb=(fb./max(fb(:)))*100;
-fb=fb+cvmask;     
-p2.fb=single(fb);
-
-
-cv=uint8(cvmask).*cv; %IMPORTANT TO MASK HISTOVOLUME!
 
 % ==============================================
-%%   optimize test
+%%   get subject-histoslice
 % ===============================================
 [pat name ext]=fileparts(file);
 filename2=fullfile(pat,[ strrep(name,'a1_','a2_') '.mat']);
@@ -157,9 +130,50 @@ if exist(modfile)==2
    s.img=brainfile;
    s.mask=maskfile;
    %s.mask=uint8(s.img>0);
-   
-    
 end
+
+% ==============================================
+%%   get histoVolume
+% ===============================================
+% p.useHistVol=0;
+if p.useHistVol==1
+    [ cv]=p_getHIstvol(fullfile(pa_template, 'HISTOVOL.nii' ),1) ;
+    disp(['Template: HISTOVOL']);
+else
+    if 1
+        [ cv    ]=p_getHIstvol(fullfile(pa_template, 'AVGT.nii' ),0) ;
+        [ cvmask]=p_getfromHistvolspace(fullfile(pa_template, 'AVGTmask.nii' )) ;
+        cv=cv.*uint8(cvmask);
+        disp(['Template: AVGT']);
+    end
+end
+
+if isfield(s,'hemi')==1
+    [ cvmask]=p_getfromHistvolspace(fullfile(pa_template, 'AVGThemi.nii' )) ;
+    if strcmp(lower(s.hemi),'r') || strcmp(lower(s.hemi),'right')
+        cvmask=single(cvmask==2);
+        %cv=cv.*uint8(cvmask);
+    elseif strcmp(lower(s.hemi),'l') || strcmp(lower(s.hemi),'left')
+        cvmask=single(cvmask==2);
+        %cv=cv.*uint8(cvmask);
+    end
+end
+
+%———————————————————————————————————————————————
+%%  using  FIB
+%———————————————————————————————————————————————
+if 0
+    fb     =p_getfromHistvolspace(fullfile(pa_template, 'FIBT.nii' )) ;
+    cvmask =p_getfromHistvolspace(fullfile(pa_template, 'AVGTmask.nii' )) ;
+    fb=(fb./max(fb(:)))*100;
+    fb=fb+cvmask;
+    p2.fb=single(fb);
+end
+
+
+cv=uint8(cvmask).*cv; %IMPORTANT TO MASK HISTOVOLUME!
+
+
 
 % ==============================================
 %%   filter HISTO-SLICE

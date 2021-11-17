@@ -60,6 +60,15 @@ ss=load(fiopt);
 ss=ss.ss;
 
 % ==============================================
+%% get a2_XXX.mat
+% ===============================================
+[pas name ext]=fileparts(fiopt);
+F1=fullfile(pas,[strrep(name,'optim_','a2_') '.mat']);
+s2=load(F1);
+s2=s2.s;
+
+
+% ==============================================
 %%   get ATLAS and mask by Atlasmask
 % ===============================================
 disp('...getting template');
@@ -70,6 +79,20 @@ if 0
     [ cv    ]=p_getHIstvol(fullfile(pa_template, 'AVGT.nii' ),0) ;
     [ cvmask]=p_getfromHistvolspace(fullfile(pa_template, 'AVGTmask.nii' )) ;
     cv=cv.*uint8(cvmask);
+end
+
+
+if isfield(s2,'hemi')==1
+    [ cvmask]=p_getfromHistvolspace(fullfile(pa_template, 'AVGThemi.nii' )) ;
+    if strcmp(lower(s2.hemi),'r') || strcmp(lower(s2.hemi),'right')
+        cvmask=single(cvmask==2);
+        cv=cv.*uint8(cvmask);
+        disp('---using right hemisphere template only');
+    elseif strcmp(lower(s2.hemi),'l') || strcmp(lower(s2.hemi),'left')
+        cvmask=single(cvmask==2);
+        cv=cv.*uint8(cvmask);
+         disp('---using left hemisphere template only');
+    end
 end
 
 % ==============================================
@@ -101,8 +124,12 @@ elseif p.approach ==2
         fullfile(pa_el,'Par0025affine_h2.txt')
         fullfile(pa_el,'par_bspline033_Ncorr.txt')};
 elseif p.approach ==3 %50sec!
-    parfile0={...
-        fullfile(pa_el, 'parameters_Affine_default.txt')
+%     parfile0={...
+%         fullfile(pa_el, 'parameters_Affine_default.txt')
+%         fullfile(pa_el, 'parameters_BSpline_default.txt') };
+
+parfile0={...
+        fullfile(pa_el, 'a1_affine.txt')
         fullfile(pa_el, 'parameters_BSpline_default.txt') };
 end
 
@@ -197,20 +224,19 @@ fix=uint8(fix);
 poolobj = gcp;
  addAttachedFiles(poolobj,{'mhd_read_header.m','readWholeTextFile.m' ,'elastix2.m', [mfilename '.m'],'mhd_read.m'});%,'elastix.m'
 timexWarp=tic;
-% cd(pa_el);
+
 parfor i=1:n%10
-    xx=ss.s(i,:)
+% for i=1:n%10
+    xx=ss.s(i,:);
     slicenum=xx(1);   X=xx(2);  Y=xx(3);
     cent    =[size(cv,2)/2 size(cv,1)/2];
     vol_center=[cent slicenum];
     d=uint8(obliqueslice(cv, vol_center, [Y -X 90]));
     
-  mov=double(d);%.*double((d>30));
-    %  mov=double(d).*double((d>30));
+    mov=double(d);%.*double((d>30));
     mov=imresize(mov,[siz]);
-        
-      mov=uint8(mov);
-%       fix=uint8(fix);
+    mov=uint8(mov);
+
     
     % ----------------------------
     elxout3=elsPathList{i};

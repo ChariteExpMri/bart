@@ -129,6 +129,7 @@ m2 = uimenu(m,'label','assign cells to region','callback', @cell2regionAssign);
 % ---------------------
 m = uimenu('label','SNIPS');
 m2 = uimenu(m,'label','make HTMLfile to select bad slices [makeSelection_HTML.m]','callback', @selectBadImages_HTML);
+m2 = uimenu(m,'label','make HTMLfile Report:  finalResult [HTMLreport.m]'        ,'callback', @HTMLreport_call);
 
 
 m  = uimenu('label','updates');
@@ -306,6 +307,8 @@ bartcb('update');
 function selectBadImages_HTML(e,e2)
   makeSelection_HTML();
 
+function HTMLreport_call(e,e2)
+HTMLreport();
 
 
 % ==============================================

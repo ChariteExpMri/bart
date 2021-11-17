@@ -1,0 +1,437 @@
+
+
+% make HTMLreport: finalResult (registration)
+
+function HTMLreport(showgui,x )
+
+
+global ak
+tx=[...
+    {'finalResult' ['fin' filesep 's#_result.gif']  }
+    ];
+outdir=fullfile(fileparts(ak.dat),'checks') ;
+% ==============================================
+%%   PARAMS
+% ===============================================
+if exist('showgui')==0 || isempty(showgui) ;    showgui=1                   ;end
+if exist('x')==0                           ;    x=[]                        ;end
+
+% ==============================================
+%% PARAMETER-gui
+% ===============================================
+
+if exist('x')~=1;        x=[]; end
+
+%% import 4ddata
+para={...
+    'inf98'      '*** HTMLreport      '    '' ''   %    'inf1'      '% PARAMETER         '                                    ''  ''
+    'task'                 tx{1,1}           'Task to perform. Display putput of task in HTML)'  tx(:,1)
+    'outdir'              outdir             'output directory'  'd'
+    'HTMLfileName'          ''               'filename-suffix of HTML-file (optional)'  '' 
+    'imageSize'             600              'image size (width) in pixels'    {50 100 200 400 500 1000}          
+    'istest'                 0               'testMOde: perform report for 1st slice only (0,1)'  'b'
+    };
+
+p=paramadd(para,x);%add/replace parameter
+%     [m z]=paramgui(p,'uiwait',0,'close',0,'editorpos',[.03 0 1 1],'figpos',[.2 .3 .7 .5 ],'title','PARAMETERS: LABELING');
+
+% %% show GUI
+if showgui==1
+    hlp=help(mfilename); hlp=strsplit2(hlp,char(10))';
+    [m z]=paramgui(p,'uiwait',1,'close',1,'editorpos',[.03 0 1 1],'figpos',[.2 .3 .5 .3 ],...
+        'title',[mfilename '.m'],'pb1string','OK','info',hlp);
+    if isempty(m); return; end
+    fn=fieldnames(z);
+    z=rmfield(z,fn(regexpi2(fn,'^inf\d')));
+else
+    z=param2struct(p);
+end
+
+cprintf([0 0 1],[' HTMLreport... '  '\n']);
+xmakebatch(z,p, mfilename); % ## BATCH
+
+
+p=z;
+
+% p.istest  =0;  %[0]all animals;  [1]: test of 5 animals
+% p.task    =tx{1,1};
+% p.outdir  =fullfile(fileparts(ak.dat),'checks');
+% p.HTMLfileName = 'test1'
+
+
+% ==============================================
+%%   
+% ===============================================
+
+
+%% readout insentity image
+% cf;clear; warning off
+
+fidi=bartcb('getsel');
+w.dirs  =fidi(strcmp(fidi(:,2),'dir'),1);
+w.files =fidi(strcmp(fidi(:,2),'file'),1);
+
+
+
+% ==============================================
+%%   parameter
+% ===============================================
+
+
+% global ak
+% 
+% 
+% tx=[...
+%     {'finalResult' ['fin' filesep 's#_result.gif']  }
+%     
+%     ]
+% p.addimage=1;  %add image in matfile
+% p.istest  =0;  %[0]all animals;  [1]: test of 5 animals
+% p.task    ='finalResult';
+% p.outdir  =fullfile(fileparts(ak.dat),'checks');
+% p.HTMLfileName = 'test1'
+
+% ==============================================
+%%   get selected  files and mdirs
+% ===============================================
+
+
+fidi=bartcb('getsel');
+w.dirs  =fidi(strcmp(fidi(:,2),'dir'),1);
+w.files =fidi(strcmp(fidi(:,2),'file'),1);
+
+files=w.files ;
+[pas name ext]=fileparts2(files );
+[pas2 name2 ext2]=fileparts2(pas );
+% mname=name2 ;%  mouseName
+mname=cellfun(@(a,b){[a filesep b]}, name2,name );%  mouseName
+
+
+
+% ==============================================
+%%   get selected  files and mdirs
+% ===============================================
+N=length(files);
+if p.istest==1
+    N=5;
+    cprintf([0 0 1],[' TEST of  N='  num2str(N) '  animals \n']);
+else
+    cprintf([0 0 1],[' ANIMALS  N='  num2str(N) '  animals \n']);
+end
+tb=[]; %table to fill:
+
+
+
+for mo=1:N
+    [pa name ext]=fileparts(files{mo} );
+    animal=mname{mo};
+    
+    disp([ num2str(mo) '/' num2str(N) ': ' animal   ]);
+    
+    pafin=fullfile(pa,'fin');
+    nametok=[strrep(name,'a1_','')];
+    
+    itx=regexpi2(tx(:,1),p.task);
+    s=tx{itx,2};
+    
+    f1=fullfile(pa,[strrep(s,'#',nametok)]);
+    %-------ANIMATED gif ------------------------------------
+    if strcmp(tx{itx,1},  'finalResult' ) %length(imfinfo(f1))==2 && ~isempty(regexp(s,'.gif$')) % animated GIF
+        %% __
+        m={};
+        try      %__RAW-FILE_______________________
+            lg=importdata(fullfile(pa,'importlog.txt'));
+            iraw=regexpi2(lg,[ name ext '$'])-1;
+            rawfile=regexprep(lg{iraw},'.*\[origin]: ','');
+            m(end+1,1)={['RAW               : ' rawfile ]};
+        end
+        try
+            %__TIF-IMAGE_______________________
+            ht=imfinfo(files{mo});
+            m(end+1,1)={['Width x Height    : ' num2str(ht.Width) ' x ' num2str(ht.Height) ...
+                '; size: ' num2str(round(ht.FileSize/1e6)) '[MB]' ]};
+        end
+        
+        try
+            %__REF-IMAGE_______________________
+            F2=fullfile(pa , [strrep(name,'a1','a2') '.mat']);
+            q=load(F2); q=q.s;
+            if isfield(q,'rotationmod')
+                m(end+1,1)={['Rotation          : ' num2str(q.rotationmod) ]};
+            end
+            if isfield(q,'rotationmod')
+                m(end+1,1)={['add Border        : ' num2str(q.bordermod) ]};
+            end
+            if isfield(q,'hemi')
+                m(end+1,1)={['HemisphereType    :   ' (q.hemi) ]};
+            else
+                m(end+1,1)={['HemisphereType    :   ' 'L+R' ]};
+            end
+        end
+        try
+            %__MOD-IMAGE_______________________
+            F2=fullfile(pa , [strrep(name,'a1','a2') 'mod' ext]);
+            if exist(F2)==2
+                m(end+1,1)={['use MOD-Image     : yes' ]};
+            else
+                m(end+1,1)={['use MOD-Image     : no' ]};
+            end
+        end
+        %          m
+        %% __
+        u.animal=animal;
+        img=f1;
+        
+        
+        dx= [animal {u} {m} img  ];
+        tb=[tb; dx];
+        
+    else
+        
+        
+        
+        
+        f1=fullfile(pa, ['intens1_'  nametok '.mat']); %'intens1_001.mat'
+        g=load(f1);
+        g=g.g;
+        x=g.x;
+        % ------------------------
+        %[2] ANO
+        an=load(fullfile(pafin, [ 's' nametok '_ANO.mat'  ] ));
+        an=an.v;
+        %[3] AVGT
+        av=load(fullfile(pafin, [ 's' nametok '_AVGT.mat'  ] ));
+        av=av.v;
+        
+        IDs=unique(an);
+        IDs(IDs==0)=[];
+        
+        an2=an(:);
+        x2=x(:);
+        if (numel(x)~=numel(an))
+            msgbox('mismatch: array size');
+        end
+        % ==============================================
+        %   get regionwise-intensity
+        % ===============================================
+        
+        ts=[];
+        for i=1:length(IDs)
+            ix=find(an2==IDs(i));
+            me=mean(x2(ix));
+            ts(i,:)=[IDs(i) me]; %ID & ME
+        end
+        
+        
+        
+        
+        
+        
+        % ==============================================
+        % make cell
+        % ===============================================
+        
+        
+        u.animal=animal;
+        u.hd={'ID' 'MEAN'};
+        if isfield(g,'file')            %add raw-fileName
+            u.raw=g.file;
+        end
+        if p.addimage==1;              %add images in matfile
+            img={{ {'intens' 'ano' 'avgt'} ; { x  an av}}};
+        end
+        
+        
+        dx= [animal {u} {ts} img  ];
+        tb=[tb; dx];
+    end
+    
+    
+end
+
+% ==============================================
+%%   mkdir
+% ===============================================
+% pastudy=fileparts(fileparts(w.dirs{1}));
+% paresult=fullfile(pastudy,'results');
+
+
+
+%% ##################################################
+% ==============================================
+%%      make HTML-fie ##########
+% ===============================================
+%% ##################################################
+
+
+
+paresult=p.outdir ;
+mkdir(paresult);
+
+if isempty(p.HTMLfileName)
+   subdir=p.task ;
+else
+    subdir=[p.task '_' p.HTMLfileName];
+end
+
+
+pahtml=fullfile(paresult,subdir);
+mkdir(pahtml);
+
+
+
+hs={
+    '<!DOCTYPE html>'
+    '<html>'
+    '<head>'
+    '<style>'
+    'img {'
+    '  width: 100%;'
+    '}'
+    '</style>'
+    '</head>'
+    '<body>'
+    };
+%  'testSubject  1s2222'
+%  '<br>'
+%  '<img src="images/a1.jpg" alt="HTML5 Icon" style="width:400px;height:400px;">'
+he={
+    '</body>'
+    '</html>'
+    ''
+    };
+
+
+if strcmp(p.task,'finalResult')
+    
+    
+    v2={};
+    wid=p.imageSize;%800;
+    for mo=1:size(tb,1)
+        
+        tt=tb(mo,:);
+        animalname=tt{1};
+        info=tt{3};
+        img=tt{4};
+        
+        sname=[ strrep(animalname,'\','__')  '.gif'];
+        fsave =fullfile(pahtml, sname);
+        flink =[ subdir '/' sname] ;
+        
+      v={ [ '<h3> [ animal-' num2str(mo) ']..  <font color="green">' animalname '</h3>  </font> ' ]  };
+      if exist(img)~=0
+          copyfile(img,fsave,'f');
+          v=[v; {[ '<img src="' flink '" alt="-no imgae--> registration not finished" style="width:' num2str(wid) 'px;height:' num2str(wid) 'px;"'...
+              [' title="' 'registration' '-image'  '">']  ]} ];
+      else
+           v{end+1,1}='<font color="red">';
+           v{end+1,1}= 'registration not finished --> final result (Image) not found';
+           v{end+1,1}='</font">';
+          
+      end
+        
+        
+        
+        v{end+1}=[ '<br>'  ];
+        
+        
+        
+        %_________INFO__________________________________
+        v{end+1}='<font color="blue">';
+        v{end+1}=[ '<pre>'  ];
+        for i=1:length(info)
+            v{end+1}= [  info{i}  ];
+        end
+        v{end+1}=[ '</pre>'  ];
+        v{end+1}='</font">';
+        
+        
+        if 0
+            B={};
+            for i=1:length(info)
+                dv={'<pre style="font-family:courier;color:191970;font-size:15px;line-height:.1;">'
+                    info{i}
+                    '</pre>'
+                    }
+                B=[B;dv]
+            end
+            v=[v;B]
+        end
+        
+        
+        %         for i=1:length(imgs)
+        %             sname=[ animalname '__' head{i} '.jpg'];
+        %             fsave =fullfile(pahtml, sname);
+        %             flink =[ subdir '/' sname] ;
+        %             if ~isempty(strfind(head{i},'ano'))
+        %                 imgx= uint8(round(255.*imadjust(mat2gray(pseudocolorize(imgs{i})   ))));
+        %             else
+        %                 imgx= uint8(round(255.*imadjust(mat2gray(imgs{i}))));
+        %             end
+        %             imwrite(imgx,fsave);
+        %
+        %             %__HTML_links
+        %             v=[v; {[ '<img src="' flink '" alt="HTML5 Icon" style="width:' num2str(wid) 'px;height:' num2str(wid) 'px;"'...
+        %                 [' title="' upper(head{i}) '-image'  '">']  ]} ];
+        %         end
+        v=[v; {[ '<br>'  ]} ];
+        
+        v2=[v2; v];
+    end
+    
+    z=[  hs ;v2; he];
+    if isempty(p.HTMLfileName)
+        htmlfile=fullfile(fileparts(pahtml),[p.task  '.html']);
+    else
+        htmlfile=fullfile(fileparts(pahtml),[p.task '_' p.HTMLfileName '.html']);
+    end
+    pwrite2file(htmlfile,z);
+    showinfo2('HTML-file',htmlfile);
+    
+    
+else
+    
+    
+    %% ===============================================
+    v2={};
+    wid=250;
+    for mo=1:size(tb,1)
+        tt=tb(mo,:);
+        animalname=tt{1};
+        head=tt{4}{1};
+        imgs=tt{4}{2};
+        
+        v={ [ '<h3> [ animal-' num2str(mo) ']..  <font color="green">' animalname '</h3>  </font> ' ]  };
+        for i=1:length(imgs)
+            sname=[ animalname '__' head{i} '.jpg'];
+            fsave =fullfile(pahtml, sname);
+            flink =[ subdir '/' sname] ;
+            if ~isempty(strfind(head{i},'ano'))
+                imgx= uint8(round(255.*imadjust(mat2gray(pseudocolorize(imgs{i})   ))));
+            else
+                imgx= uint8(round(255.*imadjust(mat2gray(imgs{i}))));
+            end
+            imwrite(imgx,fsave);
+            
+            %__HTML_links
+            v=[v; {[ '<img src="' flink '" alt="HTML5 Icon" style="width:' num2str(wid) 'px;height:' num2str(wid) 'px;"'...
+                [' title="' upper(head{i}) '-image'  '">']  ]} ];
+        end
+        v=[v; {[ '<br>'  ]} ];
+        
+        v2=[v2; v];
+    end
+    
+    z=[  hs ;v2; he];
+    htmlfile=fullfile(fileparts(pahtml),'check.html');
+    pwrite2file(htmlfile,z);
+    showinfo2('HTML-file',htmlfile);
+end
+%% ===============================================
+
+
+
+
+
+
+

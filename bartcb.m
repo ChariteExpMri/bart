@@ -210,6 +210,7 @@ jListbox = jScrollPane.getViewport.getComponent(0);
 set(jListbox, 'MouseMovedCallback', {@mouseMovedCallback,hb});
 
 function mouseMovedCallback(jListbox, jEventData, hListbox)
+warning off;
 try
     
     % Get the currently-hovered list-item
@@ -242,6 +243,7 @@ try
         set(hr,'units','pixels');
         pos=get(hr,'position');
         img=imread(f2);
+        if size(img,3)==1; img=repmat(img,[1 1 3]);end
         mn=min([pos(3) pos(4)]);
         img=imresize(img,[mn mn]);
         set(hr,'Cdata',img);

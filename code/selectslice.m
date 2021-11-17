@@ -35,6 +35,16 @@ end
 %%   
 % ===============================================
 load(file);
+
+% ==============================================
+%% get a2_XXX.mat
+% ===============================================
+[pas name ext]=fileparts(file);
+F1=fullfile(pas,[strrep(name,'warp_','a2_') '.mat']);
+s2=load(F1);
+s2=s2.s;
+
+
 % ==============================================
 %%   
 % ===============================================
@@ -48,6 +58,10 @@ bf.file=file;
 bf.cmap={'gray' 'hot' 'parula','jet'};
 bf.cmapValue=1;
 bf.sortcolumn=6;
+
+if isfield(s2,'hemi')
+    bf.hemi=s2.hemi;
+end
 %===================================================================================================
 
 
@@ -711,6 +725,21 @@ hb=findobj(gcf,'tag','lb1');
 cord=bf.tb(hb.Value,[3:5]);
 %  cv=getappdata(gcf,'cv');
 
+if isfield(bf,'hemi')
+    global ak
+    pa_template=ak.template;
+    [ cvmask]=p_getfromHistvolspace(fullfile(pa_template, 'AVGThemi.nii' )) ;
+    if strcmp(lower(bf.hemi),'r') || strcmp(lower(bf.hemi),'right')
+        cvmask=single(cvmask==2);
+        %cv=cv.*uint8(cvmask);
+    elseif strcmp(lower(bf.hemi),'l') || strcmp(lower(bf.hemi),'left')
+        cvmask=single(cvmask==2);
+        %cv=cv.*uint8(cvmask);   
+    end
+else
+     [ cvmask]=p_getfromHistvolspace(fullfile(pa_template, 'AVGTmask.nii' )) ; 
+end
+
 hx=findobj(gcf,'tag','isAVGT');
 isAVGT=get(hx,'value');
 if isAVGT==0
@@ -719,7 +748,9 @@ if isAVGT==0
         disp('...loading 3d-template..');
         global ak
         pa_template=ak.template;
+        
         [ cv]=p_getHIstvol(fullfile(pa_template, 'HISTOVOL.nii' ),1) ;
+        cv=cv.*uint8(cvmask); 
     end
     histview(cv,cord,[1 1 1],bf.ss.hi);
 elseif isAVGT==1
@@ -730,8 +761,7 @@ elseif isAVGT==1
         pa_template=ak.template;
         %[ cv]=p_getHIstvol(fullfile(pa_template, 'HISTOVOL.nii' ),1) ;
         [ cv2    ]=p_getHIstvol(fullfile(pa_template, 'AVGT.nii' ),0) ;
-        %         [ cvmask]=p_getfromHistvolspace(fullfile(pa_template, 'AVGTmask.nii' )) ;
-        %         cv=cv.*uint8(cvmask);
+        cv2=cv2.*uint8(cvmask); 
     end
     histview(cv2,cord,[1 1 1],bf.ss.hi);
 end
