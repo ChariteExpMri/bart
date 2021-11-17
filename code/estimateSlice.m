@@ -150,10 +150,10 @@ end
 
 if isfield(s,'hemi')==1
     [ cvmask]=p_getfromHistvolspace(fullfile(pa_template, 'AVGThemi.nii' )) ;
-    if strcmp(lower(s.hemi),'r') || strcmp(lower(s.hemi),'right')
+    if strcmp(lower(s.hemi),'r') || strcmp(lower(s.hemi),'right') || strcmp(lower(s.hemi),'R')
         cvmask=single(cvmask==2);
         %cv=cv.*uint8(cvmask);
-    elseif strcmp(lower(s.hemi),'l') || strcmp(lower(s.hemi),'left')
+    elseif strcmp(lower(s.hemi),'l') || strcmp(lower(s.hemi),'left') || strcmp(lower(s.hemi),'L')
         cvmask=single(cvmask==2);
         %cv=cv.*uint8(cvmask);
     end

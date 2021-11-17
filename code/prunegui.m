@@ -1809,16 +1809,16 @@ elseif strfind(hh.String{hh.Value}, 'right')
     hemistring='  hemisphere  : right  (added struct field "hemi"=''R'')';
 elseif strfind(hh.String{hh.Value}, 'both')
     if isfield(s,'hemi');
-        s=rmfield(s,'hemi');
-        hemistring='  hemisphere  : both  (removed struct field "hemi") ';
+        s=rmfield(s,'hemi'); 
     end
+    hemistring='  hemisphere  : both  (removed struct field "hemi") ';
 end
 disp(['  rotation    : ' num2str(s.rotationmod) ]);
 disp(['  add border  : ' num2str(s.bordermod)   ]);
 disp([hemistring]); 
 
 % ==============================================
-%%   save
+%%   save1
 % ===============================================
 
 
