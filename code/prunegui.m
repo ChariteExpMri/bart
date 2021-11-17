@@ -240,6 +240,18 @@ set(hb,'tooltipstring',...
     ['<html><b>rotate slice </b>--> rotate image <br>'...
     ' shortcut [r]']);
 %% ===============================================
+hemlist={'both hemispheres' 'left hemisphere' 'right hemisphere'};
+hb=uicontrol('style','popupmenu','units','norm','tag','hemisphere','string',hemlist);
+set(hb,'position',[[0.9 0.35 0.103 0.02809]],'fontsize',6);
+set(hb,'tooltipstring',...
+   ['<html><font color=blue><b>define hemisphere </b><br>' ...
+   'select the hemispheric representation of the slice  </font><br>'...
+    '<b>both hemispheres: </b>if the slice represents both hemispheres <br>' ...
+    '<b>left hemispheres: </b>if the slice represents only the left hemisphere <br>' ...
+    '<b>right hemispheres: </b>if the slice represents only the right hemisphere <br>' ...
+    ]);
+
+%% ===============================================
 
 %% glue tissue
 hb=uicontrol('style','pushbutton','units','norm','tag','glueTissue','string','glueTissue');
@@ -1787,10 +1799,34 @@ s=load(u.file);
 s=s.s;
 s.rotationmod = sum(u.rotstp(  1:u.stepnum));
 s.bordermod   = max(u.bordstp( 1:u.stepnum));
-save(u.file, 's');
 
+hh=findobj(gcf,'tag','hemisphere');
+if strfind(hh.String{hh.Value}, 'left')
+    s.hemi='L';
+    hemistring='  hemisphere  : left  (added struct field "hemi"=''L'')';
+elseif strfind(hh.String{hh.Value}, 'right')
+    s.hemi='R';
+    hemistring='  hemisphere  : right  (added struct field "hemi"=''R'')';
+elseif strfind(hh.String{hh.Value}, 'both')
+    if isfield(s,'hemi');
+        s=rmfield(s,'hemi');
+        hemistring='  hemisphere  : both  (removed struct field "hemi") ';
+    end
+end
 disp(['  rotation    : ' num2str(s.rotationmod) ]);
 disp(['  add border  : ' num2str(s.bordermod)   ]);
+disp([hemistring]); 
+
+% ==============================================
+%%   save
+% ===============================================
+
+
+save(u.file, 's');
+
+
+
+ 
 
 % ==============================================
 %%   reset
