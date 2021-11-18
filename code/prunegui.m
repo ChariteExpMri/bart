@@ -18,7 +18,7 @@ if 0
 end
 
 % ==============================================
-%%   
+%%
 % ===============================================
 % file='F:\data3\histo2\josefine\dat\14_000000000001F059\a2_002.mat'
 filelist=cellstr(filelist);
@@ -93,7 +93,7 @@ if size(u.imb,3)>1
     end
     % ==============================================
     %%
-    % =============================================== 
+    % ===============================================
 end
 
 hx=findobj(gcf,'tag','loadModImage');
@@ -240,16 +240,28 @@ set(hb,'tooltipstring',...
     ['<html><b>rotate slice </b>--> rotate image <br>'...
     ' shortcut [r]']);
 %% ===============================================
+%% HEMISPHERE
 hemlist={'both hemispheres' 'left hemisphere' 'right hemisphere'};
 hb=uicontrol('style','popupmenu','units','norm','tag','hemisphere','string',hemlist);
 set(hb,'position',[[0.9 0.35 0.103 0.02809]],'fontsize',6);
+set(hb,'callback',@hemisphere);
+
 set(hb,'tooltipstring',...
-   ['<html><font color=blue><b>define hemisphere </b><br>' ...
-   'select the hemispheric representation of the slice  </font><br>'...
+    ['<html><font color=blue><b>define hemisphere </b><br>' ...
+    'select the hemispheric representation of the slice  </font><br>'...
     '<b>both hemispheres: </b>if the slice represents both hemispheres <br>' ...
     '<b>left hemispheres: </b>if the slice represents only the left hemisphere <br>' ...
     '<b>right hemispheres: </b>if the slice represents only the right hemisphere <br>' ...
     ]);
+%% ===============================================
+%% change contrast
+hb=uicontrol('style','pushbutton','units','norm','tag','changecontrast','string','change contrast');
+set(hb,'position',[[0.90459 0.32 0.072464 0.02809]],'fontsize',6);
+set(hb,'callback',@changecontrast);
+set(hb,'tooltipstring',...
+    ['<html><b>image contrast </b><br> interactively change image contrast  <br>'...
+    ]);
+
 
 %% ===============================================
 
@@ -524,9 +536,9 @@ u=get(gcf,'userdata');
 SP='&nbsp;';
 
 if u.ismodfile==0
-  imgtype=  '<b> <font color=Black> ORIG-IMAGE</b>';
+    imgtype=  '<b> <font color=Black> ORIG-IMAGE</b>';
 else
-  imgtype=  '<b> <font color=Orange> Modified-IMAGE</b>'  ;
+    imgtype=  '<b> <font color=Orange> Modified-IMAGE</b>'  ;
 end
 
 s=['<html><font color=black>' [pa filesep]  '<font color=green><b>'  [ name ext repmat(SP,[1 10])] ...
@@ -554,7 +566,7 @@ delete(findobj(gcf,'type','line'));
 changeINfo();
 
 ax1=findobj(gcf,'tag','ax1');
-grid on; ax1.GridColor=[1 0 1]; 
+grid on; ax1.GridColor=[1 0 1];
 ax1.GridAlpha=1;
 
 % ==============================================
@@ -736,7 +748,7 @@ if 1
     [vx,vy] = meshgrid(xl(1):xl(2), yl(1):yl(2));
     %vq = griddata(x,y,v,xq,yq);
     hs=surface(vy,vx, zeros(size(vy)),'tag','surface'); %NEW
-%     hs=surface(yy,xx, zeros(2),'tag','surface'); %ORIG
+    %     hs=surface(yy,xx, zeros(2),'tag','surface'); %ORIG
     set(hs,'CData',ds');%,ds,'FaceColor','texturemap','edgecolor','none');
     hs.AlphaData = (ds'~=0); %hide  between 0 and 1:(Z<=0) | (Z>=1);
     hs.FaceColor = 'texturemap';
@@ -745,7 +757,7 @@ if 1
     % ==============================================
     %%
     % ===============================================
-
+    
 end
 
 ur.type='surface_origPosition: surface(vy,vx, zeros(size(vy)),''tag'',''surface'')';
@@ -933,16 +945,16 @@ if strcmp(arg,'edit') || strcmp('task','show')
     him=findobj(findobj(0,'tag','prune'),'tag','him');
     set(him,'Cdata',d2);
     
-elseif strcmp(arg,'ok') || strcmp(arg,'cancel') 
+elseif strcmp(arg,'ok') || strcmp(arg,'cancel')
     if strcmp(arg,'ok')
         %--update userdata-main--
-       
-       
+        
+        
         
         
         u=get(gcf,'userdata');
         nextstep=u.stepnum+1;
-         he=findobj(gcf,'tag','bord_ed');
+        he=findobj(gcf,'tag','bord_ed');
         val=str2num(get(he,'string'));
         %         disp(val)
         if val~=0
@@ -971,8 +983,57 @@ elseif strcmp(arg,'ok') || strcmp(arg,'cancel')
     
 end
 
-    
+% ==============================================
+%%   hemisphere
+% ===============================================
 
+function hemisphere(e,e2)
+%% ===============================================
+
+hb=findobj(findobj(0,'tag','prune'),'tag','hemisphere');
+him=findobj(findobj(0,'tag','prune'),'tag','him');
+b=get(him,'Cdata');
+b0=uint8(255*ones(size(b)));
+hemi=hb.String{hb.Value};
+if  ~isempty(strfind(hemi,'left'))
+    b0=uint8(255*ones(size(b)));
+    b0(:,round(size(b,2)/2):end)=0;
+    tx=text2im('using the LEFT hemispere');tx=imresize(uint8(tx.*255),[2]);
+    b0(round(size(b0,1)/2):round(size(b0,1)/2)+size(tx,1)-1, ...
+       1:size(tx,2))=tx;
+    set(him,'CData',b0);
+    
+elseif ~isempty(strfind(hemi,'right'))
+    b0=uint8(255*ones(size(b)));
+    b0(:,1:round(size(b,2)/2))=0;
+    tx=text2im('using the RIGHT hemispere');tx=imresize(uint8(tx.*255),[2]);
+    b0(round(size(b0,1)/2):round(size(b0,1)/2)+size(tx,1)-1, ...
+       (round(size(b0,2)/2):round(size(b0,2)/2)+size(tx,2)-1))=tx;
+    set(him,'CData',b0);
+else
+    b0=uint8(255*ones(size(b)));
+    tx=text2im('using BOTH hemisperes');tx=imresize(uint8(tx.*255),[2]);
+    b0(round(size(b0,1)/2):round(size(b0,1)/2)+size(tx,1)-1, ...
+       (round(size(b0,2)/2):round(size(b0,2)/2)+size(tx,2)-1)-round(size(tx,2)/2))=tx;
+    set(him,'CData',b0);
+end
+drawnow;
+pause(.5);
+set(him,'CData',b);
+
+% ==============================================
+%%   changecontrast
+% ===============================================
+
+function changecontrast(e,e2)
+
+try
+    him=findobj(findobj(0,'tag','prune'),'tag','him');
+    imcontrast(him);
+catch
+    msgbox('image processing toolbox required');
+    
+end
 
 
 % ==============================================
@@ -1045,7 +1106,7 @@ axes(findobj(gcf,'tag','ax1')); %FOCUS AXES
 
 
 % ==============================================
-%%   
+%%
 % ===============================================
 function rotsl_cb(e,e2,arg,value)
 % arg
@@ -1055,18 +1116,18 @@ elseif strcmp(arg,'edit')
     val=str2num(get(findobj(gcf,'tag','rotsl_edit'),'string'));
     if isempty(val); return; end
     rotsl_cb([],[],'rotate',val);
-elseif strcmp(arg,'ok') || strcmp(arg,'cancel') 
+elseif strcmp(arg,'ok') || strcmp(arg,'cancel')
     if strcmp(arg,'ok')
         u=get(gcf,'userdata');
         nextstep=u.stepnum+1;
         val=str2num(get(findobj(gcf,'tag','rotsl_edit'),'string'));
-%         disp(val)
+        %         disp(val)
         if val~=0
             u.rotstp(nextstep)=val;
         end
         set(gcf,'userdata',u);
         
-%         disp([u.rotstp(1:10)])
+        %         disp([u.rotstp(1:10)])
         
         
         % -----------------------;
@@ -1120,7 +1181,7 @@ end
 axes(findobj(gcf,'tag','ax1')); %FOCUS AXES
 
 % ==============================================
-%%   
+%%
 % ===============================================
 
 
@@ -1139,9 +1200,9 @@ if isempty(cb)       %-----MOVING----
     
 else          %-----FIX----
     % hs=findobj(gcf,'type','surface');
-   % set(hs,'EdgeColor',[0 0 0],'linestyle','-','linewidth',0.5);
+    % set(hs,'EdgeColor',[0 0 0],'linestyle','-','linewidth',0.5);
     
-     hp=findobj(gcf,'tag','ROI');
+    hp=findobj(gcf,'tag','ROI');
     set(hp,'LineWidth',1,'linestyle','--','EdgeColor',[0 1 0]);
     set(findobj(gcf,'tag','ROI_drag'),'backgroundcolor',[0 1 0]);
     set(gcf, 'WindowButtonMotionFcn',[]);
@@ -1188,14 +1249,14 @@ if strcmp(e2.Key,'leftarrow')   || strcmp(e2.Key,'rightarrow')
 end
 
 if ~isempty(findobj(gcf,'tag','ROI_rotate')) %ROTATE SLICE IF PANEL EXIST
-%     e2
+    %     e2
     val= get(findobj(gcf,'tag','ROI_rotate'),'value');
-   
     
-    if ~any(strcmp(e2.Modifier,'shift'))   
-         % TRAMSLATE________________
-         nstep=1;
-         if any(strcmp(e2.Modifier,'control'))
+    
+    if ~any(strcmp(e2.Modifier,'shift'))
+        % TRAMSLATE________________
+        nstep=1;
+        if any(strcmp(e2.Modifier,'control'))
             nstep=5;
             if any(strcmp(e2.Modifier,'alt')) %control+shift
                 nstep=50;
@@ -1284,7 +1345,7 @@ t(find(t(:,2)<1),:)=[];
 t(find(t(:,1)>sif(2)),:)=[];
 t(find(t(:,2)>sif(1)),:)=[];
 try
-ix=sub2ind(sif,t(:,2),t(:,1));
+    ix=sub2ind(sif,t(:,2),t(:,1));
 catch
     keyboard
 end
@@ -1306,7 +1367,7 @@ b5(b5==0)=nan;
 b5=fillmissing(b5,'nearest');
 b5(bc==1)=0;
 
-%%  ========final image ====================================== 
+%%  ========final image ======================================
 
 d0=b5;
 d3=uint8(d0==0).*d+uint8(d0~=0).*uint8(d0);
@@ -1325,7 +1386,7 @@ set(gcf,'userdata',u);
 showimage(u.stepnum);
 delete(findobj(gcf,'type','surface'));
 % ==============================================
-%%   
+%%
 % ===============================================
 return
 
@@ -1411,7 +1472,7 @@ disp(['inlay: '  num2str(size(dt))]);
 disp(['xv: '  num2str(size(xv))]);
 disp(['yv: '  num2str(size(yv))]);
 
-%% 
+%%
 d0=zeros(size(d));
 d0(yv,xv)=dt;
 d3=uint8(d0==0).*d+uint8(d0~=0).*uint8(d0);
@@ -1451,9 +1512,9 @@ if exist('userval')==~1   % NO-userINPUT
     posdiff=posdrag-pos;
     posrot  =get(v.hs,'position');  set(v.hs  ,'position',posrot+posdiff );
     posclear=get(v.hcl,'position'); set(v.hcl ,'position',posclear+posdiff );
-% else %userINPUT
-%     posdrag=[ pos(1)+userval(1)   pos(2)+userval(2)   pos(3:4) ];
-%     getpixelposition(hh)
+    % else %userINPUT
+    %     posdrag=[ pos(1)+userval(1)   pos(2)+userval(2)   pos(3:4) ];
+    %     getpixelposition(hh)
 end
 
 
@@ -1480,7 +1541,7 @@ if exist('userval')==~1   % NO-userINPUT
     set(hp,'userdata',v);
 else %userINPUT
     co=[[userval]+[xm ym]];
-  %userval
+    %userval
     %co=get(gca,'CurrentPoint');
     co=round(co(1,1:2));
     set(hp,'xdata',x-xm+co(1));
@@ -1493,7 +1554,7 @@ else %userINPUT
     hs.YData=hs.YData-xy(2);
     set(hp,'userdata',v);
     
-     ax1=findobj(gcf,'tag','ax1');
+    ax1=findobj(gcf,'tag','ax1');
     set(ax1,'units','normalized');
     x=get(hp,'xdata');
     y=get(hp,'ydata');
@@ -1505,9 +1566,9 @@ else %userINPUT
     
     
     pn=get(ax1,'position');
-%     set(ax1,'units','pixels');
-%     pp=get(ax1,'position');
-%     set(ax1,'units','normalized');
+    %     set(ax1,'units','pixels');
+    %     pp=get(ax1,'position');
+    %     set(ax1,'units','normalized');
     
     
     cx= (perc.*pn(3:4))/100;
@@ -1541,7 +1602,7 @@ slidval=get(v.hs,'value');
 
 ang=str2num(task);
 if isempty(ang)
-    if strcmp(task,'helppatch')       
+    if strcmp(task,'helppatch')
         w={ ''
             '<html><h1><font size=40>      ___move tissue___'
             ''
@@ -1555,7 +1616,7 @@ if isempty(ang)
             ' #b [shift]+             [&#x21e6;/&#x21e7; arrow] #n - translate patch -/+  1°'
             ' #b [shift]+[ctrl]+      [&#x21e6;/&#x21e7; arrow] #n - translate patch -/+  5°'
             ' #b [shift]+[ctrl]+[alt]+[&#x21e6;/&#x21e7; arrow] #n - translate patch -/+ 20°'
-
+            
             ''};
         uhelp(w,0,'name','move tissue');
         
@@ -1595,12 +1656,12 @@ if isempty(ang)
         hs=findobj(gcf,'type','surface');
         hs.XData=flipud(hs.XData);
         
-%         y = get(hp, 'YData');
-%         y2 = max(y) - y + min(y);
-%         set(hp, 'YData', y2);
-%         %----------image
-%         hs=findobj(gcf,'type','surface');
-%         hs.CData=flipud(hs.CData);
+        %         y = get(hp, 'YData');
+        %         y2 = max(y) - y + min(y);
+        %         set(hp, 'YData', y2);
+        %         %----------image
+        %         hs=findobj(gcf,'type','surface');
+        %         hs.CData=flipud(hs.CData);
         return
     end
 end
@@ -1668,13 +1729,13 @@ hs=findobj(gcf,'type','surface');
 rotate(hs,[0 0 1],rot,[v.rotcent 0]);
 
 % if 0
-%     
+%
 %     ds=hs.CData;
 %     ds2=imrotate(ds,rot,'bilinear');
-%     
+%
 %     xs=hs.XData;
 %     ys=hs.YData;
-%     
+%
 %     sizdf=size(ds2)-size(ds);
 %     w1=ceil(sizdf/2);
 %     % -------------
@@ -1682,7 +1743,7 @@ rotate(hs,[0 0 1],rot,[v.rotcent 0]);
 %     % length(xs2(1,1):xs2(2,1))
 %     ys2=[ys(:,1)-w1(2)  ys(:,2)+(sizdf(2)-w1(2) )];
 %     % length(ys2(1,1):ys2(1,2))
-%     
+%
 %     hs.CData=ds2;
 %     hs.XData=xs2;
 %     hs.YData=ys2;
@@ -1763,7 +1824,7 @@ d=him.CData;
 %% save-Question file EXIST
 % ===============================================
 if exist(fout)==2
-  opts.Interpreter = 'none';
+    opts.Interpreter = 'none';
     % Include the desired Default answer
     opts.Default = 'Yes';
     % Use the TeX interpreter to format the question
@@ -1775,7 +1836,7 @@ if exist(fout)==2
     end
 end
 % ==============================================
-%%   
+%%
 % ===============================================
 
 
@@ -1809,13 +1870,13 @@ elseif strfind(hh.String{hh.Value}, 'right')
     hemistring='  hemisphere  : right  (added struct field "hemi"=''R'')';
 elseif strfind(hh.String{hh.Value}, 'both')
     if isfield(s,'hemi');
-        s=rmfield(s,'hemi'); 
+        s=rmfield(s,'hemi');
     end
     hemistring='  hemisphere  : both  (removed struct field "hemi") ';
 end
 disp(['  rotation    : ' num2str(s.rotationmod) ]);
 disp(['  add border  : ' num2str(s.bordermod)   ]);
-disp([hemistring]); 
+disp([hemistring]);
 
 % ==============================================
 %%   save1
@@ -1826,7 +1887,7 @@ save(u.file, 's');
 
 
 
- 
+
 
 % ==============================================
 %%   reset
@@ -1872,7 +1933,7 @@ imwrite(b2,fthump);%'horst.jpg')
 
 
 % ==============================================
-%%   
+%%
 % ===============================================
 
 

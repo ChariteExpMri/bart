@@ -22,13 +22,35 @@
 % added surrogate-method for slice-estimation
 % 
 % 
-% % #ba 17 Nov 2021 (00:27:12)
+% #ba 17 Nov 2021 (00:27:12)
 % #k [HTMLreport.m ] #n   make HTMLreport: finalResult (registration)
 % available via BART-main-gui: snips/makeHTMLreport
 % 
+% #ba 18 Nov 2021 (18:56:08)
+% #k &#8658;  registration of slices if only the left or right hemispheric tissue parts are present
+% (in case that the other hemisphere is missing on the slice...for what ever reason)  
+% 
+% #k &#8658; grouping tag added in left listbox
+% selection of specific dirs/files via grouping/rating tag or string in name 
+% select files/dirs in listbox
+% ---------select via grouping tag-----
+% bartcb('sel','group',[1]);
+% bartcb('sel','group',[1 3]);
+% ---------select via  ratng tag-----
+% bartcb('sel','tag','ok');
+% bartcb('sel','tag','issue|ok');
+% ---------select string in FILEs-----
+% bartcb('sel','file','Nai|half');
+% bartcb('sel','file','Nai|half|a1');
+% bartcb('sel','file','a1_001');
+% bartcb('sel','file','all');  %select all files
+% ---------select string in DIRs-----
+% bartcb('sel','dir','Nai|half');
+% bartcb('sel','dir','fside');
+% bartcb('sel','dir','all'); %select all dirs
 % 
 % 
-% 
+
 
 %----- EOF
 % make bartver.md for GIT: bartver('makebartver')

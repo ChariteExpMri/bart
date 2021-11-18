@@ -352,13 +352,25 @@ uimenu(cmenu, 'Label', '<html><b><font color =black> show cell-counts', 'Callbac
 
 uimenu(cmenu, 'Label', '<html><b><font color =red> remove CONTENT of this directory (keep raw-dir)', 'Callback', {@lb1_context, 'removeContentDir'},'separator','on');
 % ---ok-registration
-uimenu(cmenu, 'Label', '<html><b><font color =gray> tag as "ok"',          'Callback', {@lb1_context, 'tag_ok'},'separator','on');
-uimenu(cmenu, 'Label', '<html><b><font color =gray> tag as "remind me"',          'Callback', {@lb1_context, 'tag_remindme'},'separator','off');
+uimenu(cmenu, 'Label', '<html><b><font color =gray> tag as "ok"  (crown icon)',          'Callback', {@lb1_context, 'tag_ok'},'separator','on');
+uimenu(cmenu, 'Label', '<html><b><font color =gray> tag as "remind me" (flag icon)',          'Callback', {@lb1_context, 'tag_remindme'},'separator','off');
 
-uimenu(cmenu, 'Label', '<html><b><font color =gray> tag as "problematic"', 'Callback', {@lb1_context, 'tag_problem'},'separator','off');
-uimenu(cmenu, 'Label', '<html><b><font color =gray> untag ',               'Callback', {@lb1_context, 'tag_untag'},'separator','off');
+uimenu(cmenu, 'Label', '<html><b><font color =gray> tag as "issue" (sword icon)',       'Callback', {@lb1_context, 'tag_issue'},'separator','off');
+uimenu(cmenu, 'Label', '<html><b><font color =gray> tag as "problematic" (biohazzard icon)', 'Callback', {@lb1_context, 'tag_problem'},'separator','off');
+uimenu(cmenu, 'Label', '<html><b><font color =gray> untag rating',         'Callback', {@lb1_context, 'tag_untag'},'separator','off');
 
 
+uimenu(cmenu, 'Label', '<html><b><font color =gray> tag group assignment',   'Callback', {@lb1_context, 'tag_group'},'separator','on');
+uimenu(cmenu, 'Label', '<html><b><font color =gray> untag group assignment', 'Callback', {@lb1_context, 'tag_untaggroup'},'separator','off');
+
+
+%          v2=[v2  '<font color=#22E80E>  &#9819'  ];
+%         elseif st.fis{ix,2}==2         %work
+%             v2=[v2    '<font color=#ff8c00>  &#9873'  ]; %work
+%         elseif st.fis{ix,2}==-2         %issue
+%             v2=[v2    '<font color=red>  &#9876'   ]; %clud:  &#9729
+%         elseif st.fis{ix,2}==-1         %problematic
+%             v2=[v2    '<font color=#A40D5A>  &#9762'   ];
 % item2 = uimenu(cmenu, 'Label', 'dotted', 'Callback', cb2);
 % item3 = uimenu(cmenu, 'Label', 'solid', 'Callback', cb3);
 
@@ -441,8 +453,29 @@ elseif strcmp(task,'show_cellCounts')
             disp(['could not open: ' fi]);
         end
     end
-elseif strcmp(task,'tag_ok') || strcmp(task,'tag_remindme') ...
-        || strcmp(task,'tag_problem') || strcmp(task,'tag_untag')
+% elseif strcmp(task,'tag_ok') || strcmp(task,'tag_remindme') ...
+%         || strcmp(task,'tag_problem') || strcmp(task,'tag_untag') ||...
+%         ...
+%         strcmp(task,'tag_group') || strcmp(task,'tag_untaggroup')  %groupwise un/tagging
+       
+ 
+elseif ~isempty(regexpi('tag_ok','^tag_'));
+    
+    if strcmp(task,'tag_group')==1
+        prompt = {['Enter group number [single value between 1-to-9].'...
+            'The selected images will be tagged with this number:']};
+        dlgtitle = 'Input';
+        dims = [1 35];
+        definput = {'1'};
+        answer = inputdlg(prompt,dlgtitle,dims,definput);
+        groupnumber=str2num(answer{1});
+        if ~isnumeric(groupnumber) || isempty(groupnumber)
+           return 
+        end
+        
+    end
+    
+    
     for i=1:length(files)
         [px name ext]=fileparts(files{i});
         fi=fullfile(px,['status.mat']);
@@ -453,6 +486,7 @@ elseif strcmp(task,'tag_ok') || strcmp(task,'tag_remindme') ...
             fis(:,3)={''};
             st.fis  =fis;
             st.hfis ={'name' 'tag','message'};
+            st.group=0;
             save(fi,'st');
         else
             load(fi);
@@ -462,10 +496,19 @@ elseif strcmp(task,'tag_ok') || strcmp(task,'tag_remindme') ...
             st.fis{find(strcmp(st.fis(:,1),name)) ,2}  =1   ; % set "OK"-tag
         elseif strcmp(task,'tag_remindme')==1
             st.fis{find(strcmp(st.fis(:,1),name)) ,2}  =2   ; % set "work"-tag
+        elseif strcmp(task,'tag_issue')==1
+            st.fis{find(strcmp(st.fis(:,1),name)) ,2}  =-2   ; % set "issue"-tag
         elseif strcmp(task,'tag_problem')==1
             st.fis{find(strcmp(st.fis(:,1),name)) ,2}  =-1   ; % set "problematic"-tag
         elseif strcmp(task,'tag_untag')==1
             st.fis{find(strcmp(st.fis(:,1),name)) ,2}  =0   ; % set "untag"
+            
+            
+        elseif strcmp(task,'tag_group')==1
+            %st.group=groupnumber;
+            st.fis{find(strcmp(st.fis(:,1),name)) , [4]} = groupnumber; %GROUPNUMBER
+        elseif strcmp(task,'tag_untaggroup')==1
+            st.fis{find(strcmp(st.fis(:,1),name)) , [4]} = 0 ;%untag group
         end
         save(fi,'st');
         

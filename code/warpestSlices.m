@@ -84,12 +84,12 @@ end
 
 if isfield(s2,'hemi')==1
     [ cvmask]=p_getfromHistvolspace(fullfile(pa_template, 'AVGThemi.nii' )) ;
-    if strcmp(lower(s2.hemi),'r') || strcmp(lower(s2.hemi),'right')
+    if strcmp(lower(s2.hemi),'r') || strcmp(lower(s2.hemi),'right') || strcmp(lower(s2.hemi),'R')
         cvmask=single(cvmask==2);
         cv=cv.*uint8(cvmask);
         disp('---using right hemisphere template only');
-    elseif strcmp(lower(s2.hemi),'l') || strcmp(lower(s2.hemi),'left')
-        cvmask=single(cvmask==2);
+    elseif strcmp(lower(s2.hemi),'l') || strcmp(lower(s2.hemi),'left') || strcmp(lower(s2.hemi),'L')
+        cvmask=single(cvmask==1);
         cv=cv.*uint8(cvmask);
          disp('---using left hemisphere template only');
     end

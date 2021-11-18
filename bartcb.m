@@ -1,3 +1,20 @@
+
+%% select files/dirs in listbox
+% ---------select via grouping tag-----
+% bartcb('sel','group',[1]);
+% bartcb('sel','group',[1 3]);
+% ---------select via  ratng tag-----
+% bartcb('sel','tag','ok');
+% bartcb('sel','tag','issue|ok');
+% ---------select string in FILEs-----
+% bartcb('sel','file','Nai|half');
+% bartcb('sel','file','Nai|half|a1');
+% bartcb('sel','file','a1_001');
+% bartcb('sel','file','all');  %select all files
+% ---------select string in DIRs-----
+% bartcb('sel','dir','Nai|half');
+% bartcb('sel','dir','fside');
+% bartcb('sel','dir','all'); %select all dirs
 function varargout=bartcb(varargin)
 
 if 0
@@ -7,6 +24,7 @@ if 0
     bartcb('load')
     bartcb('load','F:\data3\histo2\data_Josephine\proj.m')
     bartcb('getsel')
+    bartcb('sel')
     bartcb('updateListboxinfo');
 end
 
@@ -22,6 +40,10 @@ elseif strcmp(varargin{1},'load')
     loadproject(varargin)
 elseif strcmp(varargin{1},'getsel')
     [varargout{1} varargout{2}]=getsel(varargin);
+    
+elseif strcmp(varargin{1},'sel')
+    [varargout{1} varargout{2}]=sel(varargin);    
+    
 elseif strcmp(varargin{1}, 'updateListboxinfo')
    updateListboxinfo();
 elseif strcmp(varargin{1}, 'version')
@@ -34,6 +56,7 @@ vstring=strsplit(help('bartver'),char(10))';
 idate=max(regexpi2(vstring,' \w\w\w 20\d\d (\d\d'));
 dateLU=['BART vers. ' char(regexprep(vstring(idate), {' (.*'  '  #\w\w ' },{''}))];
 out=dateLU;
+
 
 
 
@@ -462,19 +485,140 @@ for i=1:length(slic)
     if ~isempty(st)
         ix=find(strcmp(st.fis(:,1), regexprep( slic{i} ,'.tif','')));
         if st.fis{ix,2}==1              %ok
-          v2=[v2  '<font color=green>  &#9819'  ];
-        elseif st.fis{ix,2}==-1         %problematic
-          v2=[v2    '<font color=red>  &#9876'   ];
+          v2=[v2  '<font color=#22E80E>  &#9819'  ];
         elseif st.fis{ix,2}==2         %work
-          v2=[v2    '<font color=#ff8c00>  &#9873'  ];
+            v2=[v2    '<font color=#ff8c00>  &#9873'  ]; %work
+        elseif st.fis{ix,2}==-2         %issue
+            v2=[v2    '<font color=red>  &#9876'   ]; %clud:  &#9729
+        elseif st.fis{ix,2}==-1         %problematic
+            v2=[v2    '<font color=#A40D5A>  &#9762'   ];
+        
+          
+          %elseif st.fis{ix,2}>=11 && st.fis{ix,2}<=20         %number    
         end
+        %% add GROUP numer NUMBER_________ (HTML "1" is "g&#49;" we start with st.group==1 as '1')
+        if 1
+            if isfield(st,'group')
+                if size(st.fis,2)>3
+                    if isempty(st.fis{ix,4}) || st.fis{ix,4}==0
+                        v2= [[regexprep(v2,'<font color=#ff00ff>  g&#\d\d;','')]];
+                    else
+                        v2= [[regexprep(v2,'<font color=#ff00ff>  g&#\d\d;','')]];
+                        v2=[v2    '<font color=#ff00ff>  g&#' num2str(48+st.fis{ix,4}) ';'  ];
+                        %v2=[v2    '<font color=#ff00ff>  g&#49;'  ];
+                    end
+                end
+                
+            end
+        end
+        
+        
     end
     
     
  v3{i,1}=v2;
 end
 
-% uhelp([ {''}; v3])
+% ---------select via grouping tag-----
+% bartcb('sel','group',[1]);
+% bartcb('sel','group',[1 3]);
+% ---------select via  ratng tag-----
+% bartcb('sel','tag','ok');
+% bartcb('sel','tag','issue|ok');
+% ---------select string in FILEs-----
+% bartcb('sel','file','Nai|half');
+% bartcb('sel','file','Nai|half|a1');
+% bartcb('sel','file','a1_001');
+% bartcb('sel','file','all');  %select all files
+% ---------select string in DIRs-----
+% bartcb('sel','dir','Nai|half');
+% bartcb('sel','dir','fside');
+% bartcb('sel','dir','all'); %select all dirs
+
+
+function [ fpdirs dirs] =sel(arg)
+
+hf=findobj(0,'tag','bart');
+hb=findobj(hf,'tag','lb1');
+
+
+fpdirs=[];
+dirs  =[];
+if length(arg)==1; return; end
+global ak
+if strcmp(arg{2},'group')   %---------group
+    ix=[];
+    grpnum=arg{3};
+    for i=1:length(grpnum)
+        is=regexpi2(ak.list1Html, ['<font color=#ff00ff>  g&#' num2str(grpnum(i)+48) ';']);
+        ix=[ix;is(:)];
+    end
+    set(hb,'value',ix);
+elseif strcmp(arg{2},'tag') %---------tag
+    ts={'ok' '&#9819'
+        'remind me'  '&#9873'
+        'issue' '&#9876'
+        'problem' '&#9762'
+        };
+    tag=arg{3};
+    %     tag='crown'
+    %     tag='crown|problem'
+    iv=ts(regexpi2(ts(:,1),tag),2);
+    if length(iv)==1; sp=char(iv)      ;
+    else            ; sp=strjoin(iv,'|');
+    end
+    ix=find(~cellfun(@isempty,regexpi(ak.list1Html, sp)));
+    set(hb,'value',ix);
+elseif strcmp(arg{2},'file') || strcmp(arg{2},'dir') %---------file/string search
+    tag=arg{3};
+    sname=ak.list1(:,1);
+    %     idir=find(strcmp(ak.list1(:,2),'dir'));
+    %     sname(idir)=cellfun(@(a){[a filesep '@@@@@@@@' ]}, sname(idir) )
+    %     [n1 n2 n3]=fileparts2(sname)
+    [n1 n2 n3]=fileparts2(sname);
+    cellfun(@(a,b){[a  b]}, n2 ,n3 );
+    
+    ix=find(~cellfun(@isempty,regexpi(sname, tag)));
+    type=ak.list1(ix,2);
+    ixfiles=ix(strcmp(type,'file'));
+    ixdirs=ix(strcmp(type,'dir'));
+    if strcmp(arg{2},'dir')
+        if strcmp(arg{3},'all')
+            ixdirs=find((strcmp(ak.list1(:,2),'dir')));
+        end
+        set(hb,'value',ixdirs);
+        return
+    end
+    
+    if isempty(ixfiles)
+        fis=[];
+    else
+        fis=ak.list1(ixfiles,1);
+    end
+    for i=1:length(ixdirs)
+        tdir=ak.list1{ixdirs(i),1};
+        [files] = spm_select('FPList',tdir,'^a1_001.tif');
+        if ~isempty(files)
+            fis=[fis; cellstr(files)];
+        end
+    end
+    ifis=[];
+    for i=1:length(fis)
+        ix=find(strcmp(ak.list1(:,1),fis{i}));
+        ifis=[ifis; ix(:)];
+    end
+    
+     if strcmp(arg{3},'all')
+            ifis=find((strcmp(ak.list1(:,2),'file')));
+        end
+    set(hb,'value',ifis);
+    
+end
+
+
+
+
+
 
 
 % ==============================================

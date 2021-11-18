@@ -154,7 +154,7 @@ if isfield(s,'hemi')==1
         cvmask=single(cvmask==2);
         %cv=cv.*uint8(cvmask);
     elseif strcmp(lower(s.hemi),'l') || strcmp(lower(s.hemi),'left') || strcmp(lower(s.hemi),'L')
-        cvmask=single(cvmask==2);
+        cvmask=single(cvmask==1);
         %cv=cv.*uint8(cvmask);
     end
 end
