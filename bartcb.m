@@ -549,6 +549,9 @@ global ak
 if strcmp(arg{2},'group')   %---------group
     ix=[];
     grpnum=arg{3};
+    if ischar(grpnum)
+        grpnum=str2num(grpnum);
+    end
     for i=1:length(grpnum)
         is=regexpi2(ak.list1Html, ['<font color=#ff00ff>  g&#' num2str(grpnum(i)+48) ';']);
         ix=[ix;is(:)];
@@ -576,7 +579,7 @@ elseif strcmp(arg{2},'file') || strcmp(arg{2},'dir') %---------file/string searc
     %     sname(idir)=cellfun(@(a){[a filesep '@@@@@@@@' ]}, sname(idir) )
     %     [n1 n2 n3]=fileparts2(sname)
     [n1 n2 n3]=fileparts2(sname);
-    cellfun(@(a,b){[a  b]}, n2 ,n3 );
+    sname=cellfun(@(a,b){[a  b]}, n2 ,n3 );
     
     ix=find(~cellfun(@isempty,regexpi(sname, tag)));
     type=ak.list1(ix,2);

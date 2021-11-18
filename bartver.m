@@ -49,6 +49,9 @@
 % bartcb('sel','dir','fside');
 % bartcb('sel','dir','all'); %select all dirs
 % 
+% % #k &#8658;  select folders/files by string/tag/group using [sel]-button
+% 
+% 
 % 
 
 

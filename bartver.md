@@ -28,6 +28,8 @@
   bartcb('sel','dir','Nai|half');  
   bartcb('sel','dir','fside');  
   bartcb('sel','dir','all'); %select all dirs  
+    
+  %  &#8658;  select folders/files by string/tag/group using __[sel]__-button  
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**17 Nov 2021 (00:27:12)**</ins>  
    __[HTMLreport.m ]__   make HTMLreport: finalResult (registration)  

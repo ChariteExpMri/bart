@@ -76,6 +76,13 @@ set(hb,'string','update','tag','update','tooltipstring','update cases');
 set(hb,'position',[ 0.0125    0.8012    0.0804    0.0464],'callback',@update);
 
 % ==============================================
+%%   select
+% ===============================================
+hb=uicontrol('style','pushbutton','units','norm');
+set(hb,'string','sel','tag','select','tooltipstring','select');
+set(hb,'position',[ 0.1    0.8012    0.0404    0.0364],'callback',@select);
+set(hb,'tooltipstring','select specific files/folders');
+% ==============================================
 %%   listbox-info
 % ===============================================
 hb=uicontrol('style','text','units','norm');
@@ -710,7 +717,82 @@ end
 
 
 
+function select(e,e2)
+
+  
+delete(findobj(0,'tag','sel_pan'));
+hp = uipanel('Title','select files/folders','FontSize',8,...
+    'BackgroundColor','white','units','norm','tag','sel_pan');
+set(hp,'position',[0.4 .5   .5 .15]);
+set(hp,'BackgroundColor',[ 1.0000    0.7333    0.1608]);
+
+
+list1={'dir','file' ,'tag','group'};
+hb=uicontrol(hp,'style','popupmenu','units','norm','tag','sel_poptype');
+set(hb,'position',[0  .5 .2 .4],'string',list1);
+set(hb,'tooltipstring','selected the search-type (dir,file,tag,group)');
+
+hb=uicontrol(hp,'style','edit','units','norm','tag','sel_edit');
+set(hb,'position',[.205  .5 .6 .4],'string','');
+set(hb,'tooltipstring','type string/pattern to search for');
+
+list2={...
+    '<html><font color=red>clear-edit-field ' ...  %------FILE/DIR
+    '<html><font color=blue>---FILE/DIR-PATTERN: ' ...  %------FILE/DIR
+    'all' ...
+    '<html><font color=blue>---TAG-PATTERN: ' ...  %------TAG
+    'ok' 'remind me' 'issue' 'problem' ...
+    'issue|problem'...
+    '<html><font color=blue>---GROUP-PATTERN examples: ' ...   %------Group
+    '1' '1 3' '1:3'...
+    };
+
+hb=uicontrol(hp,'style','popupmenu','units','norm','tag','sel_popinsert');
+set(hb,'position',[.805  .5 .2 .4],'string',list2);
+set(hb,'tooltipstring','this can be inserted into the edit-field ');
+set(hb,'callback',{@sel_task,'insert'});
+
+%----------ok/cancel-------
+hb=uicontrol(hp,'style','pushbutton','units','norm','tag','sel_find');
+set(hb,'position',[0.1    0  .22 .4],'string','find&select','backgroundcolor','w');
+set(hb,'tooltipstring','find and select found files');
+set(hb,'callback',{@sel_task,'find'});
+
+hb=uicontrol(hp,'style','pushbutton','units','norm','tag','sel_close');
+set(hb,'position',[0.33    0  .15 .4],'string','close','backgroundcolor','w');
+set(hb,'tooltipstring','close this panel');
+set(hb,'callback',{@sel_task,'close'});
+
+function sel_task(e,e2,task)
+hp=findobj(gcf,'tag','sel_pan');
+htype=findobj(hp,'tag','sel_poptype');
+hins =findobj(hp,'tag','sel_popinsert');
+he =findobj(hp,'tag','sel_edit');
+
+
+
+if strcmp(task,'close')
+    delete(hp);
+elseif strcmp(task,'insert')
+    s=hins.String{hins.Value};
+    if ~isempty(strfind(s,'html')); 
+        if ~isempty(strfind(s,'clear')); 
+           set(he,'string', '');  
+        end
+        return; 
+    else
+       set(he,'string', s); 
+    end
+    
+    
+elseif strcmp(task,'find')
+    
+    str=['bartcb(''sel'',''' htype.String{htype.Value} ''',''' he.String ''');'];
+    %disp(str);
+    eval(str);
+end
 
 
 
 
+    
