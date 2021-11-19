@@ -498,7 +498,7 @@ for i=1:length(slic)
         end
         %% add GROUP numer NUMBER_________ (HTML "1" is "g&#49;" we start with st.group==1 as '1')
         if 1
-            if isfield(st,'group')
+            %if isfield(st,'group')
                 if size(st.fis,2)>3
                     if isempty(st.fis{ix,4}) || st.fis{ix,4}==0
                         v2= [[regexprep(v2,'<font color=#ff00ff>  g&#\d\d;','')]];
@@ -509,7 +509,7 @@ for i=1:length(slic)
                     end
                 end
                 
-            end
+            %end
         end
         
         

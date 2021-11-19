@@ -349,9 +349,15 @@ set(hb, 'UIContextMenu', cmenu);
 uimenu(cmenu, 'Label', '<html><b><font color =green> DIR: open DIRECTORY', 'Callback', {@lb1_context, 'opdenDIR'});
 uimenu(cmenu, 'Label', '<html><b><font color =green> DIR: show cutting Image', 'Callback', {@lb1_context, 'showCuttingImage'},'separator','on');
 uimenu(cmenu, 'Label', '<html><b><font color =blue> show (cutted) Tif', 'Callback', {@lb1_context, 'showresizedTif'},'separator','on');
-uimenu(cmenu, 'Label', '<html><b><font color =blue> show resized Tif and Mask', 'Callback', {@lb1_context, 'showTifandMask'});
-uimenu(cmenu, 'Label', '<html><b><font color =blue> show warped BestSlice', 'Callback', {@lb1_context, 'showWarpedBestSlice'});
-uimenu(cmenu, 'Label', '<html><b><font color =blue> show final result', 'Callback', {@lb1_context, 'show_finalResult'});
+% --------
+uimenu(cmenu, 'Label', '<html><b><font color =blue> show resized Tif and Mask', 'Callback', {@lb1_context, 'showTifandMask'},'separator','on');
+uimenu(cmenu, 'Label', '<html><b><font color =#0AAED6> show Parameter of a2_###.mat (mod-paramter)', 'Callback', {@lb1_context, 'showParamModfile'});
+% --------
+uimenu(cmenu, 'Label', '<html><b><font color =blue> show warped BestSlice', 'Callback', {@lb1_context, 'showWarpedBestSlice'},'separator','on');
+% --------
+uimenu(cmenu, 'Label', '<html><b><font color =blue> show final result', 'Callback', {@lb1_context, 'show_finalResult'},'separator','on');
+uimenu(cmenu, 'Label', '<html><b><font color =#0AAED6> show final parameter (Slice/pitch/yaw)', 'Callback', {@lb1_context, 'show_finalParameter'},'separator','off');
+% --------
 
 uimenu(cmenu, 'Label', '<html><b><font color =black> show cell-counts', 'Callback', {@lb1_context, 'show_cellCounts'},'separator','on');
 
@@ -420,6 +426,20 @@ elseif strcmp(task,'showresizedTif')
             disp(['could not open: ' fi]);
         end
     end
+elseif strcmp(task,'showParamModfile')
+    for i=1:length(files)
+        fi=regexprep(files{i},{[filesep filesep 'a1_'], '.tif$'},{[filesep filesep 'a2_'],'.mat'});
+        if exist(fi)==2
+            s=load(fi);s=s.s;
+            cprintf([0 .1 1],[repmat('_',[1 length(fi)]) '\n']);
+            cprintf([0 .1 1],[strrep(fi,filesep,[filesep filesep]) '\n']);
+            disp(s);
+        else
+            disp(['could not open: ' fi]);
+        end
+    end
+    
+    
 elseif strcmp(task,'showTifandMask')
     for i=1:length(files)
         fi=regexprep(files{i},{[filesep filesep 'a1_'], '.tif$'},{[filesep filesep 'a2_'],'.jpg'});
@@ -449,6 +469,65 @@ elseif strcmp(task,'show_finalResult')
             disp(['could not open: ' fi]);
         end
     end
+ elseif strcmp(task,'show_finalParameter')
+     cprintf('*[0 .1 1]',['*** FINAL_PARAMETER (slice,pitch,yaw)***' '\n']);
+     tb={};
+      for i=1:length(files)
+        fi=regexprep(files{i},{[filesep filesep 'a1_'], '.tif$'},{[filesep filesep 'bestslice_'],'.mat'});
+        %if exist(fi)==2
+            
+        cprintf([0 .1 1],[repmat('_',[1 length(fi)]) '\n']);
+        cprintf([0 .1 1],[strrep(fi,filesep,[filesep filesep]) '\n']);
+        rawfile='unknown';
+        try
+            s=load(fi);s=s.s2;
+            
+            try
+                f2=fullfile(fileparts(fi),'importlog.txt');
+                l=importdata(f2);
+                ix=find(~cellfun('isempty',strfind(l,files{i})));
+                rawfile=l{ix-1};
+                rawfile=regexprep(rawfile,'.*\[origin]: ','');
+                %rawfile=regexprep(rawfile,{']'},{''});
+            catch
+                %rawfile='unknown';
+            end
+            g  =sprintf('[%6.3f\t%6.3f\t%6.3f]\t %s', s.param(1),s.param(2),s.param(3),rawfile);
+            g2 =[num2cell(s.param) rawfile];
+        catch
+            g=sprintf('[%6.3f\t%6.3f\t%6.3f\t %s] --> presumably not processed', nan,nan,nan,'unknown');
+            g2 =[num2cell([nan,nan,nan]) rawfile] ;
+        end
+        disp(g);
+           
+            
+            
+            dx=[fi,  (g2) ];
+            tb=[tb;dx];
+            
+%         else
+%             disp(['could not open: ' fi]);
+%         end
+      end  
+    
+      htb={'#k Name' 'Slice' ,'Pitch' 'Yaw' ,'Raw'};
+      % uhelp(plog([],[htb;tb],0, '#ko Paramter Estimations','s=4;al=2;'),1);
+      spara.htb=htb;
+      spara. tb= tb;
+      assignin('base','spara', spara);
+      
+      %% ===============================================
+      msg='Parameter table  ';
+      msg2='slice/pitch/yaw';
+      name='parameter';
+      cprintf('*[1 0 1]',msg);
+      disp([  ' [' msg2 ']: <a href="matlab: uhelp(plog([],[ spara.htb;spara.tb],0, ''#ko Paramter Estimations'',''s=4;al=2;''),1,''name'',''' name ''');">' 'show it' '</a>' ...
+          ]);
+          
+          
+%% ===============================================
+      
+    
     
 elseif strcmp(task,'show_cellCounts')
     for i=1:length(files)

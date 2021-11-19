@@ -170,7 +170,10 @@ if 0
     p2.fb=single(fb);
 end
 
-
+if exist('cvmask')==0
+    cvmask =p_getfromHistvolspace(fullfile(pa_template, 'AVGTmask.nii' )) ;
+    cvmask=single(cvmask>0);
+end
 cv=uint8(cvmask).*cv; %IMPORTANT TO MASK HISTOVOLUME!
 
 
