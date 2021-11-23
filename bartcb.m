@@ -425,7 +425,9 @@ t={...
     'optim_#.mat'          [0.9294    0.6941    0.1255]    'slice-finder executed' 
     'warp_#.mat'           [1 0 0 ]                        'suggested slices warped'
     'bestslice_#.mat'      [ 0.4667    0.6745    0.1882]   'best slice selected'
-    ['fin' filesep 's#_result.gif']      [1 0 1]   'backtransformed images to histo-space'
+    ['fin' filesep 's#_result.gif']      [1 0 1]   'backtransformed result (gif-plot) to histo-space'
+    ['fin' filesep 's#_AVGT.mat'  ]      [ 0.7176    0.2745    1.0000]   'backtransformed images to histo-space'
+    ['fin' filesep 's#_other*.gif'  ]    [0.6353    0.0784    0.1843]   'warped other images to histo-space'
     ['cellcounts_a1_#' filesep 'predfus.tif'] [0 0 0] 'cell-detection'
     ['fin' filesep 's#_cellcountsRegion.mat']      [.5 .5 .5]   'regionwise cellcounts/area calc'
     };
@@ -478,9 +480,23 @@ for i=1:length(slic)
             colhex=sprintf('%02X',round([t{j,2}]*255));
             v=[v    '<font color =#' colhex '>&#9632' ];
         else
-            %disp('is not');
-            colhex=sprintf('%02X',round([colblank]*255));
-            v=[v    '<font color =#' colhex '>&#9633' ];
+            
+            if ~isempty(strfind(t{j,1},'*'))
+                k=dir(fil);
+                if ~isempty(k)
+                    colhex=sprintf('%02X',round([t{j,2}]*255));
+                    v=[v    '<font color =#' colhex '>&#9632' ];
+                else
+                    colhex=sprintf('%02X',round([colblank]*255));
+                    v=[v    '<font color =#' colhex '>&#9633' ];
+                end
+            else
+                %disp('is not');
+                colhex=sprintf('%02X',round([colblank]*255));
+                v=[v    '<font color =#' colhex '>&#9633' ];
+                
+            end
+            
         end
     end
     v2=['<html><b><font color =blue>'   [ slic{i} ] v];

@@ -239,7 +239,7 @@ time_save=tic;
 fprintf('saving(nonlinear): ');
 thumb={};
 for i=1:size(o,1)
-    nameout=[outtag o{i,1} '.mat' ];
+    nameout=[outtag 'other_' o{i,1} '.mat' ];
     fprintf([ '(' num2str(i) ') "' nameout '"; ']);
     
     interpy=interps{i}.interpResize;

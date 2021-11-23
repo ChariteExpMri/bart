@@ -34,7 +34,7 @@ template=fullfile(ak.template,'HISTOVOL.nii');
 if exist('x')~=1;        x=[]; end
 
 templateDir=fullfile(fileparts(which('bart.m')),'templates');
-%% import 4ddata
+%% -------------------------------------------------------------
 para={...
     'inf98'      '*** warp other images to histospace      '    '' ''   %    'inf1'      '% PARAMETER         '                                    ''  ''
     'inf100'     '==================================='                          '' ''
@@ -65,7 +65,7 @@ end
 
 
 
-cprintf([0 0 1],[' import Tiffs... '  '\n']);
+cprintf([0 0 1],[' warp other images... '  '\n']);
 xmakebatch(z,p, mfilename); % ## BATCH
 
 
@@ -94,7 +94,7 @@ w.files =fidi(strcmp(fidi(:,2),'file'),1);
 bartfile  ={};
 otherfile ={};
 for i=1:length(mdir_bart)
-    ix=strcmp(mdir_other,mdir_bart{i} );
+    ix=find(strcmp(mdir_other,mdir_bart{i} ));
     if ~isempty(ix)
         bartfile{end+1,1}=[ w.files{i}  ];
         otherfile{end+1,1}=[ z.niftis2warp(ix)  ];
@@ -120,7 +120,7 @@ for i=1:length(bartfile)
     bf=bartfile(i);
     of=otherfile{i};
     
-    [pz]=fileparts(bf{i});
+    [pz]=fileparts(bf{1});
     [~,thisMdir]=fileparts(pz); %bart-dir-name
     
     bf2=[bf; repmat({' '},[ length(of)-1 1]) ];
