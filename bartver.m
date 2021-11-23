@@ -51,6 +51,25 @@
 % 
 % % #k &#8658;  select folders/files by string/tag/group using [sel]-button
 % 
+% #ba 22 Nov 2021 (16:55:16)
+%  #k [manucut_image ] #n manually cut multiSlice-Tiff  
+% --> via: "Cut large Tiff" (right listbox): select approach: 3 tu use manual mode
+% 
+% #ba 23 Nov 2021 (13:36:56)
+% #k [HTMLreportotherimages.m] #n  make HTMLreport for other images warped to histospace 
+% --> access via MENU: HTML/'make HTMLfile Report:  other images to histoSpace [HTMLreportotherimages.m]
+% 
+% #ba 23 Nov 2021 (16:18:01)
+% #k [f_warpotherimages.m] #n warp other images to histospace
+% --> access via right listbox/warping section
+% .
+% 
+% 
+% 
+% 
+% 
+% 
+% 
 % 
 % 
 

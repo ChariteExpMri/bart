@@ -62,8 +62,8 @@ templateDir=fullfile(fileparts(which('bart.m')),'templates');
 para={...
 %     'inf98'      '*** cut tif to slices      '                                  '' ''   %    'inf1'      '% PARAMETER         '                                    ''  ''
 %     'inf100'     '==================================='                          '' ''
-    'approach'              1   'select approach{1 or 2}; {1}medflt+otsu+cluster {2}sum-ydim+threshold  '                   {1 2}
-    'files'                  ''                'select tiff files'                   'mf'
+    'approach'              1   'select approach{1,2 or 3}; {1}medflt+otsu+cluster {2}sum-ydim+threshold; {3} manual cut & threshold  '                   {1 2 3}
+    'files'                  ''                ' THIS IS optional!: select OTHER tiff files'                   'mf'
     'fileswcard'             '_x10'                'alternative select wildcard string'   {'_x10' ''}
     'transpose'              1                'transpose image {0,1}'               'b'
     'outdir'                'up1'      'out-put directory: {explicit path, same" "up1"}'  {'up1' 'same'}
@@ -94,7 +94,7 @@ else
     z=param2struct(p);
 end
 
-cprintf([0 0 1],[' import Tiffs... '  '\n']);
+cprintf([0 0 1],[' cut & Tiffs... '  '\n']);
 xmakebatch(z,p, mfilename); % ## BATCH
 
 % ==============================================
@@ -172,7 +172,6 @@ else
 end
 
 uhelp(lgerr);
-
 
 
 

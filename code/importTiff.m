@@ -4,7 +4,7 @@ function importTiff(file, s)
 warning off;
 file=char(file);
 
-disp(['*** prosessing:' file]);
+disp([' ..importing:' file]);
 [pa fi ext]=fileparts(file);
 
 outDir0=fi;

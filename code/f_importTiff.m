@@ -85,6 +85,8 @@ zfiles=cellstr(z.files);
 global ak
 s=catstruct(z,ak);
 disp(['isparalel: ' num2str(s.isparallel)]);
+cprintf([0 0 1],['Import Tiffs' '\n']);
+timx=tic;
 if s.isparallel==0
     for i=1:length(z.files)
         importTiff(z.files{i},s);
@@ -94,6 +96,7 @@ else
         importTiff(z.files{i},s);
     end
 end
+cprintf([0 0 1],['Done. (t=' sprintf('%2.2f min',toc(timx)/60)  ')' '\n']);
 
 % ==============================================
 %%   

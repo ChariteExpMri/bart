@@ -11,12 +11,12 @@ end
 pabart=fileparts(which('bart.m'));
 addpath(pabart);
 addpath(genpath(fullfile(pabart,'code')));
-    
+
 % if isempty(which('@dummy.m')) %set paths
-    addpath(genpath(fullfile(pabart,'slicedetection')));
-    addpath(genpath(fullfile(pabart,'vlfeat-0.9.21\mex')));
-    addpath(genpath(fullfile(pabart,'celldetection')));
-	addpath(genpath(fullfile(pabart,'elastix2')));
+addpath(genpath(fullfile(pabart,'slicedetection')));
+addpath(genpath(fullfile(pabart,'vlfeat-0.9.21\mex')));
+addpath(genpath(fullfile(pabart,'celldetection')));
+addpath(genpath(fullfile(pabart,'elastix2')));
 
 % end
 
@@ -95,7 +95,7 @@ set(hb,'backgroundcolor','w');
 hb=uicontrol('style','radio','units','norm');
 set(hb,'string','parallel','tag','isparallel','tooltipstring','use parallel computation');
 set(hb,'position',[ 0.2054    0.9202    0.1204    0.0464],'backgroundcolor','w');%,'callback',@update,'');
-
+set(hb,'visible','off');
 % ==============================================
 %%  version
 % ===============================================
@@ -108,12 +108,12 @@ dateLU=bartcb('version');
 h = uicontrol('style','pushbutton','units','normalized','position',[.94 .65 .08 .05],'tag','txtversion',...
     'string',dateLU,'fontsize',5,'fontweight','normal',...
     'tooltip',['date of last update' char(10) '..click to see last updates [bartver.m]']);
-% set(h,'position',[.2 .65 .08 .02],'fontsize',6,'backgroundcolor','w','foregroundcolor',[.7 .7 .7])  
+% set(h,'position',[.2 .65 .08 .02],'fontsize',6,'backgroundcolor','w','foregroundcolor',[.7 .7 .7])
 set(h,'position',[0.44107 0.96548 0.25 0.027],'fontsize',7,'backgroundcolor','w','foregroundcolor',[0.9294    0.6941    0.1255],...
     'horizontalalignment','left','callback',{@callbartver});
 
 % ==============================================
-%%   
+%%
 % ===============================================
 
 
@@ -134,9 +134,10 @@ m = uimenu('label','CellDetection');
 m2 = uimenu(m,'label','cellDetection','callback', @cellDetecetion);
 m2 = uimenu(m,'label','assign cells to region','callback', @cell2regionAssign);
 % ---------------------
-m = uimenu('label','SNIPS');
+m = uimenu('label','HTML');
 m2 = uimenu(m,'label','make HTMLfile to select bad slices [makeSelection_HTML.m]','callback', @selectBadImages_HTML);
 m2 = uimenu(m,'label','make HTMLfile Report:  finalResult [HTMLreport.m]'        ,'callback', @HTMLreport_call);
+m2 = uimenu(m,'label','make HTMLfile Report:  other images to histoSpace [HTMLreportotherimages.m]'        ,'callback', @HTMLreportotherimages_call);
 
 
 m  = uimenu('label','updates');
@@ -210,7 +211,7 @@ end
 
 function cb_flipTiffUD(e,e2)
 % ==============================================
-%%   
+%%
 % ===============================================
 [fis]=bartcb('getsel');
 fis=fis(strcmp(fis(:,2),'file'),:);
@@ -236,33 +237,33 @@ if isempty(answer) | strcmp(answer{1},'1')~=1
     return
 end
 % ==============================================
-%%   
+%%
 % ===============================================
- % suffix='_test';
- suffix='';%overwrite
+% suffix='_test';
+suffix='';%overwrite
 for i=1:size(fis,1)
-   fi=fis{i,1};
-   
-   %info=imfinfo(fi);
-   disp(['fllip up-down: ' fi]);
-   a=imread(fi);
-   a=flipdim(a,1);
+    fi=fis{i,1};
     
-  
-   fi2=stradd(fi,suffix,2);
-   imwrite(a,fi2, 'tif','Compression','none');
-   
-   %---------
-   f2=strrep(fi,'.tif','.jpg');
-   a=imread(f2);
-   a=flipdim(a,1);
-   f22=stradd(f2,suffix,2);
-   imwrite(a,f22, 'jpg','quality',100);
-   
-   % check
-   %a2=imread(f22);
-   %fg,imagesc(a2-a)
-   
+    %info=imfinfo(fi);
+    disp(['fllip up-down: ' fi]);
+    a=imread(fi);
+    a=flipdim(a,1);
+    
+    
+    fi2=stradd(fi,suffix,2);
+    imwrite(a,fi2, 'tif','Compression','none');
+    
+    %---------
+    f2=strrep(fi,'.tif','.jpg');
+    a=imread(f2);
+    a=flipdim(a,1);
+    f22=stradd(f2,suffix,2);
+    imwrite(a,f22, 'jpg','quality',100);
+    
+    % check
+    %a2=imread(f22);
+    %fg,imagesc(a2-a)
+    
 end
 disp(['Done.' ]);
 
@@ -312,11 +313,13 @@ f_cell2region(1,x);
 bartcb('update');
 
 function selectBadImages_HTML(e,e2)
-  makeSelection_HTML();
+makeSelection_HTML();
 
 function HTMLreport_call(e,e2)
 HTMLreport();
 
+function HTMLreportotherimages_call(e,e2)
+HTMLreportotherimages();
 
 % ==============================================
 %%   update Listbox
@@ -469,13 +472,13 @@ elseif strcmp(task,'show_finalResult')
             disp(['could not open: ' fi]);
         end
     end
- elseif strcmp(task,'show_finalParameter')
-     cprintf('*[0 .1 1]',['*** FINAL_PARAMETER (slice,pitch,yaw)***' '\n']);
-     tb={};
-      for i=1:length(files)
+elseif strcmp(task,'show_finalParameter')
+    cprintf('*[0 .1 1]',['*** FINAL_PARAMETER (slice,pitch,yaw)***' '\n']);
+    tb={};
+    for i=1:length(files)
         fi=regexprep(files{i},{[filesep filesep 'a1_'], '.tif$'},{[filesep filesep 'bestslice_'],'.mat'});
         %if exist(fi)==2
-            
+        
         cprintf([0 .1 1],[repmat('_',[1 length(fi)]) '\n']);
         cprintf([0 .1 1],[strrep(fi,filesep,[filesep filesep]) '\n']);
         rawfile='unknown';
@@ -499,34 +502,54 @@ elseif strcmp(task,'show_finalResult')
             g2 =[num2cell([nan,nan,nan]) rawfile] ;
         end
         disp(g);
-           
-            
-            
-            dx=[fi,  (g2) ];
-            tb=[tb;dx];
-            
-%         else
-%             disp(['could not open: ' fi]);
-%         end
-      end  
+        
+        
+        
+        dx=[fi,  (g2) ];
+        tb=[tb;dx];
+        
+        %         else
+        %             disp(['could not open: ' fi]);
+        %         end
+    end
     
-      htb={'#k Name' 'Slice' ,'Pitch' 'Yaw' ,'Raw'};
-      % uhelp(plog([],[htb;tb],0, '#ko Paramter Estimations','s=4;al=2;'),1);
-      spara.htb=htb;
-      spara. tb= tb;
-      assignin('base','spara', spara);
-      
-      %% ===============================================
-      msg='Parameter table  ';
-      msg2='slice/pitch/yaw';
-      name='parameter';
-      cprintf('*[1 0 1]',msg);
-      disp([  ' [' msg2 ']: <a href="matlab: uhelp(plog([],[ spara.htb;spara.tb],0, ''#ko Paramter Estimations'',''s=4;al=2;''),1,''name'',''' name ''');">' 'show it' '</a>' ...
-          ]);
-          
-          
-%% ===============================================
-      
+    htb={'File' 'Slice' ,'Pitch' 'Yaw' ,'Raw'};
+    % uhelp(plog([],[htb;tb],0, '#ko Paramter Estimations','s=4;al=2;'),1);
+    spara.info=['*** REGISTRATION PARAMETER ***'];
+    spara.htb=htb;
+    spara. tb= tb;
+   
+    
+    %% ===============================================
+    msg='Parameter table  ';
+    msg2='slice/pitch/yaw';
+    name='parameter';
+    cprintf('*[1 0 1]',msg);
+    
+    %% --save xlsfile-option
+    global ak
+    xlscode=[...
+        ['spara.outdir=''' fullfile(fileparts(ak.dat),'results') ''';']...
+        ['warning off; mkdir(spara.outdir);']...
+        '[ spara.fi spara.pa]=uiputfile(fullfile(spara.outdir,''*.xlsx''),''enter filename to save paramter [excel]'');'....
+        'if isnumeric(spara.fi); return;end;'....
+        'spara.fout=fullfile(spara.pa,spara.fi);'...;
+        'pwrite2excel(spara.fout,{1 ''params''},spara.htb,[],spara.tb);'...
+        'showinfo2(''ParameterFile [Excel]'',spara.fout);'
+        ];   
+    
+    spara.xlscode=xlscode;
+    %       eval(xlscode);
+    %% --
+     assignin('base','spara', spara);
+    
+    disp([  ' [' msg2 ']: <a href="matlab: uhelp(plog([],[ spara.htb;spara.tb],0, ''#ko Paramter Estimations'',''s=4;al=2;''),1,''name'',''' name ''');">' 'show it' '</a>' ...
+        ' or <a href="matlab: ' 'eval(spara.xlscode)' ';">' 'save as ExcelFile' '</a>'  ' '  ...
+        ] );
+    
+    
+    %% ===============================================
+    
     
     
 elseif strcmp(task,'show_cellCounts')
@@ -539,12 +562,12 @@ elseif strcmp(task,'show_cellCounts')
             disp(['could not open: ' fi]);
         end
     end
-% elseif strcmp(task,'tag_ok') || strcmp(task,'tag_remindme') ...
-%         || strcmp(task,'tag_problem') || strcmp(task,'tag_untag') ||...
-%         ...
-%         strcmp(task,'tag_group') || strcmp(task,'tag_untaggroup')  %groupwise un/tagging
-       
- 
+    % elseif strcmp(task,'tag_ok') || strcmp(task,'tag_remindme') ...
+    %         || strcmp(task,'tag_problem') || strcmp(task,'tag_untag') ||...
+    %         ...
+    %         strcmp(task,'tag_group') || strcmp(task,'tag_untaggroup')  %groupwise un/tagging
+    
+    
 elseif ~isempty(regexpi('tag_ok','^tag_'));
     
     if strcmp(task,'tag_group')==1
@@ -556,7 +579,7 @@ elseif ~isempty(regexpi('tag_ok','^tag_'));
         answer = inputdlg(prompt,dlgtitle,dims,definput);
         groupnumber=str2num(answer{1});
         if ~isnumeric(groupnumber) || isempty(groupnumber)
-           return 
+            return
         end
         
     end
@@ -622,7 +645,7 @@ elseif strcmp(task,'removeContentDir')
             return
         end
         
-    
+        
         
     end
     % ==============================================
@@ -798,7 +821,7 @@ end
 
 function select(e,e2)
 
-  
+
 delete(findobj(0,'tag','sel_pan'));
 hp = uipanel('Title','select files/folders','FontSize',8,...
     'BackgroundColor','white','units','norm','tag','sel_pan');
@@ -854,13 +877,13 @@ if strcmp(task,'close')
     delete(hp);
 elseif strcmp(task,'insert')
     s=hins.String{hins.Value};
-    if ~isempty(strfind(s,'html')); 
-        if ~isempty(strfind(s,'clear')); 
-           set(he,'string', '');  
+    if ~isempty(strfind(s,'html'));
+        if ~isempty(strfind(s,'clear'));
+            set(he,'string', '');
         end
-        return; 
+        return;
     else
-       set(he,'string', s); 
+        set(he,'string', s);
     end
     
     
@@ -874,4 +897,3 @@ end
 
 
 
-    

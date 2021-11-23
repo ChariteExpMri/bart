@@ -23,8 +23,8 @@ f={...
 
 'f_selectslice.m'   'select best matching slice'                       0
 ''  '<html><b><font color=blue> WARPING SECTION_________ ' ''  
-'f_warp2histo.m'   'warp image back to Histo-space'                    0
-
+'f_warp2histo.m'        'warp image back to Histo-space'                    0
+'f_warpotherimages.m'   'warp other images (NIFTIs) back to Histo-space'    0
 
 };
 

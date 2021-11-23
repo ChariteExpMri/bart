@@ -1,4 +1,8 @@
 
+%% get selected files and folders
+% fidi=bartcb('getsel');
+% w.dirs  =fidi(strcmp(fidi(:,2),'dir'),1);
+% w.files =fidi(strcmp(fidi(:,2),'file'),1);
 %% select files/dirs in listbox
 % ---------select via grouping tag-----
 % bartcb('sel','group',[1]);

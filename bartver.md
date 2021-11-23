@@ -1,11 +1,25 @@
 ## **BART Modifications**
- ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   18 Nov 2021 (18:56:08)  
+ ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   23 Nov 2021 (16:18:01)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/bart">https://github.com/ChariteExpMri/bart</a>  
     
     
     
 ------------------  
+  ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**23 Nov 2021 (16:18:01)**</ins>  
+   __[f_warpotherimages.m]__ warp other images to histospace  
+  --> access via right listbox/warping section  
+<!---->
+  ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**23 Nov 2021 (13:36:56)**</ins>  
+   __[HTMLreportotherimages.m]__  make HTMLreport for other images warped to histospace   
+  --> access via MENU: HTML/'make HTMLfile Report:  other images to histoSpace __[HTMLreportotherimages.m]__  
+    
+<!---->
+  ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**22 Nov 2021 (16:55:16)**</ins>  
+    __[manucut_image ]__ manually cut multiSlice-Tiff    
+  --> via: "Cut large Tiff" (right listbox): select approach: 3 tu use manual mode  
+    
+<!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**18 Nov 2021 (18:56:08)**</ins>  
    &#8658;  registration of slices if only the left or right hemispheric tissue parts are present  
   (in case that the other hemisphere is missing on the slice...for what ever reason)    
@@ -30,6 +44,7 @@
   bartcb('sel','dir','all'); %select all dirs  
     
   %  &#8658;  select folders/files by string/tag/group using __[sel]__-button  
+    
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**17 Nov 2021 (00:27:12)**</ins>  
    __[HTMLreport.m ]__   make HTMLreport: finalResult (registration)  

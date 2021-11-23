@@ -82,7 +82,7 @@ disp([ '...reading file Time: ' sprintf('%2.2f',toc/60) 'min']);
 
 approach=x.approach;
 
-if approach==1
+if approach==1 || approach==3
     % ==============================================
     %%  other approach
     % ===============================================
@@ -159,6 +159,17 @@ if approach==1
     clear c1 c2 c3 c4
     
     % ==============================================
+    %% approach-3
+    % ===============================================
+    if approach==3
+        %keyboard
+        c5=manucut_image(c);
+        
+    end
+    
+    
+    
+    % ==============================================
     %%   cut images
     % ===============================================
     %tic
@@ -195,6 +206,10 @@ if approach==1
     fprintf('\n');
     %toc
     
+    %===================================================================================================
+    %% ===============================================
+    
+ 
     
     % ==============================================
     %%    plot result
@@ -220,13 +235,14 @@ if approach==1
     % ==============================================
     %%  save images
     % ===============================================
+
     slicefiles={};
     ut2=[]; %all thumbs
     %compression='none';
     compression='LZW';
     for i=1:length(ims)
         %disp(i);
-            u2=ims{i,1};
+        u2=ims{i,1};
         if x.verb==1
             fg; imagesc(u2); title(['cutted slice-' num2str(i)]);
         end
@@ -249,6 +265,38 @@ if approach==1
         end
         ut2(:,:,i) = ut(:,:,3);
     end
+
+
+    % ==============================================
+    %%  Logfile
+    % ===============================================
+%     clc
+    if ~isempty(slicefiles)
+        logfile=fullfile(x.outpath,'importlog.txt');
+        msgline={...
+            ['RawSize: ' [num2str([s.Width]) ' x ' num2str(s.Height)]]
+            ['cutApproach: ' num2str(approach)]
+            ['Nslices: ' num2str(length(slicefiles))]
+            ['RawFileSize: ' sprintf('%2.1fMB',s.FileSize/1e6)]
+            };
+          try;    msgline=[msgline; ['RawCompression: ' s.Compression]];            end
+          try;    msgline=[msgline; ['RawColorType: '   s.ColorType]];            end
+        
+        for i=1:length(slicefiles)
+            internfile =slicefiles{i};
+            rawfile    =file;
+            if i==1
+                forceoverwrite=1;
+                makelogfile(logfile, rawfile,internfile,msgline,forceoverwrite)
+            else
+                forceoverwrite=0;
+                makelogfile(logfile, rawfile,internfile,msgline,forceoverwrite)
+            end
+        end
+        
+    end
+%     type(logfile)
+    
     % ==============================================
     %%   make montage plot
     % ===============================================
@@ -275,13 +323,15 @@ if approach==1
     imwrite(mon,fioutMon);
     showinfo2('..cutting..Infoimage',fioutMon);
     
+   
+    
     
     % ==============================================
     %%    %-------write info struct
     % ===============================================
     
     v.s=s;
-    v.imgcuts='approach-1';
+    v.imgcuts=['approach-' num2str(x.approach)];
     v.x =x;
     v.file=file;
     v.slicefiles=slicefiles;
@@ -442,6 +492,39 @@ elseif approach==2
         end
         ut2(:,:,i) = ut(:,:,3);
     end
+    
+    
+    % ==============================================
+    %%  Logfile
+    % ===============================================
+    %     clc
+    if ~isempty(slicefiles)
+        logfile=fullfile(x.outpath,'importlog.txt');
+        msgline={...
+            ['RawSize: ' [num2str([s.Width]) ' x ' num2str(s.Height)]]
+            ['cutApproach: ' num2str(approach)]
+            ['Nslices: ' num2str(length(slicefiles))]
+            ['RawFileSize: ' sprintf('%2.1fMB',s.FileSize/1e6)]
+            };
+        try;    msgline=[msgline; ['RawCompression: ' s.Compression]];            end
+        try;    msgline=[msgline; ['RawColorType: '   s.ColorType]];            end
+        
+        for i=1:length(slicefiles)
+            internfile =slicefiles{i};
+            rawfile    =file;
+            if i==1
+                forceoverwrite=1;
+                makelogfile(logfile, rawfile,internfile,msgline,forceoverwrite)
+            else
+                forceoverwrite=0;
+                makelogfile(logfile, rawfile,internfile,msgline,forceoverwrite)
+            end
+        end
+        
+    end
+    type(logfile)
+    
+    
     % ==============================================
     %%   make montage plot
     % ===============================================
@@ -489,5 +572,35 @@ end
 % ===============================================
 
 disp([ '...Total time for cutting this file: ' sprintf('%2.2f',toc(timeTot)/60) 'min']);
+
+
+
+
+
+% function makelogfile(logfile, rawfile,internfile,forceoverwrite)
+% 
+% % ==============================================
+% %%  log file
+% % ===============================================
+% 
+% %  logfile=fullfile(fpoutDir,'importlog.txt');
+% 
+% 
+% if exist('forceoverwrite')==1 && forceoverwrite==1
+%     lg0=[];
+% else
+%     if exist(filog)==2
+%         lg0=importdata(filog);
+%     else
+%         lg0=[];
+%     end
+%     
+% end
+% 
+% 
+% lg={[ 'DATE: '  timestr(now) ]};
+% lg(end+1,1) ={['#import_TIFF [origin]: '  rawfile]};
+% lg(end+1,1) ={['#import_TIFF [BART]  : '  internfile]};
+% pwrite2file(logfile, [lg0; lg]);
 
 

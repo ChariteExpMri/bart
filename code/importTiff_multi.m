@@ -49,7 +49,7 @@ for i=1:length(tiffgrp)
         lg0=[];
     else
         if exist(filog)==2
-            lg0=importdata(filog);
+            lg0=importdata(filog,'\n'););
             iorig=find(~cellfun(@isempty,strfind(lg0,'[origin]')));
             or={}; im={};
             for j=1:length(iorig)
@@ -104,12 +104,9 @@ for i=1:length(tiffgrp)
     % ==============================================
     %%  log file
     % ===============================================
-  
         lg={[ 'DATE: '  timestr(now) ]};
         lg(end+1,1) ={['#import_TIFF [origin]: '  file]};
         lg(end+1,1) ={['#import_TIFF [BART]  : '  fiout]};
-    
-    
     % ==============================================
     %%   save log
     % ===============================================
