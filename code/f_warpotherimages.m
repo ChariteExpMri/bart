@@ -103,7 +103,7 @@ for i=1:length(mdir_bart)
 end
 
 if isempty(bartfile) || isempty(otherfile)
-    if     isempty(bartfile) ;     disp('no files in BART-GUI selected');
+    if     isempty(bartfile) ;     disp('no files in BART-GUI selected or mismatch of folder-names');
     elseif isempty(otherfile);     disp('no files assigned..check folder-names:folder other images to be warp must correspond to the folder-name in bart/dat (identical folder-names)');
     end
     return;

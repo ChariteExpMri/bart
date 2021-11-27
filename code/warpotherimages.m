@@ -56,6 +56,10 @@ elxout     =fullfile(pa,'elx2',['forward' numberstr]);
 
 [~,mdir,~]=fileparts(pa); %animal-DIR
 
+try
+    cprintf('-[0 0 1]',[ ['[' mdir ']' '  --> Slice: ' name]  '\n']);
+end
+
 
 % ==============================================
 %%   load best slice ...get paramter from [bestslice_###.mat']
