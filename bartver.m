@@ -64,9 +64,9 @@
 % --> access via right listbox/warping section
 % .
 % 
-% 
-% 
-% 
+% #ba 30 Nov 2021 (17:09:30)
+% #k [f_ano_falsecolor2tif.m] #n convert ANO-atlas in histoSpace to pseudoatlas-TIF (pseudo-color or Allen-color)
+% --> access via MENU: Conversion/"convert Histo-ATLAS(ANO)-slice(mat) to pseudocolor-TIF"
 % 
 % 
 % 

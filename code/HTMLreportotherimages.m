@@ -8,7 +8,8 @@ function HTMLreportotherimages(showgui,x )
 global ak
 tx=[...
     %     {'finalResult' ['fin' filesep 's#_result.gif']  }
-    {'otherImages' ['fin' filesep 's#_other_.gif']  }
+    {'otherImages' ['fin' filesep 's#_other_.gif']            '.mat' 'Other Images Warped  To Histospace'}
+    {'pseudoANOtiff'         ['fin' filesep 's#_ANO_.jpg']    '.tif' 'ANOatlas in Histospace in pseudoColors (Slice-size)'}
     ];
 outdir=fullfile(fileparts(ak.dat),'checks') ;
 % ==============================================
@@ -144,7 +145,11 @@ for mo=1:N
     [sub namestr ext]=fileparts(s);
     paf=fullfile(pa,sub);
     
-    searchstr=[regexprep(namestr,'#',nametok) '.*.gif'];
+    if strcmp(p.task, 'otherImages')
+        searchstr=[regexprep(namestr,'#',nametok) '.*.gif'];
+    elseif strcmp(p.task, 'pseudoANOtiff')
+        searchstr=[regexprep(namestr,'#',nametok) '.*.jpg'];
+    end
     [filex] = spm_select('FPList',paf,['^' searchstr]);
     filex=cellstr(filex);
     if isempty(filex{1})
@@ -260,10 +265,14 @@ he={
 %%
 %%   PART-3  :       create HTML & co
 %%
-% ############################################################    
+% ############################################################ 
+
+itask=find(strcmp(tx(:,1), p.task ));
+formatOutput=tx{itask,3};
+header      =tx{itask,4};
     
     v2={};
-    v2{end+1,1}=[ '<h2> <font color="blue">' '*** Other Images Warped  To Histospace ***' '</h3>  </font> ' ];
+    v2{end+1,1}=[ '<h2> <font color="blue">' '*** ' header ' ***' '</h3>  </font> ' ];
     wid=p.imageSize;%800;
     for mo=1:size(tb,1)
         
@@ -280,11 +289,11 @@ he={
         if ~isempty(img)
             for i=1:length(img)
                 thisimg=img{i};
-                [pax namex extx ]=fileparts(thisimg);
-                sname=[ strrep(animalname,'\','__')  namex '.gif']; %file_name (link/copy)
+                [pax namex fmtx ]=fileparts(thisimg);
+                sname=[ strrep(animalname,'\','__')  namex fmtx]; %file_name (link/copy)
                 fsave =fullfile(pahtml, sname); %copy-destination
                 flink =[ subdir '/' sname] ; %HTML-link
-                shortnamelist{i,1}=[namex '.mat'];
+                shortnamelist{i,1}=[namex formatOutput ];
                 
                 if exist(thisimg)~=0
                     copyfile(thisimg,fsave,'f');
