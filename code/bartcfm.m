@@ -648,7 +648,7 @@ if isnewfig==1
     set(hb,'callback',@pop_metric);
     set(hb,'tooltipstring',['displaying metric {normal/FileSize/Date} ']);
     
-end
+
 
 
 hm=findobj(gcf,'tag','pop_metric');
@@ -663,7 +663,11 @@ end
     set(hb,'position',[0.91071 0.80833 0.1 0.031]);
     set(hb,'callback',@rd_axEqual);
     set(hb,'tooltipstring',['set axis [0] normal or [1] equal(image) ']);
-
+    
+    
+    
+    
+end
 
 % ==============================================
 %%   contextMenu
