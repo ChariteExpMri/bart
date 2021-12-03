@@ -10,6 +10,9 @@
 % ---------select via  ratng tag-----
 % bartcb('sel','tag','ok');
 % bartcb('sel','tag','issue|ok');
+% ---------select based on string in fullpathFileName-----
+% bartcb('sel','filename',v);
+% bartcb('sel','filename','test_2figs\a1_001');
 % ---------select string in FILEs-----
 % bartcb('sel','file','Nai|half');
 % bartcb('sel','file','Nai|half|a1');
@@ -28,6 +31,7 @@ if 0
     bartcb('load')
     bartcb('load','F:\data3\histo2\data_Josephine\proj.m')
     bartcb('getsel')
+    bartcb('getall')
     bartcb('sel')
     bartcb('updateListboxinfo');
 end
@@ -44,6 +48,8 @@ elseif strcmp(varargin{1},'load')
     loadproject(varargin)
 elseif strcmp(varargin{1},'getsel')
     [varargout{1} varargout{2}]=getsel(varargin);
+elseif strcmp(varargin{1},'getall')
+    [varargout{1} varargout{2}]=getall(varargin);
     
 elseif strcmp(varargin{1},'sel')
     [varargout{1} varargout{2}]=sel(varargin);    
@@ -61,7 +67,12 @@ idate=max(regexpi2(vstring,' \w\w\w 20\d\d (\d\d'));
 dateLU=['BART vers. ' char(regexprep(vstring(idate), {' (.*'  '  #\w\w ' },{''}))];
 out=dateLU;
 
-
+function [ fpdirs dirs] =getall(arg)
+hf=findobj(0,'tag','bart');
+hb=findobj(hf,'tag','lb1');
+global ak
+ fpdirs=ak.list1;
+ dirs=[];
 
 
 function [ fpdirs dirs] =getsel(arg)
@@ -592,6 +603,25 @@ elseif strcmp(arg{2},'tag') %---------tag
     end
     ix=find(~cellfun(@isempty,regexpi(ak.list1Html, sp)));
     set(hb,'value',ix);
+    
+ elseif strcmp(arg{2},'filename') %---------fullpath files 
+     %% ===============================================
+     sname=ak.list1(:,1);
+    tag=cellstr(arg{3});
+    padat=ak.dat;
+     [files] = spm_select('FPListRec',padat,'.*a1_\d\d\d.tif');
+     files=cellstr(files);
+     sel=[];
+    for i=1:length(tag)
+        thistag=tag{i};
+        %[pa name ext]=fileparts(thistag)
+        ix=regexpi2(sname,strrep(thistag,filesep,[filesep filesep]));
+        sel=[sel; ix(:)];
+    end
+     set(hb,'value',sel); 
+     
+    %% ===============================================
+    
 elseif strcmp(arg{2},'file') || strcmp(arg{2},'dir') %---------file/string search
     tag=arg{3};
     sname=ak.list1(:,1);

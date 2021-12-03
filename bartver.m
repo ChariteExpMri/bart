@@ -68,9 +68,9 @@
 % #k [f_ano_falsecolor2tif.m] #n convert ANO-atlas in histoSpace to pseudoatlas-TIF (pseudo-color or Allen-color)
 % --> access via MENU: Conversion/"convert Histo-ATLAS(ANO)-slice(mat) to pseudocolor-TIF"
 % 
-% 
-% 
-% 
+% #ba 03 Dec 2021 (12:13:41) 
+% #k [bartcfm.m] #n case-file-matrix for bart: visualize data (files x dirs), basic file-manipulation
+% --> accessible: via "grid" ICON main BART-gui (next to load project button)
 % 
 
 

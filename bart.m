@@ -156,15 +156,35 @@ h = uicontrol('style','pushbutton','units','normalized','position',[0.14107 0.88
     'backgroundcolor','w');
 % icon=which('profiler.gif');
 icon=fullfile(matlabroot,'toolbox','matlab', 'icons','book_link.gif');
+% icon=fullfile(matlabroot,'toolbox','matlab', 'icons','HDF_grid.gif');
+
 [e map]=imread(icon)  ;
 e=ind2rgb(e,map);
 % e(e<=0.01)=nan;
 set(h,'cdata',e);
 
 
+h = uicontrol('style','pushbutton','units','normalized','position',[0.17679 0.88452 0.034 0.058],...
+    'tag','ant_study_history',...
+    'string','','fontsize',13,   'callback',@call_CFM,'tooltip', 'open case-file-matrix(cfm)',...
+    'backgroundcolor','w');
+% icon=which('profiler.gif');
+% icon=fullfile(matlabroot,'toolbox','matlab', 'icons','book_link.gif');
+icon=fullfile(matlabroot,'toolbox','matlab', 'icons','HDF_grid.gif');
+[e map]=imread(icon)  ;
+e=ind2rgb(e,map);
+% e(e<=0.01)=nan;
+set(h,'cdata',e);
+
 % ==============================================
 %%   MENU
 % ===============================================
+
+function call_CFM(e,e2)
+
+bartcfm()
+
+
 function openStudyHistory(e,e2)
 barthistory('select');
 
