@@ -28,6 +28,7 @@ para={...
     'frameNumber'            1               'select the frame number (default is 1) if TIFF contains more than 1 image' {1 2 3 4 5}
     'SliceInOwnDir'          1               'import each slice in its own folder (use filename of slice as new Dir-name) '   'b'     
 
+    'useFolderName'          0               'resulting animal name: [0]: from folder or [1] from Tiff-file ' 'b'
     'copyfoldercontent'      0               'copy the folder content (all files) from original tif-folder'  'b'
     'isparallel'             0               'use parallel computing (0,1)'  'b'
     };

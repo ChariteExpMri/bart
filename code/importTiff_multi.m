@@ -26,13 +26,20 @@ for i=1:length(tiffgrp)
     file=tiffgrp{i};
     disp(['*** prosessing: ' file]);
     [pa, fi ,ext]=fileparts(file);
+    if s.useFolderName==1
+       [pa2, fi2]=fileparts(pa);
+       animal=fi2;
+    else
+       animal=fi; 
+    end
+    animal=regexprep(animal,{'\.', '\s+' ,'#'},{'_' ,'_',''});
     
     if s.SliceInOwnDir==1  %use own DIR 
-        outDir=regexprep(fi,{'\.', '\s+' ,'#'},{'_' ,'_',''});
+        outDir=animal;
         fpoutDir=fullfile(s.dat ,outDir);
          mkdir(fpoutDir);
     end
-    
+    disp(['animal/DIR : ['  animal  ']']);
     
    
    
