@@ -1,6 +1,7 @@
 
 %% get selected files and folders
-% fidi=bartcb('getsel');
+% fidi=bartcb('getsel'); %get selected files/dirs
+% fidi=bartcb('getall'); %get all files/dirs
 % w.dirs  =fidi(strcmp(fidi(:,2),'dir'),1);
 % w.files =fidi(strcmp(fidi(:,2),'file'),1);
 %% select files/dirs in listbox

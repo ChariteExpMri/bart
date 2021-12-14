@@ -72,6 +72,18 @@
 % #k [bartcfm.m] #n case-file-matrix for bart: visualize data (files x dirs), basic file-manipulation
 % --> accessible: via "grid" ICON main BART-gui (next to load project button)
 % 
+% #ba 14 Dec 2021 (22:03:21)
+% #k [cfm.m] #n case-file-matrix from from ANT-project used , 
+% [bartcfm.m] is not used anymore 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+
 
 
 %----- EOF

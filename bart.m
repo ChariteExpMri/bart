@@ -163,26 +163,69 @@ e=ind2rgb(e,map);
 % e(e<=0.01)=nan;
 set(h,'cdata',e);
 
-
-h = uicontrol('style','pushbutton','units','normalized','position',[0.17679 0.88452 0.034 0.058],...
-    'tag','ant_study_history',...
-    'string','','fontsize',13,   'callback',@call_CFM,'tooltip', 'open case-file-matrix(cfm)',...
+% ==============================================
+%%   
+% ===============================================
+% ==============================================
+%%   CFM -all
+% ===============================================
+%% SETTINGS
+h = uicontrol('style','pushbutton','units','normalized','position',[0.21071 0.88929 0.04 0.05],...
+    'tag','ant_cfm',...
+    'string','','fontsize',13,   'callback',{@openCFM,'all'},'tooltip', 'open Case-FileMatrix (all animals)',...
     'backgroundcolor','w');
 % icon=which('profiler.gif');
-% icon=fullfile(matlabroot,'toolbox','matlab', 'icons','book_link.gif');
 icon=fullfile(matlabroot,'toolbox','matlab', 'icons','HDF_grid.gif');
 [e map]=imread(icon)  ;
+inoLila=find(map(:,1)==1 & map(:,2)==0 & map(:,3)==1 );
+map(inoLila,:)=repmat([0 .5 0],[length(inoLila) 1]);
 e=ind2rgb(e,map);
 % e(e<=0.01)=nan;
 set(h,'cdata',e);
+% ==============================================
+%%   CFM -selected
+% ===============================================
+%% SETTINGS
+h = uicontrol('style','pushbutton','units','normalized','position',[0.25 0.88929 0.04 0.05],...
+    'tag','ant_cfm',...
+    'string','','fontsize',13,   'callback',{@openCFM,'sel'},'tooltip', 'open Case-FileMatrix (selected animals)',...
+    'backgroundcolor','w');
+% icon=which('profiler.gif');
+% icon=fullfile(matlabroot,'toolbox','matlab', 'icons','HDF_grid.gif');
+% [e map]=imread(icon)  ;
+e2=e(:,[3:8 end-1:end],:);
+% e(:,[ end-7:end])=1;
+
+% e=ind2rgb(e,map);
+% e(e<=0.01)=nan;
+set(h,'cdata',e2);
+
+% h = uicontrol('style','pushbutton','units','normalized','position',[0.17679 0.88452 0.034 0.058],...
+%     'tag','ant_study_history',...
+%     'string','','fontsize',13,   'callback',@call_CFM,'tooltip', 'open case-file-matrix(cfm)',...
+%     'backgroundcolor','w');
+% % icon=which('profiler.gif');
+% % icon=fullfile(matlabroot,'toolbox','matlab', 'icons','book_link.gif');
+% icon=fullfile(matlabroot,'toolbox','matlab', 'icons','HDF_grid.gif');
+% [e map]=imread(icon)  ;
+% e=ind2rgb(e,map);
+% % e(e<=0.01)=nan;
+% set(h,'cdata',e);
 
 % ==============================================
 %%   MENU
 % ===============================================
 
-function call_CFM(e,e2)
+function openCFM(e,e2,dirmode)
+if strcmp(dirmode,'all')
+    cfm(1,'','all');
+else
+    cfm(1,'','sel');
+end
 
-bartcfm()
+% function call_CFM(e,e2)
+% 
+% bartcfm()
 
 
 function openStudyHistory(e,e2)
