@@ -8,7 +8,7 @@
 ------------------  
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**14 Dec 2021 (22:03:21)**</ins>  
    __[cfm.m]__ case-file-matrix from from ANT-project used ,   
-  __[bartcfm.m]__ is not used anymore  
+  __[bartcfm.m]__ is not used anymore   
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**03 Dec 2021 (12:13:41)** </ins>  
    __[bartcfm.m]__ case-file-matrix for bart: visualize data (files x dirs), basic file-manipulation  
