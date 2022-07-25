@@ -224,7 +224,7 @@ fix=uint8(fix);
 poolobj = gcp;
  addAttachedFiles(poolobj,{'mhd_read_header.m','readWholeTextFile.m' ,'elastix2.m', [mfilename '.m'],'mhd_read.m'});%,'elastix.m'
 timexWarp=tic;
-
+warning off;
 parfor i=1:n%10
 % for i=1:n%10
     xx=ss.s(i,:);
@@ -334,7 +334,7 @@ ss.hi   =single(fix);
 nameshort=[strrep(name,'optim_', 'warp_') '.mat'];
 fiout=fullpath(pas,nameshort);
 
-disp(['..storing warped-solution(s) ["'  nameshort '"]']);
+disp(['[DONE]..storing warped-solution(s) ["'  nameshort '"]']);
 save(fiout,'ss');
 
 
