@@ -11,7 +11,7 @@ calculation of cell density for observed region).
 
 
 ## UPDATES ##
-![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+) Inspect [**last changes/updates**](bartver.md).<br>
+&#x1F535; Inspect [**last changes/updates**](bartver.md).<br>
 
 
 
