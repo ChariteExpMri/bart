@@ -238,7 +238,7 @@ fprintf(1,'\n');
 cprintf([0.9294 0.6941 0.1255],[' CURRENT STATE:  ' ]);
 parfor i=1:n%10
     % for i=1:n%10
-    fprintf('\b.|\n');%fprintf(1,['.|']);
+%     fprintf('\b.|\n');%fprintf(1,['.|']);
     
     
     xx=ss.s(i,:);
@@ -284,6 +284,8 @@ parfor i=1:n%10
     row=str2num(char(lg(ix-1)));
     val=row(2);
     met2(i,:)=val ;%row; 
+    
+    fprintf('\b.|\n');%fprintf(1,['.|']);
 end
 fprintf(1,'\n');
 cprintf([0 .5 0],['  ..dT-warping: ' sprintf('%2.2f',toc(timexWarp)/60)  ' min\n']);
