@@ -8,6 +8,12 @@
 % updatebart(1);  % same as updatebart()
 % updatebart(2) ; % just update (simplest version, user is not asked),
 % updatebart(3) ; % hard reset, in case some local files have been modified/deleted
+
+
+
+% ==============================================
+%%   the following is not checked!
+% ===============================================
 %% ___ FRESH INSTALLATION ___________________
 % updatebart(4,'path',LOCAL-PATH-TO-INSTALL-THE-TOOLBOX);
 % ..replace "LOCAL-PATH-TO-INSTALL-THE-TOOLBOX" with yout destination-path
