@@ -294,6 +294,7 @@ else
     end
     
     updatebart(2);                              % UPDAETE
+    bartcb('versionupdate');
     
     try
         w=git('log -p -1');                  % obtain DATE OF local repo
