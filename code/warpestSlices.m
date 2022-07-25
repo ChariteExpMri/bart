@@ -225,8 +225,22 @@ poolobj = gcp;
  addAttachedFiles(poolobj,{'mhd_read_header.m','readWholeTextFile.m' ,'elastix2.m', [mfilename '.m'],'mhd_read.m'});%,'elastix.m'
 timexWarp=tic;
 warning off;
+
+
+
+tic
+cprintf([0 0.45 0],['  TARGET STATE: ' ]);
+for i=1:n
+    cprintf([0 0.45 0],['.|']);
+end
+fprintf(1,'\n');
+
+
 parfor i=1:n%10
-% for i=1:n%10
+    % for i=1:n%10
+    fprintf('\b.|\n');%fprintf(1,['.|']);
+    
+    
     xx=ss.s(i,:);
     slicenum=xx(1);   X=xx(2);  Y=xx(3);
     cent    =[size(cv,2)/2 size(cv,1)/2];
