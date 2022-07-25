@@ -235,7 +235,7 @@ for i=1:n
 end
 fprintf(1,'\n');
 
-
+cprintf([0.9294 0.6941 0.1255],[' CURRENT STATE:  ' ]);
 parfor i=1:n%10
     % for i=1:n%10
     fprintf('\b.|\n');%fprintf(1,['.|']);
@@ -285,7 +285,7 @@ parfor i=1:n%10
     val=row(2);
     met2(i,:)=val ;%row; 
 end
-
+fprintf(1,'\n');
 cprintf([0 .5 0],['  ..dT-warping: ' sprintf('%2.2f',toc(timexWarp)/60)  ' min\n']);
 cprintf([0 .5 0],['  ..dt-total  : ' sprintf('%2.2f',toc(timex0)/60)  ' min\n']);
 % ==============================================
