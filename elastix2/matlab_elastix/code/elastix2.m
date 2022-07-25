@@ -178,19 +178,23 @@ end
 
 % Create and move the images
 movingFname=[dirName,'_moving']; %TODO: so the file name contains the dir name? 
-mhd_write(movingImage,movingFname);
-if ~strcmp(outputDir,'.')
-    if ~movefile([movingFname,'.*'],outputDir); error('Can''t move files'), end
-end
+% mhd_write(movingImage,movingFname);
+% if ~strcmp(outputDir,'.')
+%     if ~movefile([movingFname,'.*'],outputDir); error('Can''t move files'), end
+% end
+
+mhd_write(movingImage,fullfile(outputDir,movingFname));
 
 %create fixedImage only if we're registering to an image. parameters
 %may have been supplied instead
 if isnumeric(fixedImage)
     targetFname=[dirName,'_target'];
-    mhd_write(fixedImage,targetFname);
-    if ~strcmp(outputDir,'.') %Don't copy if we're already in the directory
-        if ~movefile([targetFname,'.*'],outputDir); error('Can''t move files'), end
-    end
+%     mhd_write(fixedImage,targetFname);
+%     if ~strcmp(outputDir,'.') %Don't copy if we're already in the directory
+%         if ~movefile([targetFname,'.*'],outputDir); error('Can''t move files'), end
+%     end
+    
+    mhd_write(fixedImage,fullfile(outputDir,targetFname));
 end
 
 

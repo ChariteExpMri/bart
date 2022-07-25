@@ -241,6 +241,7 @@ parfor i=1:n%10
     % ----------------------------
     elxout3=elsPathList{i};
     %disp(elxout3);
+    mkdir(elxout3);
     drawnow;drawnow;drawnow; % add a little pause here because win-10-srv does not update the ouput-path
     
     [wa,outs]= elastix2(mov,fix,elxout3,parfile(1:end),pa_el ,struct('threads',1));
