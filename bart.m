@@ -112,6 +112,34 @@ h = uicontrol('style','pushbutton','units','normalized','position',[.94 .65 .08 
 set(h,'position',[0.44107 0.96548 0.25 0.027],'fontsize',7,'backgroundcolor','w','foregroundcolor',[0.9294    0.6941    0.1255],...
     'horizontalalignment','left','callback',{@callbartver});
 
+
+%% ===============================================
+% update-pushbutton :get update ...no questions ask
+%% ===============================================
+h = uicontrol('style','pushbutton','units','normalized','position',[.94 .65 .04 .05],...
+    'tag','update_btn',...
+    'string','','fontsize',13,  'callback',{@updateTBXnow},...
+    'tooltip', ['<html><b>download latest updates from Github</b><br>forced updated, no user-input<br>'...
+    '<font color="green"> see contextmenu for more options'],...
+    'backgroundcolor','w');
+set(h,'position',[0.69286 0.96071 0.025 0.033333]);
+set(h,'units','pixels');
+posi=get(h,'position');
+set(h,'position',[posi(1:2) 14 14]);
+set(h,'units','norm');
+icon=fullfile(antpath,'icons','Download_16.png');
+[e map]=imread(icon)  ;
+set(h,'cdata',e);
+
+cmm=uicontextmenu;
+uimenu('Parent',cmm, 'Label','check update-status',             'callback', {@updateTBX_context,'info' });
+uimenu('Parent',cmm, 'Label','force update',                    'callback', {@updateTBX_context,'forceUpdate' } ,'ForegroundColor',[1 0 1],'separator','on');
+uimenu('Parent',cmm, 'Label','show last local changes (files)', 'callback', {@updateTBX_context,'filechanges_local' } ,'ForegroundColor',[.5 .5 .5],'separator','on');
+uimenu('Parent',cmm, 'Label','help: update from GitHUB-repo' ,  'callback', {@updateTBX_context,'help' } ,'ForegroundColor',[0 .5 0],'separator','on');
+set(h,'UIContextMenu',cmm);
+
+
+
 % ==============================================
 %%
 % ===============================================
@@ -203,6 +231,8 @@ e2=e(:,[3:8 end-1:end],:);
 % e(e<=0.01)=nan;
 set(h,'cdata',e2);
 
+
+
 % h = uicontrol('style','pushbutton','units','normalized','position',[0.17679 0.88452 0.034 0.058],...
 %     'tag','ant_study_history',...
 %     'string','','fontsize',13,   'callback',@call_CFM,'tooltip', 'open case-file-matrix(cfm)',...
@@ -215,9 +245,80 @@ set(h,'cdata',e2);
 % % e(e<=0.01)=nan;
 % set(h,'cdata',e);
 
+
+% ==============================================
+%%   update tbx via button, no user-questions
+% ===============================================
+function updateTBX_context(e,e2,task)
+cname=getenv('COMPUTERNAME');
+msg_myMachine='The source machine can''t be updated from Github';
+if strcmp(task,'help')
+    help updatebart
+elseif strcmp(task,'info')
+    if strcmp(cname,'STEFANKOCH06C0')==1
+        disp(msg_myMachine);  %my computer---not allowed
+    else
+        updatebart('info');
+    end
+elseif strcmp(task,'forceUpdate')
+    if strcmp(cname,'STEFANKOCH06C0')==1
+        disp(msg_myMachine);  %my computer---not allowed
+    else
+        updatebart(3);
+    end
+elseif strcmp(task,'filechanges_local')
+    if strcmp(cname,'STEFANKOCH06C0')==1
+        disp(msg_myMachine);  %my computer---not allowed
+    else
+        updatebart('changes');
+    end
+end
+% ==============================================
+%%   update-btn
+% ===============================================
+
+function updateTBXnow(e,e2)
+cname=getenv('COMPUTERNAME');
+if strcmp(cname,'STEFANKOCH06C0')==1
+    disp('The source machine can''t be updated from Github');  %my computer---not allowed
+else
+    thispa=pwd;
+    go2pa =fileparts(which('bartver.m'));
+    cd(go2pa);
+    try
+        w=git('log -p -1');                    % obtain DATE OF local repo
+        w=strsplit(w,char(10))';
+        date1=w(min(regexpi2(w,'Date: ')));
+    catch
+        cd(thispa);
+    end
+    
+    updatebart(2);                              % UPDAETE
+    
+    try
+        w=git('log -p -1');                  % obtain DATE OF local repo
+        w=strsplit(w,char(10))';
+        date2=w(min(regexpi2(w,'Date: ')));
+    catch
+        cd(thispa);
+    end
+    
+    cd(thispa);
+    if strcmp(date1,date2)~=1   %COMPARE date1 & date2 ...if changes--->reload tbx
+        q=updatebart('changes');
+        if ~isempty(find(strcmp(q,'bart.m')));
+            disp(' BART-main gui was modified: reloading GUI');
+            %antcb('reload');
+            bart;
+        end
+    end
+end
+
 % ==============================================
 %%   MENU
 % ===============================================
+
+
 
 function openCFM(e,e2,dirmode)
 if strcmp(dirmode,'all')

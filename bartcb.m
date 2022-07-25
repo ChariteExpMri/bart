@@ -59,7 +59,18 @@ elseif strcmp(varargin{1}, 'updateListboxinfo')
    updateListboxinfo();
 elseif strcmp(varargin{1}, 'version')
    varargout{1} =version(varargin);
+elseif strcmp(varargin{1}, 'versionupdate')
+  versionupdate(varargin);
 end
+
+
+function versionupdate(varargin)
+hc=findobj(findobj(0,'tag','bart'),'tag','txtversion');
+if isempty(hc); return; end
+version=bartcb('version');
+set(hc,'string',version);
+return
+
 
 
 function out=version(varargin)
@@ -167,6 +178,13 @@ if ~isempty(hf)
     close(hf);
 end
 clear global ak;
+
+
+
+
+
+
+
 
 
 function updateListboxinfo()

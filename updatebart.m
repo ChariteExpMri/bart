@@ -197,6 +197,7 @@ if updatecode==2
         cd(p.pathbefore);
         return
     end
+    bartcb('versionupdate');
 end
 %% ==================== .GIT IS MISSING..UPDATE ========================================
 %% ==============================================
@@ -292,6 +293,7 @@ if updatecode==3 %hard reset
     
     
     cd(p.pathbefore);
+    bartcb('versionupdate');
     return
 end
 
