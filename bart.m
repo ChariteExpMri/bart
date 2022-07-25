@@ -146,8 +146,11 @@ m2 = uimenu(m,'label','convert Histo-ATLAS(ANO)-slice(mat) to pseudocolor-TIF [f
 
 
 m  = uimenu('label','updates');
-m2 = uimenu(m,'label','check updates','callback', {@check_updates,1});
-m2 = uimenu(m,'label','force updates','callback', {@check_updates,2});
+m2 = uimenu(m,'label','      update','callback', {@check_updates,2});
+m2 = uimenu(m,'label','force update','callback', {@check_updates,3});
+m2 = uimenu(m,'label','check update','callback', {@check_updates,1});
+m2 = uimenu(m,'label','<html><font color =gray>help  bart-update','callback', {@check_updates,-1});
+
 
 %% BArthistory
 h = uicontrol('style','pushbutton','units','normalized','position',[0.14107 0.88452 0.034 0.058],...
@@ -263,17 +266,29 @@ if strcmp(which('bart.m'), 'F:\data3\histo2\bart\bart.m')
     msgbox('This is the original version...can''t be updated');
 else
     %just update
-    bartcb('close');
-    cd(fileparts(which('bart.m')));
+    %     bartcb('close');
+    %     cd(fileparts(which('bart.m')));
     % ==============================================
     %%   update without deleting new folder
     % ===============================================
-    if task==1
-        git reset --hard HEAD;git pull;
-        bart();
+    %     if task==1
+    %         git reset --hard HEAD;git pull;
+    %         bart();
+    %     elseif task==2
+    %         disp('not implemented jet!')
+    %     end
+    
+    if  task==-1
+        help updatebart;
     elseif task==2
-        disp('not implemented jet!')
+        updatebart(2);
+    elseif task==3
+        updatebart(3);
+    elseif task==1
+        updatebart('info');
+        %updatebart('changes')
     end
+    
 end
 
 
