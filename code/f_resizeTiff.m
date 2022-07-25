@@ -37,7 +37,7 @@ para={...
 'm2_otsuclass'         [20]    'method-2 (WSL) ONLY: number of otsu-classes (higher..more sensitive)'         ''
 
 'inf44'    '__METHOD-3___THRESHOLD_____________'  ''  ''
-'m3_TR'               1      'method3 (TRESHOLD) only: threshold value (range 0-255), 0 is assumed to be background' ''
+'m3_TR'               'pct75'      'threshold: range 0-255, 0 is background; other thresholds: "pct75":75th percentile, "mean"/"median" ' {'pct75','mean','median' [1],[50]}
 
 '' '' '' ''
 

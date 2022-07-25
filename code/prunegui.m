@@ -47,6 +47,7 @@ makefig();
 setupimage(u);
 setuplist();
 showimage(1);
+uiwait(gcf);
 % ==============================================
 %%
 % ===============================================
@@ -569,6 +570,7 @@ ax1=findobj(gcf,'tag','ax1');
 grid on; ax1.GridColor=[1 0 1];
 ax1.GridAlpha=1;
 
+axes(ax1);
 % ==============================================
 %%
 % ===============================================
@@ -1060,31 +1062,35 @@ uistack(h,'bottom');
 %ok
 hb=uicontrol(h, 'style','pushbutton','units','norm','string','OK');
 set(hb,'fontsize',7,'tag','rotsl_ok','callback',{@rotsl_cb,'ok'});
-set(hb,'position',[0.6   0.1    0.15  0.5]);
+set(hb,'position',[0.63   0.1    0.15  0.5]);
+set(hb,'backgroundcolor',[0.8039    0.8784    0.9686]);
 %cancel
 hb=uicontrol(h, 'style','pushbutton','units','norm','string','Cancel');
 set(hb,'fontsize',7,'tag','rotsl_cancel','callback',{@rotsl_cb,'cancel'});
-set(hb,'position',[0.75   0.1    0.15  0.5]);
+set(hb,'position',[0.78   0.1    0.15  0.5]);
+set(hb,'backgroundcolor',[0.8039    0.8784    0.9686]);
+
 %help
 hb=uicontrol(h, 'style','pushbutton','units','norm','string','<html><b>&#63;<b>');
 set(hb,'fontsize',7,'tag','rotsl_help','callback',{@rotsl_cb,'help'});
 set(hb,'position',[ .4 .1  0.08  0.5]);
 set(hb,'backgroundcolor',[1 .7 .1]);
+set(hb,'position',[.95 .09 .05 .5])
 
 
 %reset
 hb=uicontrol(h, 'style','pushbutton','units','norm','string','reset');
 set(hb,'fontsize',7,'tag','rotsl_reset','callback',{@rotsl_cb,'reset'});
-set(hb,'position',[0.01   0.1    0.15  0.5]);
+set(hb,'position',[0.01 0.1 0.12  0.5]);
 %edit
 hb=uicontrol(h, 'style','edit','units','norm','string','0');
 set(hb,'fontsize',7,'tag','rotsl_edit','callback',{@rotsl_cb,'edit'});
-set(hb,'position',[0.18   0.1    0.15  0.5]);
+set(hb,'position',[0.15 0.1 0.12  0.5]);
 %edit-msg
-hb=uicontrol(h, 'style','text','units','norm','string','angle(Â°)');
+hb=uicontrol(h, 'style','text','units','norm','string','angle(°)');
 set(hb,'fontsize',7,'tag','rotsl_editmsg');
 set(hb,'backgroundcolor',colbg);
-set(hb,'position',[0.18   0.5    0.15  0.5]);
+set(hb,'position',[0.15   0.5    0.15  0.5]);
 uistack(hb,'bottom');
 %info
 hb=uicontrol(h, 'style','text','units','norm','string','use L/R arrow-keys to rotate slice');
@@ -1092,6 +1098,20 @@ set(hb,'fontsize',7,'tag','rotsl_msg');
 set(hb,'backgroundcolor',[1 1 0.06]);
 set(hb,'position',[.35 .65 .68  0.35]);
 uistack(hb,'bottom');
+
+%% rot+90
+hb=uicontrol(h, 'style','pushbutton','units','norm','string','+90°');
+set(hb,'fontsize',7,'callback',{@rotsl_cb,'rot+90'});
+set(hb,'position',[0.28 0.1 0.12 0.4]);
+set(hb,'tooltipstring','90° anticlockwise rotation');
+%% rot-90
+hb=uicontrol(h, 'style','pushbutton','units','norm','string','-90°');
+set(hb,'fontsize',7,'callback',{@rotsl_cb,'rot-90'});
+set(hb,'position',[0.4 0.1 0.12 0.4]);
+set(hb,'tooltipstring','90° clockwise rotation');
+
+
+%% ===============================================
 
 % ----------------------userdata in fr---
 hr=findobj(gcf,'tag','rotsl_frame');
@@ -1146,6 +1166,24 @@ elseif strcmp(arg,'ok') || strcmp(arg,'cancel')
     end
     hr=findobj(gcf,'tag','rotsl_frame');
     delete(hr);
+    
+%     hf=gcf;
+%     set(hf,'color',[1 1 1]);
+%     axes(gca);
+   try; setfocus(gca); end
+    
+ elseif strcmp(arg,'rot-90') || strcmp(arg,'rot+90')  
+     
+     if ~isempty(findobj(gcf,'tag','rotsl_frame')) %ROTATE SLICE IF PANEL EXIST
+         val=str2num(get(findobj(gcf,'tag','rotsl_edit'),'string'));
+         val2=str2num(strrep(arg,'rot',''));
+         valnew=val+val2;
+         set(findobj(gcf,'tag','rotsl_edit'),'string',num2str(valnew));
+         rotsl_cb([],[],'rotate',valnew);
+     end
+     
+     
+    
 elseif strcmp(arg,'rotate')
     him=findobj(gcf,'tag','him');
     %d=get(him,'Cdata');

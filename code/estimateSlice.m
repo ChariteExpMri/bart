@@ -349,9 +349,10 @@ elseif p.method==2
     p2.plotresult     = 0;%p.plotresult       ;% plot result best "solution" (image)
     
     
-    x0=p.plan1_x0;
+    %x0=p.plan1_x0;
     LB=p.plan1_LB;
     UB=p.plan1_UB;
+    x0=mean([LB;UB],1);
     
     plan1=[x0; LB; UB];
     p2.planno=1;

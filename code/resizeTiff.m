@@ -115,8 +115,19 @@ elseif p.method==3
     % ==============================================
     %   threshold
     % ===============================================
+    if ischar(p.m3_TR)
+        if strcmp(p.m3_TR, 'median')
+            thresh=median(p2(:));
+        elseif strcmp(p.m3_TR, 'mean')
+            thresh=mean(p2(:));
+        elseif strcmp(p.m3_TR, 'pct75')
+            thresh=prctile(p2(:),75);
+        end
+    else
+        thresh=p.m3_TR;
+    end
     TR=0;
-    v=p2>p.m3_TR;
+    v=p2>thresh;
     ms=imfill(imgaussfilt(double(v),[1])>0,'holes');
     
     %     ms2=imerode(imopen(ms,strel('disk',7)),strel('disk',5));

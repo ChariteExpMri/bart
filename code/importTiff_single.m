@@ -45,10 +45,17 @@ end
 
 % b=imread(fout);
 % ib=imfinfo(fout);
+
 % ==============================================
-%%   
+%%   thumbnail
 % ===============================================
 
+a2=imresize(a,[400 400]);
+a2=imadjust(mean(mat2gray(a2),3));
+a2=uint8(round(255.*a2 ));
+
+F2=fullfile(fpoutDir, ['a1_' pnum(1,3) '.jpg']);
+imwrite(a2,F2);
 
 
 

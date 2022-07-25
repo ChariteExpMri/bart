@@ -460,6 +460,7 @@ set(jSlider,'ToolTipText',[...
     '[con2]: contour2<br>' ...
     ]);
 
+set(gcf,'menubar','none');
 %———————————————————————————————————————————————
 %%   
 %———————————————————————————————————————————————
@@ -571,6 +572,20 @@ s2.ref   =ref;
 s2.param =row(2:4);
 s2.ix    =row(1);
 
+%% ==========get tagged slices =====================================
+try
+    it=find(bf.tb(:,1)==1);
+    tagged=bf.tb(it,3:5); %tagged
+    tagged=[tagged; [ s2.param ] ];%currently selected best slice
+    tagged=unique([tagged],'rows');
+    s2.tagged=tagged;
+end
+
+%% ===============================================
+
+
+
+
 cprintf([0 0 1],['Best-Slice : ' sprintf('[%d] %2.2f %2.2f %2.2f ',row(1),row(2:4))  '\n']);
 disp(['..saving: ' fileout1 ]);
 save(fileout1,'s2');
@@ -661,6 +676,28 @@ if isfield(bf,'tb')
     %  disp(tb(find(tb(:,1)==1),:))  %check
 end
 
+%% ========[load existing best slice...if exist ]=======================================
+
+[pa name ext]=fileparts(bf.file);
+f2=fullfile(pa,[strrep(name,'warp_','bestslice_') '.mat']);
+if exist(f2)==2
+    bx=load(f2);
+    if isfield(bx.s2,'tagged')==1
+        ix_tagged=[];
+        for i=1:size(bx.s2.tagged,1)
+            it=find(sum(abs(tb(:,3:5)-repmat(bx.s2.tagged(i,:),[size(tb,1) 1])),2)==0);
+            if length(it)>1; it=it(1); end
+            if ~isempty(it)
+            ix_tagged=[ix_tagged it]; 
+            end
+        end
+        ix_tagged=unique(ix_tagged);
+        tb(ix_tagged,1)=1;
+    end
+end
+%% ===============================================
+
+
 ls=repmat({''},[size(ss.q,3) 1]);
 for i=1:size(ss.q,3)
     if tb(i,1)==0
@@ -737,6 +774,8 @@ if isfield(bf,'hemi')
         %cv=cv.*uint8(cvmask);   
     end
 else
+      global ak
+    pa_template=ak.template;
      [ cvmask]=p_getfromHistvolspace(fullfile(pa_template, 'AVGTmask.nii' )) ; 
 end
 
