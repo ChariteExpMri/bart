@@ -147,7 +147,7 @@ m2 = uimenu(m,'label','convert Histo-ATLAS(ANO)-slice(mat) to pseudocolor-TIF [f
 
 m  = uimenu('label','updates');
 m2 = uimenu(m,'label','      update','callback', {@check_updates,2});
-m2 = uimenu(m,'label','force update','callback', {@check_updates,3});
+m2 = uimenu(m,'label','<html><font color =blue>force update','callback', {@check_updates,3});
 m2 = uimenu(m,'label','check update','callback', {@check_updates,1});
 m2 = uimenu(m,'label','<html><font color =gray>help  bart-update','callback', {@check_updates,-1});
 
