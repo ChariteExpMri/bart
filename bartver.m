@@ -76,10 +76,10 @@
 % #k [cfm.m] #n case-file-matrix from from ANT-project used , 
 % [bartcfm.m] is not used anymore 
 % 
-% 
-% 
-% 
-% 
+% #ba 25 Jul 2022 (14:52:11)
+% #k [elastix2.m] #n  ---removed bug: 
+% solved: warping n-best slices resulted in error when usong parallel processing
+% % #k [updatebart.m] #n  -new function to update changes
 % 
 % 
 % 

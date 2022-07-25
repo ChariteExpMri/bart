@@ -1,14 +1,20 @@
 ## **BART Modifications**
- ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   14 Dec 2021 (22:03:21)  
+ ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   25 Jul 2022 (14:52:11)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/bart">https://github.com/ChariteExpMri/bart</a>  
     
     
     
 ------------------  
+  ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**25 Jul 2022 (14:52:11)**</ins>  
+   __[elastix2.m]__  ---removed bug:   
+  solved: warping n-best slices resulted in error when usong parallel processing  
+  %  __[updatebart.m]__  -new function to update changes  
+<!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**14 Dec 2021 (22:03:21)**</ins>  
    __[cfm.m]__ case-file-matrix from from ANT-project used ,   
-  __[bartcfm.m]__ is not used anymore  
+  __[bartcfm.m]__ is not used anymore   
+    
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**03 Dec 2021 (12:13:41)** </ins>  
    __[bartcfm.m]__ case-file-matrix for bart: visualize data (files x dirs), basic file-manipulation  
