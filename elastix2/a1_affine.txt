@@ -20,7 +20,7 @@
 (AutomaticScalesEstimation "false")
 (AutomaticTransformInitialization "true")
 (AutomaticTransformInitializationMethod "CenterOfGravity")
-(Scales 1000.0)
+//(Scales 1000.0)
 
 // ########################################################################
 

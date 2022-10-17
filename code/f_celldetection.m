@@ -44,7 +44,7 @@ para={...
 'radius'      [3 7] 'detection radius of cells [3 7] IMPORTANT!!!'  '' %[3 7]; %[10 30]
 'testimage'   [1:10] 'ONLY OF istest is 1, plot this test-image numbers ' ''
 
-'meth ' 'TwoStage'  'method to use'  {'TwoStage' 'frst'}
+'meth' 'TwoStage'  'method to use'  {'TwoStage' 'frst'}
 %p.meth='frst'
 % -----fdo 2nd sensitivyty
 'inf25' '___SENSITIVITY2 ("TwoStage" only)________' '___________________________________' ''
@@ -66,11 +66,9 @@ para={...
 'medfilt'      []  'median filter image [two values] or empty'  ''
 'color'       'm' 'cell-detection color'  ''
 'isparallel'   0 'PARALLEL COMPUTIATION...might be faster'  'b'
-
-'files'   ''  'select files here'   'mf'
-
-
 };
+% 'files'   ''  'select files here'   'mf'
+
 
 
 % ==============================================
@@ -119,6 +117,17 @@ if showgui==-1
     return
 end
 
+
+
+% ==============================================
+%%   files
+% ===============================================
+if isfield(x,'files') && ~isempty(char(x.files))
+    z.files=x.files;
+else
+  fidi=bartcb('getsel')  ;
+    z.files=fidi(strcmp(fidi(:,2),'file'),1);
+end
 % return
 % ==============================================
 %%   PROCEED

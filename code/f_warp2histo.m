@@ -19,10 +19,10 @@ if exist('x')==0                           ;    x=[]                        ;end
 % ===============================================
 
 if exist('x')~=1;        x=[]; end
-if ~isempty(x) && ~isempty(x.files)
-%     x.files =regexprep(x.files,{ '\a1' '.tif'},{'\a2','.mat' })
-%     x.files =regexprep(x.files,{ [filesep filesep 'a1_'] '.tif'},{[filesep filesep 'optim_'],'.mat' });
-end
+% if ~isempty(x) && ~isempty(x.files)
+% %     x.files =regexprep(x.files,{ '\a1' '.tif'},{'\a2','.mat' })
+% %     x.files =regexprep(x.files,{ [filesep filesep 'a1_'] '.tif'},{[filesep filesep 'optim_'],'.mat' });
+% end
 
 
 % ==============================================
@@ -41,8 +41,9 @@ tb=tb0;
 tb(:,1)=stradd(tb0(:,1),[pa_template filesep],1); %fullpath
 % templateDir=fullfile(fileparts(which('bart.m')),'templates');
 
-
-refimage=fullfile(pa_template,'HISTOVOL.nii');
+% 
+% refimage=fullfile(pa_template,'HISTOVOL.nii');
+refimage=fullfile(pa_template,'AVGT.nii');
 %% =============================================== elastix-paramter
 pa_el=strrep(which('bart.m'),'bart.m','elastix2');
 parfile0={...
@@ -60,6 +61,7 @@ para={...
 '' '' '' ''
 % 'outDirName'   'fin'   'Name of the output Directory: ("fin": folder with output images)'      ''
 'useModFile'                 1               'use modFile "a2_XXXmod.tif" if exist'  'b'
+'enableRotation' 1       'enable rotation if manally defined' 'b'
 'saveIMG'        1  'save output images {0|1}; [0]is for testing only [1]yes save images'      'b'
 
 '' '' '' ''
@@ -74,7 +76,7 @@ para={...
 'inf4'     '_____ ELASTIX PARAMETER _________________________' '' ''
 'parameterFiles'    parfile0      'Elastix paramter files (affine&Bspline)'    {@getElestixfiles}
 'changeParameter'  'HIT BUTTON'              'change elastix Parameter using a local copy of parameterfiles'       {@changeElastixparameter}
-
+};
 % 
 % 'NumResolutions'             [2     6     ]  'number of resolutions for affine(arg1) & B-spline(arg2) transformation'   ''
 % 'MaximumNumberOfIterations'  [1250 1000]     'number of iterations within each resolution for affine(arg1) & B-spline(arg2) transformation' ''
@@ -83,10 +85,10 @@ para={...
 % 'inf5'    '_____ MISC _________________________'  ''  ''
 % 'isparallel'           0   'parallel processing {0,1}' 'b'
 
-'' '' '' ''
-'inf6'     '_____ DO THIS FOR THE FOLLOWING FILES _________________________' '' ''
-'files'    {}          'histo-files'  'mf'
-};
+% '' '' '' ''
+% 'inf6'     '_____ DO THIS FOR THE FOLLOWING FILES _________________________' '' ''
+% 'filesAlternative'    {}          'histo-files'  'mf'
+
 % ==============================================
 %%   
 % ===============================================
@@ -127,6 +129,15 @@ end
 
 cprintf([0 0 1],[' warp estimated slices... '  '\n']);
 
+% ==============================================
+%%   files
+% ===============================================
+if isfield(x,'files') && ~isempty(char(x.files))
+    z.files=x.files;
+else
+  fidi=bartcb('getsel')  ;
+    z.files=fidi(strcmp(fidi(:,2),'file'),1);
+end
 
 
 % ==============================================

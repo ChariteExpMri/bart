@@ -13,7 +13,7 @@
 
 // ############  IMPORTANT PARAMETER ####################################
 
-(NumberOfResolutions 2)
+(NumberOfResolutions 6)
 (ImagePyramidSchedule 8 8 4 4 2 2 1 1)
 (MaximumNumberOfIterations 10000)
 (MaximumStepLength .5)

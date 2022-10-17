@@ -34,6 +34,7 @@ x.verb   =0;
 x.outdir    ='up1';
 x.thumbnail =1;
 x.approach =1;
+x.addborderpixel=5;
 
 % ==============================================
 %%
@@ -79,6 +80,22 @@ w=imread(f0);%,'PixelRegion',{[1 10977+100],[10977 10977]}) %cell array in the f
 % fg,imagesc(w(:,:,1))
 disp([ '...reading file Time: ' sprintf('%2.2f',toc/60) 'min']);
 
+%% ========add border-pixels ====================
+if x.addborderpixel>0
+    nbb=2; % number of bordering columns/rows to obtain median
+    for i=1:size(w,3)
+        bov=[w(:,[1: nbb],i) ; w(:,[end-nbb+1:end],i); w([1:nbb],:,i)'; w([end-nbb+1:end],:,i)' ];
+        valbord=round(median(bov(:)));
+        temp(:,:,i)=padarray(  w(:,:,i)  ,[x.addborderpixel x.addborderpixel],valbord);
+    end
+    w=temp;
+    s.Height =size(w,1);
+    s.Width  =size(w,2);
+    clear temp;
+end
+
+
+%% ===============================================
 
 approach=x.approach;
 
@@ -92,19 +109,38 @@ if approach==1 || approach==3
     si2=round([size(w,1) size(w,2)]/10);
     
     c=imresize(w(:,:,1), [si2],'nearest');
-    c1=otsu(medfilt2(c,[15 15]),3);
-    c2=c1<3; %mask
+    
+    try
+        notsu=7;
+        c1=otsu(medfilt2(c,[15 15]),notsu);
+        c2=c1<notsu; %mask
+    catch
+        notsu=3;
+        c1=otsu(medfilt2(c,[15 15]),notsu);
+        c2=c1<notsu; %mask
+    end
+    
+    
     c2=imfill(c2,'holes');
     [c3 nc]=bwlabeln(c2);
     uni=unique(c3); uni(uni==0)=[]; %clusterTable
     tv=[uni histc(c3(:),uni) ];
     tv=flipud(sortrows(tv,2));
     
+    
+    % ==============================================
+    %%  remove tiny cluster below threshold
+    % ===============================================
+    delthresh=round(tv(1,2)*(xp.tr4smallcluster/100)); %treshold for smallest cluster in percent to largest cluster
+    %delthresh=1500; %absolute size
     % to tiny cluster
-    delthresh=500;
     cl_tiny=tv(find(tv(:,2)<delthresh),1);
     %corner+border-artefacts
-    cl_bord=unique([c3(:,[1 end]); c3([1 end],:)' ]); cl_bord(cl_bord==0)=[];
+    if x.addborderpixel>0
+        cl_bord=[];
+    else
+        cl_bord=unique([c3(:,[1 end]); c3([1 end],:)' ]); cl_bord(cl_bord==0)=[];
+    end
     cl_del=unique([cl_tiny; cl_bord]);
     c3=c3(:) ;
     for i=1:length(cl_del)
@@ -301,9 +337,7 @@ if approach==1 || approach==3
     %%   make montage plot
     % ===============================================
     tif3=imresize(w(:,:,3),[ size(ut2,1)  size(ut2,2) ],'nearest');
-    % ==============================================
-    %%
-    % ===============================================
+
     
     ut3=cat(3,tif3,ut2);
     ut3=imresize(ut3,[500 500]);

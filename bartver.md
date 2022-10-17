@@ -1,15 +1,25 @@
 ## **BART Modifications**
- &#x1F535; last modification:   25 Jul 2022 (14:52:11)  
+ &#x1F535; last modification:   17 Oct 2022 (15:34:09)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/bart">https://github.com/ChariteExpMri/bart</a>  
     
     
     
 ------------------  
+  &#x1F535;   <ins>**17 Oct 2022 (15:34:09)**</ins>  
+   __[f_statisticLR.m]__  -new function to statistically evaluate regionwise left-right differences in cell-density  
+<!---->
+  &#x1F535;   <ins>**14 Oct 2022 (09:40:52)** several revisions</ins>  
+  added code history:select __[H]__-Button or it's context menu to obtain the code of previously executed processes   
+    
+    
+    
+<!---->
   &#x1F535;   <ins>**25 Jul 2022 (14:52:11)**</ins>  
    __[elastix2.m]__  ---removed bug:   
   solved: warping n-best slices resulted in error when usong parallel processing  
-  %  __[updatebart.m]__  -new function to update changes  
+   __[updatebart.m]__  -new function to update changes  
+    
 <!---->
   &#x1F535;   <ins>**14 Dec 2021 (22:03:21)**</ins>  
    __[cfm.m]__ case-file-matrix from from ANT-project used ,   

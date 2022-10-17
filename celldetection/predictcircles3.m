@@ -173,9 +173,65 @@ for u=1:length(imvec)
     
     %     fg,imagesc(b); colorbar
     %     fg,imagesc(b<120)
+    b0=b;
     
-    
-    
+    % ==============================================
+    %%  issue: dark border/background reduce detection of dark cells
+    % ===============================================
+    if 0
+        ot=otsu(b0,3);
+        if length(unique(ot))>1
+            ot=ot==1;
+            [e1 con]=bwlabeln(ot);
+            regp=regionprops(e1,'FilledArea');
+            sizreg=[regp.FilledArea ];
+            
+            tb1=sortrows([[1:length(sizreg)]' sizreg(:)  ],2);
+            
+            bg_sizethreshold=0.0181;%5
+            ibg=find( 100*tb1(:,2)./numel(e1) > bg_sizethreshold);
+            ibg2=[];
+            for i=1:length(ibg) %must be located at the border
+                ci=e1==tb1(ibg(i),1);
+                if ~isempty( find([ci(:,1); ci(:,end); ci(1,:)'; ci(end,:)'])==1)
+                    ibg2(end+1,1)= ibg(i);
+                end
+            end
+            
+            
+            b2=b;
+            valbg=max(b(:));
+            for i=1:length(ibg2)
+                b2(e1==tb1(ibg2(i),1))=valbg;
+            end
+            b=b2;
+            
+            if isempty(p.medfilt)
+                b=(( (mat2gray((b)))));
+            else
+                b=(medfilt2( adapthisteq(mat2gray((b))),[p.medfilt(1) p.medfilt(2)]));
+            end
+            % gm3(gm3==min(gm3(:)))=max(gm3(:));
+            vals=unique(b(:));
+            b(b==min(b(:)))=vals(end-1);%median(gm3(:));
+            b(b==max(b(:)))=median(b(:));
+            % gm3=imadjust(gm3);
+            b=imadjust(b,[0 1],[.1 .9]);
+            
+            if 0
+                
+                [ce,ra] = imfindcircles(b,p.radius,'Method',p.meth,'ObjectPolarity',p.polarity,...
+                    'Sensitivity',p.sens);
+                
+                
+                fg,imagesc(b);%colormap gray;
+                viscircles(ce, ra*0+1,'Color','m','linewidth',.5); axis square
+                title('ww','fontsize',8,'interpreter','none');
+                drawnow;
+            end
+            
+        end
+    end
     % ==============================================
     %%  find circles
     % adapthisteq
@@ -188,6 +244,13 @@ for u=1:length(imvec)
         end
         [ce,ra] = imfindcircles(gm2,p.radius,'Method',p.meth,'ObjectPolarity',p.polarity,...
             'Sensitivity',p.sens);
+        
+%         fg,imagesc(b);%colormap gray;
+%         viscircles(ce, ra*0+1,'Color','m','linewidth',.5); axis square
+%         title('ww','fontsize',8,'interpreter','none');
+%         drawnow;
+        
+        
         
         ra2=ra; %copy for PIE-PLOT
         if p.doHD==1

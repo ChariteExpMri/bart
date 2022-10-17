@@ -84,6 +84,9 @@ if 0
     end
     s=load(fib);
     s=s.s;
+    if isa(s.img,'double')==0
+        s.img=double(s.img);
+    end
     
 %     keyboard
 %     
@@ -196,7 +199,7 @@ if p.filterHisto==1
         s.img=imgaussfilt(s.img,[wid]);
     end
     if isrounded==1
-        s.img=round(s.img.*maxval);
+        s.img=round(s.img.*double(maxval));
     end
     
 end

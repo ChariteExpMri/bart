@@ -65,6 +65,9 @@ para={...
     'approach'              1   'select approach{1,2 or 3}; {1}medflt+otsu+cluster {2}sum-ydim+threshold; {3} manual cut & threshold  '                   {1 2 3}
     'files'                  ''                ' THIS IS optional!: select OTHER tiff files'                   'mf'
     'fileswcard'             '_x10'                'alternative select wildcard string'   {'_x10' ''}
+   'tr4smallcluster'      10   'treshold for smallest cluster relative to largest cluster in percent'  {5 10 15 20}
+   'addborderpixel'        5   'adding bordering-pixel in case to segment histoslices located close to the image-border'  {0 1 4 5 10}
+
     'transpose'              1                'transpose image {0,1}'               'b'
     'outdir'                'up1'      'out-put directory: {explicit path, same" "up1"}'  {'up1' 'same'}
     'verb'                   0                  'verbose,passes extra info  {0,1}'               'b'
@@ -135,10 +138,6 @@ end
 % ==============================================
 %%   proceed
 % ===============================================
-
-% ==============================================
-%%   proceed
-% ===============================================
 z.zfiles=cellstr(z.files);
 global ak
 s=catstruct(z,ak);
@@ -146,11 +145,12 @@ disp(['isparalel: ' num2str(s.isparallel)]);
 lgerr={[' #ok CUT-TIFFS (' mfilename  ')']};
 lgerr=[lgerr; {[' #wb ERRONEOUS File #w'  repmat(' ',[1 size(char(z.files),2)-12])  '#wr Message']} ];
 lgerr=[lgerr; { repmat('=',[1 length(lgerr{2})])} ];
+lgerr=[lgerr; { ' #a ..if empty everything is OK! ...'} ];
 if s.isparallel==0
     
     for i=1:length(z.files)
         try
-        cuttiff(z.files{i},s);
+            cuttiff(z.files{i},s);
         catch
             lgerr=[lgerr;  {[z.files{i}  ' #r ' regexprep(lasterr,char(10),'--')]} ];
         end

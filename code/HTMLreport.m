@@ -95,7 +95,7 @@ w.files =fidi(strcmp(fidi(:,2),'file'),1);
 %%   get selected  files and mdirs
 % ===============================================
 
-
+disp(['wait...']);
 fidi=bartcb('getsel');
 w.dirs  =fidi(strcmp(fidi(:,2),'dir'),1);
 w.files =fidi(strcmp(fidi(:,2),'file'),1);
@@ -114,9 +114,9 @@ mname=cellfun(@(a,b){[a filesep b]}, name2,name );%  mouseName
 N=length(files);
 if p.istest==1
     N=5;
-    cprintf([0 0 1],[' TEST of  N='  num2str(N) '  animals \n']);
+    cprintf([0 0 1],[' TEST of  N='  num2str(N) '  slices \n']);
 else
-    cprintf([0 0 1],[' ANIMALS  N='  num2str(N) '  animals \n']);
+    cprintf([0 0 1],[' SLICES  N='  num2str(N) '  slices \n']);
 end
 tb=[]; %table to fill:
 
@@ -126,7 +126,7 @@ for mo=1:N
     [pa name ext]=fileparts(files{mo} );
     animal=mname{mo};
     
-    disp([ num2str(mo) '/' num2str(N) ': ' animal   ]);
+    %disp([ num2str(mo) '/' num2str(N) ': ' animal   ]);
     
     pafin=fullfile(pa,'fin');
     nametok=[strrep(name,'a1_','')];
@@ -307,6 +307,7 @@ if strcmp(p.task,'finalResult')
     
     v2={};
     wid=p.imageSize;%800;
+    cprintf([0 .7 0],'..copying images:.. ');
     for mo=1:size(tb,1)
         
         tt=tb(mo,:);
@@ -330,7 +331,9 @@ if strcmp(p.task,'finalResult')
           
       end
         
-        
+      if mod(mo,10)==0
+          cprintf([0 .7 0],['' num2str(mo) '.. ']);
+      end
         
         v{end+1}=[ '<br>'  ];
         
@@ -378,6 +381,7 @@ if strcmp(p.task,'finalResult')
         
         v2=[v2; v];
     end
+    disp('..copying done...creating HTML-file...');
     
     z=[  hs ;v2; he];
     if isempty(p.HTMLfileName)
@@ -428,7 +432,7 @@ else
     showinfo2('HTML-file',htmlfile);
 end
 %% ===============================================
-
+cprintf([0 .7 0],'..Done!\n');
 
 
 

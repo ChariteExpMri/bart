@@ -2,6 +2,8 @@
 %% get selected files and folders
 % fidi=bartcb('getsel'); %get selected files/dirs
 % fidi=bartcb('getall'); %get all files/dirs
+% fi  =bartcb('getselstacked') ;%get files, stacked animalwise
+% v=bartcb('getanimals'); % get struct with animal-names, No slices, and FPdirs of selected animals 
 % w.dirs  =fidi(strcmp(fidi(:,2),'dir'),1);
 % w.files =fidi(strcmp(fidi(:,2),'file'),1);
 %% select files/dirs in listbox
@@ -23,6 +25,9 @@
 % bartcb('sel','dir','Nai|half');
 % bartcb('sel','dir','fside');
 % bartcb('sel','dir','all'); %select all dirs
+% =============================================
+% bartcb('reload') ;% reload BART
+
 function varargout=bartcb(varargin)
 
 if 0
@@ -41,6 +46,8 @@ if nargin==0; return; end
 
 if strcmp(varargin{1},'update')
     update(varargin);
+elseif strcmp(varargin{1},'reload')
+    bart_reload(varargin);
 elseif strcmp(varargin{1},'getallsubjects')
     [varargout{1} varargout{2}]=getallsubjects(varargin);
 elseif strcmp(varargin{1},'close')
@@ -51,6 +58,10 @@ elseif strcmp(varargin{1},'getsel')
     [varargout{1} varargout{2}]=getsel(varargin);
 elseif strcmp(varargin{1},'getall')
     [varargout{1} varargout{2}]=getall(varargin);
+elseif strcmp(varargin{1},'getselstacked')
+    [varargout{1} varargout{2}]=getselstacked(varargin);  
+elseif strcmp(varargin{1},'getanimals')
+    [varargout{1} varargout{2}]=getanimals(varargin); 
     
 elseif strcmp(varargin{1},'sel')
     [varargout{1} varargout{2}]=sel(varargin);    
@@ -63,6 +74,11 @@ elseif strcmp(varargin{1}, 'versionupdate')
   versionupdate(varargin);
 end
 
+function bart_reload(varargin)
+global ak;
+cfile=ak.configfile;
+bart;
+loadproject({1,cfile});
 
 function versionupdate(varargin)
 hc=findobj(findobj(0,'tag','bart'),'tag','txtversion');
@@ -85,6 +101,68 @@ hb=findobj(hf,'tag','lb1');
 global ak
  fpdirs=ak.list1;
  dirs=[];
+ 
+function [ v dirs] =getanimals(arg)
+[ v dirs] =deal([]);
+
+
+%% ===============================================
+
+fi  =bartcb('getselstacked');
+t={};
+for i=1:length(fi)
+   [pax slice]=fileparts(fi{i});
+   [px animal]=fileparts(pax{1});
+   dx={animal  size(slice,1) fullfile(px,animal)};
+   t(i,:)=dx;
+end
+
+v.dirs =t(:,3);
+v.names=t(:,1);
+v.ht={'animal' 'Nslices' 'dir'};
+v.t=t;
+v.N=size(v.dirs,1);
+
+
+  %% ===============================================
+  
+
+function [ fpdirs dirs] =getselstacked(arg)
+[ fpdirs dirs] =deal([]);
+%% ===============================================
+
+ fidi=bartcb('getsel');
+ 
+ % if dir is selected
+ files2='';
+ dirs=fidi(strcmp(fidi(:,2),'dir'),1);
+ for i=1:length(dirs)
+     [fidum] = spm_select('FPList',dirs{i},'^a1_.*.tif$');
+     fidum=cellstr(fidum);
+     if ~isempty(fidum)
+     files2=[files2; fidum];
+     end
+ end
+ files1=fidi(strcmp(fidi(:,2),'file'),1);
+ if isempty(files1)
+     files=files2;
+ else
+     files=files1;
+ end
+ 
+ files=unique([files;files2]);
+ %% ===============================================
+ 
+[px ]=fileparts2(files);
+animal=unique(px);
+stack={};
+for i=1:length(animal)
+    ix=~cellfun(@isempty,strfind(files,animal{i}));
+    stack{i,1}=files(ix);
+end
+fpdirs=stack;
+%% ===============================================
+
 
 
 function [ fpdirs dirs] =getsel(arg)
@@ -217,6 +295,7 @@ drawnow;
 %% ===============================================
 hf=findobj(0,'tag','bart');
 hb=findobj(hf,'tag','lb1');
+delete(findobj(hf,'type','axes')); %delete axis from other window
 global ak;
 try
     %  [s1 s2]=bartcb('getallsubjects');
@@ -261,10 +340,11 @@ updateListboxinfo;
 drawnow;
 
 
-
-jScrollPane = findjobj(hb);
-jListbox = jScrollPane.getViewport.getComponent(0);
-set(jListbox, 'MouseMovedCallback', {@mouseMovedCallback,hb});
+try
+    jScrollPane = findjobj(hb);
+    jListbox = jScrollPane.getViewport.getComponent(0);
+    set(jListbox, 'MouseMovedCallback', {@mouseMovedCallback,hb});
+end
 
 function mouseMovedCallback(jListbox, jEventData, hListbox)
 warning off;

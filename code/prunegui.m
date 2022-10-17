@@ -48,9 +48,23 @@ setupimage(u);
 setuplist();
 showimage(1);
 uiwait(gcf);
+
+waitissue();
+
 % ==============================================
 %%
 % ===============================================
+function waitissue
+
+hf=findobj(0,'tag','prune');
+while ~isempty(hf)
+    try
+    hf=findobj(0,'tag','prune');
+    uiwait(hf);
+    end
+end
+
+
 function setuplist()
 u=get(gcf,'userdata');
 

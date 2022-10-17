@@ -54,7 +54,7 @@ close(hf);
 fg;
 set(gcf,'tag','histview');
 set(gcf,'WindowKeyPressFcn',@keys);
-set(gcf,'ToolBar','none');
+set(gcf,'ToolBar','none','name',[ '[' mfilename ']' ]);
 set(gcf,'WindowButtonMotionFcn',@motion);
 % end
 
@@ -287,6 +287,7 @@ end
 axes(ax1);
 
 
+
 if isfield(p,'ovl')
     r=imfuse(p.ovl,imadjust(mat2gray(d))  );
      him=imagesc(r);
@@ -294,6 +295,10 @@ else
     him=imagesc(imadjust(mat2gray(d)));
     colormap gray
 end
+% hv=vline([1:20:size(d,2)],'color','m','tag','lines');
+% hv=hline([1:20:size(d,1)],'color','m','tag','lines');
+hv=vline([linspace(1,size(d,2),16)],'color','m','tag','lines');
+hv=hline([linspace(1,size(d,1),16)],'color','m','tag','lines');
 
 set(him,'ButtonDownFcn',@imageclick)
 xlim=[1 size(d,2)];
@@ -312,6 +317,11 @@ drawnow
 
 axes((findobj(gcf,'tag','ax3')));
 view([p.x0(3) p.x0(2)]);
+
+%% ==========lines=====================================
+
+
+%% ===============================================
 
 
 function imageclick(e,e2)

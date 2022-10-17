@@ -79,12 +79,20 @@
 % #ba 25 Jul 2022 (14:52:11)
 % #k [elastix2.m] #n  ---removed bug: 
 % solved: warping n-best slices resulted in error when usong parallel processing
-% % #k [updatebart.m] #n  -new function to update changes
+% #k [updatebart.m] #n  -new function to update changes
+% 
+% #ba 14 Oct 2022 (09:40:52) several revisions
+% added code history:select [H]-Button or it's context menu to obtain the code of previously executed processes 
 % 
 % 
 % 
-
-
+% #ba 17 Oct 2022 (15:34:09)
+% #k [f_statisticLR.m] #n  -new function to statistically evaluate regionwise left-right differences in cell-density 
+% 
+% 
+% 
+% 
+% 
 
 %----- EOF
 % make bartver.md for GIT: bartver('makebartver')
@@ -101,6 +109,11 @@ if nargin==1
     if strcmp(varargin{1},'makebartver')
         makebartver(r);
         return
+    elseif strcmp(varargin{1},'new')
+           clipboard('copy', [    ['% #ba '   datestr(now,'dd mmm yyyy (HH:MM:SS)') repmat(' ',1,0) ]           ]); 
+           a=preadfile(which('bartver.m'))
+           matlab.desktop.editor.openAndGoToLine(which('bartver.m'), min(regexpi2(a.all,'EOF')));
+           return
     end
 end
 

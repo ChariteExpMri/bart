@@ -48,6 +48,24 @@ end
  I = imread(file);
  si=size(I);
  
+ %% =============otsu background to white ==================================
+ ot=otsu(I(:,:,1),3)==1;
+ [e1 con]=bwlabeln(ot);
+ 
+ cl=mode([e1(:,1); e1(:,end); e1(1,:)'; e1(end,:)']);
+ e2=e1==cl;
+ 
+%  e3=medfilt2(e2,[11 11]);
+I2=I;
+for i=1:size(I,3)
+    u=I(:,:,i);
+    u(e2)=median(u(e2==0));
+    I2(:,:,i)=u;
+end
+
+I=I2;
+ 
+ %% ===============================================
  
  fc=ceil(si(1:2)./xy);
  si2=xy.*fc;

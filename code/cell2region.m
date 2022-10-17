@@ -180,7 +180,7 @@ al=(he2==1).*an2;
 ar=(he2==2).*an2;
 
 al2=al; al2(al2==0)=[];
-ar2=al; ar2(ar2==0)=[];
+ar2=ar; ar2(ar2==0)=[];
 
 vwl=histc(al2,ids); %voxels warped LEFT and RIGHT
 vwr=histc(ar2,ids);
@@ -270,7 +270,7 @@ he2=single(hef.v(:));
 al=(he2==1).*an2;
 ar=(he2==2).*an2;
 al2=al; al2(al2==0)=[];
-ar2=al; ar2(ar2==0)=[];
+ar2=ar; ar2(ar2==0)=[];
 
 val=histc(al2,ids); %voxels affine LEFT and RIGHT
 var=histc(ar2,ids);

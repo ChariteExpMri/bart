@@ -1,5 +1,6 @@
 
-function varargout=f_cell2region(showgui,x )
+
+function varargout=f_makeDatabase(showgui,x )
 
 disp(['executing: ' mfilename '.m']);
 
@@ -27,12 +28,9 @@ templateDir=fullfile(fileparts(which('bart.m')),'templates');
 % ===============================================
 para={...
    
-    'isparallel'  0   'do parallel processing {0,1}'        'b'
+    'files'  ''   'load all excelfiles containing regionwise cellcounting  '        'mf'
+    'saveBigTable' 1  'save big table with all animals '            'b'
     'showTable'   0   'show output table {0,1}'                    'b'
-    'save'        1   'save result {0,1}'                   'b'
-    'pruneData'   1   'use "modImg" to prune cells-counting and subtract nonexisting area ' 'b'
-    '' '' '' ''
-    'debug'       0   'just for debugging..show more plots'  'b'
     };
 %     '' '' '' ''
 %     '' '____USED FILES_______' '' ''
@@ -73,55 +71,63 @@ if showgui==1
 elseif showgui==2
      showgui=-1;   %just parse data
 end
-% ==============================================
-%%   Parse parameter without runnning rest
-% ===============================================
-if showgui==-1
-    p2=struct2param(p,z);
-    p2=[{['@' mfilename] 0 'FunctionName' ''}; p2]; % add functionName
-    varargout{1}=p2;
-    varargout{2}= z;
-    return
-end
 
 % ==============================================
-%%   files
+%%   get all xlsfile-files
 % ===============================================
-if isfield(x,'files') && ~isempty(char(x.files))
-    z.files=x.files;
-else
-  fidi=bartcb('getsel')  ;
-    z.files=fidi(strcmp(fidi(:,2),'file'),1);
-end
-% return
+
 
 
 
 % ==============================================
-%%   PROCEED
+%%   make big table
 % ===============================================
-cprintf([0 0 1],[' region-wise cellcounting... '  '\n']);
-timex=tic;
-z.files=cellstr(z.files);
-if isempty(z.files{1}); return; end
-
-if z.isparallel==0
-    for i=1:length(z.files)
-        z2=z;
-        z2=rmfield(z2,'files');
-        z2.file=z.files{i};
-        cell2region(z2);
+cprintf([0 .7 0],'make BIG table...');
+b=[];
+for i=1:length(z.files)
+    
+    [~,~,a0]=xlsread(z.files{i});
+    a0(:,strcmp(cellfun(@(a){[num2str(a)  ]}, a0(1,:) ),'NaN'))=[];
+    a0(strcmp(cellfun(@(a){[num2str(a)    ]}, a0(:,1)),'NaN'),:)=[];
+    
+    if i==1
+        hb=a0(1,:);
     end
-else
-
-   parfor i=1:length(z.files);
-        z2=z;
-        z2=rmfield(z2,'files');
-        z2.file=z.files{i};
-        cell2region(z2);
-    end 
+    a=a0(2:end,:);
+    b=[b;a];
 end
-cprintf([0 0 1],[' done... dT=' sprintf('%2.2f min',toc(timex)/60)  '\n']);
+cprintf([0 .7 0],'..Done!\n');
+% ==============================================
+%%   save table
+% ===============================================
+if z.saveBigTable==1
+    cprintf([0 .7 0],'..saving BIGtable...');
+    [paout animal ext]=fileparts(z.files{1});
+    paout2=fullfile(paout,'BigTable');
+    warning off;
+    mkdir(paout2)
+    try; delete(f1); end
+    f1=fullfile(paout2,'bigtable.xlsx');
+    pwrite2excel(f1,{1 'celldensALL'},hb,[],b);
+    showinfo2('..BIGtable',f1);
+    cprintf([0 .7 0],'..Done!\n');
+end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -1,4 +1,6 @@
 
+% resizing tiff for registration
+
 function varargout=f_resizeTiff(showgui,x )
 
 %———————————————————————————————————————————————
@@ -14,11 +16,15 @@ if exist('x')==0                           ;    x=[]                        ;end
 % ===============================================
 
 if exist('x')~=1;        x=[]; end
-if ~isempty(x) && ~isempty(x.files)
-%     x.files =regexprep(x.files,{ '\a1' '.tif'},{'\a2','.mat' })
-%     x.files =regexprep(x.files,{ [filesep filesep 'a1_'] '.tif'},{[filesep filesep 'optim_'],'.mat' });
+% if ~isempty(x) && ~isempty(x.files)
+% %     x.files =regexprep(x.files,{ '\a1' '.tif'},{'\a2','.mat' })
+% %     x.files =regexprep(x.files,{ [filesep filesep 'a1_'] '.tif'},{[filesep filesep 'optim_'],'.mat' });
+% end
+if ~isfield(x,'files') || isempty(x.files)
+    fidi=bartcb('getsel');
+    fidi=fidi(strcmp(fidi(:,2),'file'),1);
+    x.files=fidi;
 end
-
 
 % ==============================================
 %%   struct
@@ -52,10 +58,9 @@ para={...
 'resize'             [2000 2000]  'size of the resized image'                           ''
 'doplot'                  0       'plot image to screen'                                'b'
 'isparallel'      x.isparallel    'use parallel processing {0,1}'              'b'
-'' '' '' ''
-'inf5'     '_____ DO THIS FOR THE FOLLOWING FILES _________________________' '' ''
-'files'    {}          'histo-files'  'mf'
 };
+% 'files'    {}          'histo-files'  'mf'
+
 % ==============================================
 %%   GUI
 % ===============================================
@@ -81,7 +86,14 @@ else
     z=param2struct(p);
 end
 
+% ==============================================
+%%   
+% ===============================================
 xmakebatch(z,p, mfilename); % ## BATCH
+
+% ==============================================
+%%   
+% ===============================================
 
 if showgui==1
     varargout{1}=z;
@@ -103,6 +115,15 @@ if showgui==-1
 end
 
 
+% ==============================================
+%%   files
+% ===============================================
+if isfield(x,'files') && ~isempty(char(x.files))
+    z.files=x.files;
+else
+  fidi=bartcb('getsel')  ;
+    z.files=fidi(strcmp(fidi(:,2),'file'),1);
+end
 
 
 

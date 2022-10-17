@@ -42,6 +42,7 @@ p.FinalGridSpacingInVoxels   = 50                              ; %control point 
 p.file                       =    ''                           ; % files
 p.plot                       =   0                             ; %plot results
 p.useModFile                 =   1                              ; %use modified files
+p.enableRotation             =1                                ; % enable rotation, if manually defined
 %-------------------
 p=catstruct(p,p0);
 
@@ -373,8 +374,15 @@ if 0
 end
 if 1
     % ### image to atlas-Size (320x456) before warping  (t=70s) -->ok!!!
-    mov =imresize(double(tatlas),[1000 1000],'bilinear');
+    if 0
+        mov =imresize(double(tatlas),[1000 1000],'bilinear');
+        fix =imresize(double(histo) ,[size(mov)],'bilinear');
+    end
+    
+    imsizeinterim=2000;
+    mov =imresize(double(tatlas),[imsizeinterim imsizeinterim],'bilinear');
     fix =imresize(double(histo) ,[size(mov)],'bilinear');
+    
 end
 % -------------------------
 % ### atlas to image size (2000x2000) before warping  (t=90s) --> not that good!
@@ -397,6 +405,17 @@ end
 
 
 warning off;
+%% ================ testbed ===============================
+
+if 0
+    delete(fullfile(elxout,'*'));
+    [wa,outs]= elastix2(  (mov), (fix),elxout,parfile(1),pa_el);
+    fprintf(['Done. (t_registration: '  sprintf('%2.2fs',toc(time_warp) ) ')\n']);
+    
+end
+%% ===============================================
+
+
 delete(fullfile(elxout,'*'));
 [wa,outs]= elastix2(  (mov), (fix),elxout,parfile(1:end),pa_el);
 fprintf(['Done. (t_registration: '  sprintf('%2.2fs',toc(time_warp) ) ')\n']);
@@ -672,15 +691,26 @@ for i=1:size(tb,1)
         
     end
     
+    %% ===============================================
     
     % ------------------------------------------------------ transformix
+    trafofile1=fullfile(elxout,'TransformParameters.0.txt');
+    set_ix(trafofile1,'FinalBSplineInterpolationOrder',FinalBSplineInterpolationOrder);
+    set_ix(trafofile1,'ResultImagePixelType','float');
+    
     trafofile2=fullfile(elxout,'TransformParameters.1.txt');
     set_ix(trafofile2,'FinalBSplineInterpolationOrder',FinalBSplineInterpolationOrder); %default:1500
+    set_ix(trafofile2,'ResultImagePixelType','float');
+    
+    
     
     pawork =pwd;
     cd(fileparts(which('elastix.exe')));
     %[w3,log] = transformix(w2,elxout) ;
     [msg,w3,log]=evalc('transformix(w2,elxout)');
+
+    %% ===============================================
+    
     cd(pawork);
     % ------------------------------------------------------ put to [o]-cell
     o(i,:)={fiName w3};
@@ -877,6 +907,7 @@ time_save=tic;
 fprintf('saving(nonlinear): ');
 thumb={};
 o(4,:)={'REF'  single(wa) };
+addborder=0;
 for i=1:size(o,1)
     %%%%nameout=[ o{i,1}  numberstr '.mat' ];
     nameout=[outtag o{i,1} '.mat' ];
@@ -899,19 +930,35 @@ for i=1:size(o,1)
    
         u2=imresize(o{i,2},[size(so.img)],interpy);
         if isfield(so,'rotationmod')
-            u2=imrotate(u2,-so.rotationmod  ,'nearest','crop');
+            if p.enableRotation==1
+                u2=imrotate(u2,-so.rotationmod  ,'nearest','crop');
+            end
         end
+        
+        R1=corr2(imresize(s.img,[2000 2000]), imresize(u2,[2000 2000]));
         if isfield(so,'bordermod')
             border=so.bordermod;
             k=u2;
             k=imresize(k,[size(so.img,1)+2*border  size(so.img,2)+2*border ],interpy);
             k(  [ 1:border  end-border+1:end ],:)=[];
             k(:,[ 1:border  end-border+1:end ]  )=[];
-            u2=k;
-            if any(size(u2)~=size(so.img,1))
-                u2=imresize(u2,[size(so.img) ],interpy);
+            u3=k;
+            if any(size(u3)~=size(so.img,1))
+                u3=imresize(u3,[size(so.img) ],interpy);
             end
+             R2=corr2(imresize(s.img,[2000 2000]), imresize(u3,[2000 2000]));
+             
+             if i==1%decide on first image
+                 if R2>R1
+                     addborder=1;
+                 end
+             end 
+             if addborder==1
+                u2=u3; 
+             end
         end
+        
+        
         
         thumb{i,1}=u2;
         %fg; imagesc(u2); title('crap')

@@ -161,11 +161,19 @@ m2 = uimenu(m,'label','prune tiffs','callback', @cb_pruneTiff);
 m = uimenu('label','CellDetection');
 m2 = uimenu(m,'label','cellDetection','callback', @cellDetecetion);
 m2 = uimenu(m,'label','assign cells to region','callback', @cell2regionAssign);
+m2 = uimenu(m,'label','cell-region to atlas','callback', @call_cellregion2atlas);
+m2 = uimenu(m,'label','make BIGtable','callback', @call_makeBIGtable);
 % ---------------------
-m = uimenu('label','HTML');
+m = uimenu('label','Reports');
 m2 = uimenu(m,'label','make HTMLfile to select bad slices [makeSelection_HTML.m]','callback', @selectBadImages_HTML);
 m2 = uimenu(m,'label','make HTMLfile Report:  finalResult [HTMLreport.m]'        ,'callback', @HTMLreport_call);
 m2 = uimenu(m,'label','make HTMLfile Report:  other images to histoSpace [HTMLreportotherimages.m]'        ,'callback', @HTMLreportotherimages_call);
+m2 = uimenu(m,'label','make XLS-file: Evaluation of Slices (bad slice /L-R-flipp) [x_makeEvaluationTable.m]'        ,'callback', @x_makeEvaluationTable_call);
+
+
+% ---------------------
+m = uimenu('label','statistic');
+m2 = uimenu(m,'label','statistic: left vs right density [f_statisticLR]','callback', @f_statisticLR_call);
 
 % ---------------------
 m = uimenu('label','Conversion');
@@ -232,6 +240,20 @@ e2=e(:,[3:8 end-1:end],:);
 set(h,'cdata',e2);
 
 
+% ==============================================
+%%   anthistory
+% ===============================================
+%% SETTINGS
+h = uicontrol('style','pushbutton','units','normalized','position',[0.25 0.88929 0.04 0.05],...
+    'tag','ant_cfm',...
+    'string','','fontsize',13,   'callback',{@barthistory_call,1},'tooltip', 'show BART-history',...
+    'backgroundcolor','w');
+set(h,'Position',[[0.35 0.88929 0.04 0.05]],'string','H');
+cmenu = uicontextmenu;
+set(h, 'UIContextMenu', cmenu);
+uimenu(cmenu, 'label','show show BART-history in CMD-window', 'Callback', {@barthistory_call,2});
+
+% h.ContextMenu
 
 % h = uicontrol('style','pushbutton','units','normalized','position',[0.17679 0.88452 0.034 0.058],...
 %     'tag','ant_study_history',...
@@ -245,6 +267,26 @@ set(h,'cdata',e2);
 % % e(e<=0.01)=nan;
 % set(h,'cdata',e);
 
+% ==============================================
+%%   call anthistory
+% ===============================================
+function barthistory_call(e1,e2,arg)
+hs=[];
+try
+    hs=evalin('base','anth');
+end
+if ~isempty(hs)
+    if arg==1 % FIG
+        drawnow;
+        uhelp(hs,0,'name','BART-history');
+    elseif arg==2 % cmd
+        col='[ 0.4667    0.6745    0.1882]';
+        cprintf(['*' col],[repmat('=',[1 90]) '\n']);
+        cprintf(['*' col],'..BART-HISTORY!\n');
+        cprintf(['*' col],[repmat('=',[1 90]) '\n']);
+        disp(strjoin(hs,char(10)));
+    end
+end
 
 % ==============================================
 %%   update tbx via button, no user-questions
@@ -329,7 +371,7 @@ else
 end
 
 % function call_CFM(e,e2)
-% 
+%
 % bartcfm()
 
 
@@ -342,6 +384,60 @@ bartver;
 
 function lb1_cb(e,e2)
 bartcb('updateListboxinfo');
+
+show_histotooltip();
+
+
+function show_histotooltip()
+
+% ==============================================
+%%
+% ===============================================
+
+hf=findobj(0,'tag','bart');
+hb=findobj(hf,'tag','lb1');
+
+li=get(hb,'string');
+index=get(hb,'value');
+try
+    
+    
+    global ak
+    if isempty(ak); return; end
+    f1= ak.list1{index};
+    [pa name ext]=fileparts(f1);
+    [~, animal]=fileparts(pa);
+    f2=fullfile(pa,[name '.jpg']);
+    msg=strjoin({['<html>animal: <b>' animal '</b>'],['image: <b><font color=blue>'  name ext '</b>']},'<br>');
+    if exist(f2)==2
+        hr=findobj(findobj(0,'tag','bart'),'tag','currentImage');
+        if isempty(hr)
+            hr=uicontrol('style','pushbutton','units','norm','tag','currentImage') ;
+            set(hr,'position',[  0.501 0  .2 .2],'backgroundcolor','w');
+        end
+        set(hr,'tooltipstring',[msg]);
+        set(hr,'visible','on');
+        set(hr,'units','pixels');
+        pos=get(hr,'position');
+        img=imread(f2);
+        if size(img,3)==1; img=repmat(img,[1 1 3]);end
+        mn=min([pos(3) pos(4)]);
+        img=imresize(img,[mn mn]);
+        set(hr,'Cdata',img);
+    else
+        hr=findobj(gcf,'tag','currentImage');
+        set(hr,'visible','off');
+    end
+    
+    
+end
+
+
+
+
+
+
+
 
 function newProject(e,e2)
 f_newproject();
@@ -487,6 +583,15 @@ f_celldetection(1,x);
 bartcb('update');
 
 
+function call_cellregion2atlas(e,e2)
+f_cell2atlasaggregate;
+bartcb('update');
+
+function call_makeBIGtable(e,e2)
+f_makeDatabase;
+bartcb('update');
+
+
 function cell2regionAssign(e,e2)
 [sel]=bartcb('getsel');
 if isempty(sel); return; end
@@ -506,8 +611,14 @@ HTMLreport();
 function HTMLreportotherimages_call(e,e2)
 HTMLreportotherimages();
 
+function x_makeEvaluationTable_call(e,e2)
+x_makeEvaluationTable();
+
 function convetANO2pseudoTiff(e,e2)
 f_ano_falsecolor2tif();
+
+function f_statisticLR_call(e,e2)
+f_statisticLR(1);
 
 % ==============================================
 %%   update Listbox
@@ -538,7 +649,8 @@ function lb1_defineContext(hb)
 cmenu = uicontextmenu;
 set(hb, 'UIContextMenu', cmenu);
 uimenu(cmenu, 'Label', '<html><b><font color =green> DIR: open DIRECTORY', 'Callback', {@lb1_context, 'opdenDIR'});
-uimenu(cmenu, 'Label', '<html><b><font color =green> DIR: show cutting Image', 'Callback', {@lb1_context, 'showCuttingImage'},'separator','on');
+uimenu(cmenu, 'Label', '<html><b><font color =blue> show montage of cutted image', 'Callback', {@lb1_context, 'showCuttingMontage'},'separator','on');
+% uimenu(cmenu, 'Label', '<html><b><font color =green> DIR: show cutting Image', 'Callback', {@lb1_context, 'showCuttingImage'},'separator','on');
 uimenu(cmenu, 'Label', '<html><b><font color =blue> show (cutted) Tif', 'Callback', {@lb1_context, 'showresizedTif'},'separator','on');
 % --------
 uimenu(cmenu, 'Label', '<html><b><font color =blue> show resized Tif and Mask', 'Callback', {@lb1_context, 'showTifandMask'},'separator','on');
@@ -566,6 +678,9 @@ uimenu(cmenu, 'Label', '<html><b><font color =gray> untag rating',         'Call
 
 uimenu(cmenu, 'Label', '<html><b><font color =gray> tag group assignment',   'Callback', {@lb1_context, 'tag_group'},'separator','on');
 uimenu(cmenu, 'Label', '<html><b><font color =gray> untag group assignment', 'Callback', {@lb1_context, 'tag_untaggroup'},'separator','off');
+
+uimenu(cmenu, 'Label', '<html><b><font color =black> get animal names', 'Callback', {@lb1_context, 'get_animal_short'},'separator','off');
+uimenu(cmenu, 'Label', '<html><b><font color =black> get animal names fullpath', 'Callback', {@lb1_context, 'get_animal_fp'},'separator','off');
 
 
 %          v2=[v2  '<font color=#22E80E>  &#9819'  ];
@@ -597,6 +712,22 @@ if strcmp(task,'opdenDIR')
         end
         
     end
+    
+elseif strcmp(task,'showCuttingMontage')
+    
+    pax1=fileparts2(files);
+    pax2=dirs
+    unidirs=unique([pax1; pax2]);
+    
+    for i=1:length(unidirs)
+        fi=fullfile(unidirs{i},'a0_cut.jpg');
+        if exist(fi)==2
+            web(fi,'-new');
+        else
+            disp(['could not open: ' fi]);
+        end
+    end    
+    
 elseif strcmp(task,'showCuttingImage')
     for i=1:length(dirs)
         fi=fullfile(dirs{i},'a0_cut.jpg');
@@ -755,7 +886,13 @@ elseif strcmp(task,'show_cellCounts')
     %         ...
     %         strcmp(task,'tag_group') || strcmp(task,'tag_untaggroup')  %groupwise un/tagging
     
-    
+ elseif strcmp(task,'get_animal_short')
+     v=bartcb('getanimals');
+     mat2clip(v.names);
+     
+ elseif strcmp(task,'get_animal_fp')    
+     v=bartcb('getanimals');
+     mat2clip(v.dirs);
 elseif ~isempty(regexpi('tag_ok','^tag_'));
     
     if strcmp(task,'tag_group')==1

@@ -151,7 +151,8 @@ end
  set(gca,'tag','ax1');
 axis off;   
     
-
+hl=findobj(gcf,'tag','lb1');
+uicontrol(hl);
 
 % 
 % if docontour==1
@@ -239,6 +240,7 @@ if strcmp(get(gcf,'selectiontype'),'open')
         end
         us.toggle=us.toggle+1;
         set(gcf,'userdata',us);
+      
     end
     
 else
@@ -517,7 +519,7 @@ uicontrol(findobj(gcf,'tag','lb1')); %focus to LB
 
 
 function keys(e,e2)
-
+% e2
 if strcmp(e2.Key,'o')
     hr=findobj(gcf,'tag','dooverlay');
     set(hr,'value',~get(hr,'value'));
@@ -527,6 +529,26 @@ elseif strcmp(e2.Key,'t')
     tag_slice([],[],1);
 elseif strcmp(e2.Key,'u') 
     tag_slice([],[],0);
+elseif strcmp(e2.Key,'uparrow')  || strcmp(e2.Key,'downarrow') 
+    
+    if strcmp(get(gco,'tag'),'lb1')==0
+        hl=findobj(gcf,'tag','lb1');
+        val=get(hl,'value')
+        maxsi=size(get(hl,'string'),1);
+        if strcmp(e2.Key,'uparrow')
+            val2=val-1;
+            if val2>0;
+                set(hl,'value',val2);
+                hgfeval(get(hl,'callback')); drawnow;
+            end
+        else
+            val2=val+1;
+            if val2<=maxsi;
+                set(hl,'value',val2);
+                hgfeval(get(hl,'callback'));
+            end
+        end
+    end
 end
 
 function dooverlay(e,e2)
@@ -791,7 +813,8 @@ if isAVGT==0
         [ cv]=p_getHIstvol(fullfile(pa_template, 'HISTOVOL.nii' ),1) ;
         cv=cv.*uint8(cvmask); 
     end
-    histview(cv,cord,[1 1 1],bf.ss.hi);
+%     histview(cv,cord,[1 1 1],bf.ss.hi);
+    histview(cv,cord,[1 1 1]);
 elseif isAVGT==1
     global cv2
     if isempty(cv2)
@@ -800,12 +823,13 @@ elseif isAVGT==1
         pa_template=ak.template;
         %[ cv]=p_getHIstvol(fullfile(pa_template, 'HISTOVOL.nii' ),1) ;
         [ cv2    ]=p_getHIstvol(fullfile(pa_template, 'AVGT.nii' ),0) ;
-        cv2=cv2.*uint8(cvmask); 
+        cv2=cv2.*uint8(cvmask);
     end
-    histview(cv2,cord,[1 1 1],bf.ss.hi);
+    %     histview(cv2,cord,[1 1 1],bf.ss.hi);
+    histview(cv2,cord,[1 1 1]);
 end
- 
-    
+
+
 
 
 
