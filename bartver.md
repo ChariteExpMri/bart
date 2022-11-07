@@ -1,13 +1,17 @@
 ## **BART Modifications**
- &#x1F535; last modification:   17 Oct 2022 (15:34:09)  
+ &#x1F535; last modification:   07 Nov 2022 (15:06:23)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/bart">https://github.com/ChariteExpMri/bart</a>  
     
     
     
 ------------------  
+  &#x1F535;   <ins>**07 Nov 2022 (15:06:23)**</ins>  
+   __[f_statisticLR.m]__  ---modified: option to remove animals from statistic  
+<!---->
   &#x1F535;   <ins>**17 Oct 2022 (15:34:09)**</ins>  
-   __[f_statisticLR.m]__  -new function to statistically evaluate regionwise left-right differences in cell-density  
+   __[f_statisticLR.m]__  -new function to statistically evaluate regionwise left-right differences in cell-density   
+    
 <!---->
   &#x1F535;   <ins>**14 Oct 2022 (09:40:52)** several revisions</ins>  
   added code history:select __[H]__-Button or it's context menu to obtain the code of previously executed processes   

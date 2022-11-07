@@ -89,7 +89,8 @@
 % #ba 17 Oct 2022 (15:34:09)
 % #k [f_statisticLR.m] #n  -new function to statistically evaluate regionwise left-right differences in cell-density 
 % 
-% 
+% #ba 07 Nov 2022 (15:06:23)
+% #k [f_statisticLR.m] #n  ---modified: option to remove animals from statistic 
 % 
 % 
 % 

@@ -57,11 +57,13 @@ para={...
     'statistic'    'ttest'   'type of within-statistic {ttest or signrank}' {'ttest' 'signrank'}
     'tail'         'left'    'select the statistical tail {both,left,right}'  {'both' 'left' 'right'}
     'FDRqlevel'     0.05     'q-The desired false discovery rate {0.1, 0.05, 0.001}' {0.1, 0.05, 0.001}
+    'removeAnimals'  []        'remove animals by ID; example: remove animals 1 and 3 is [1,3]' ,{'' '1' '3' '1 3'}
     '' '' '' ''
     'inf2' '___OUTPUTS__' '' ''
     'showResults'  1     'show results (tables'    {'b'}
     'saveReducedTable' 1 'save a reduced table {0,1} (containing only regions that exist in all animals)'  {'b'}
     'saveOutput'       1 'save results as excel-file {0,1} ' {'b'}
+    'outputDir'      outputpath 'output directory'  'd'
     'prefix'           ''  'additiona option to add prefix-string to filename of "saveOutput" '  {'test_' 'LR_'}
     };
 %     '' '' '' ''
@@ -128,7 +130,7 @@ end
 % ==============================================
 %%   PROCEED
 % ===============================================
-cprintf([0 0 1],[' stitistic-left vs vs right [' mfilename '.m]... '  '\n']);
+cprintf([0 0 1],[' statistic-left vs vs right [' mfilename '.m]... '  '\n']);
 timex=tic;
 proc(z);
 cprintf([0 0 1],[' Done... dT=' sprintf('%2.2f min',toc(timex)/60)  '\n']);
@@ -175,6 +177,28 @@ a=a0(2:end,:);
 %%   obtain ID,animals
 % ===============================================
 v.animals=unique(a(:,1));
+
+if ~isempty(num2str([z.removeAnimals])); %               REMOVE ANIMALS BY id
+    animalsremoved=v.animals(z.removeAnimals);
+    cprintf([1 .1 0],['__removed animals (n=' num2str(length(animalsremoved)) ')____\n']);
+    disp(char(animalsremoved));
+    
+    v.animals(z.removeAnimals)=[];
+    %size(a)
+    for i=1:length(animalsremoved)
+        a(strcmp(a(:,1), animalsremoved{i}),:)=[];
+        %size(a)
+    end
+    v.animalsremoved =animalsremoved;
+    v.Nanimalsremoved=length(animalsremoved);
+else
+    v.animalsremoved ='none';
+    v.Nanimalsremoved=0;
+end
+%% ===============================================
+
+
+
 v.no_animals=length(v.animals);
 v.isDiffIn_IDs=unique(cell2mat(a(:,3))-cell2mat(a(:,4)));
 v.IDall=cell2mat(a(:,3));
@@ -213,13 +237,20 @@ end
 v.animals_reduced    =unique(a2(:,1));
 v.no_animals_reduced =length(v.animals_reduced);
 
+
 % ==============================================
 %%   save reduzed table
 % ===============================================
 if z.saveReducedTable==1
     cprintf([0 .7 0],'..saving REDUCED-TABLE...');
-    [paout animal ext]=fileparts(char(z.bigtable));
-    paout2=fullfile(paout);
+    %     [paout animal ext]=fileparts(char(z.bigtable));
+    %     paout2=fullfile(paout);
+    
+    paout2=z.outputDir;
+    if exist(paout2)~=7
+        mkdir(paout2);
+    end
+    
     warning off;
     mkdir(paout2);
     f1=fullfile(paout2,['reducedtable_n' num2str(v.samplethresh) '.xlsx']);
@@ -348,7 +379,7 @@ zz.hb2=regexprep(hb,'^H$','H_FDR');
 zz.b2=b2;
 
 % ==============================================
-%%   intersection of regions across animals
+%%  show intersection of regions across animals
 % ===============================================
 
 v.atlasUnionAnimal=sortrows(b(:,1:2),2);
@@ -365,9 +396,13 @@ zz.intreg=v.atlasUnionAnimal;
 % ===============================================
 if z.saveOutput==1
     cprintf([1  0 1],'..saving results to excel');
-    paout=fileparts(z.bigtable);
+    
+    paout2=z.outputDir;
+    if exist(paout2)~=7
+        mkdir(paout2);
+    end
     fname=[char(z.prefix) 'statLR_' densmode '_' z.statistic '_tail' z.tail '_FDRq' num2str(z.FDRqlevel) '.xlsx'  ];
-    f2=fullfile(paout,fname);
+    f2=fullfile(paout2,fname);
     
     try; delete(f2); end
     
@@ -377,7 +412,7 @@ if z.saveOutput==1
     pwrite2excel(f2,{3 ['region_All_animals ' ]},{'regions' 'ID'},[],zz.intreg);
   
     
-    %% ===============================================
+    % ===============================================
     
     
     
@@ -398,9 +433,15 @@ if z.saveOutput==1
     l{end+1,1}=['  '];
     l{end+1,1}=['__ANIMALS (n='  num2str(v.no_animals_reduced) ') __________'];
     l=[l; v.animals_reduced ];
-    %% ===============================================
-    pwrite2excel(f2,{4 ['info ' ]},{'_INFO_' },[],l);
-    cprintf([1  0 1],'..DONE!\n');
-      showinfo2('..RESULTS',f2);
+    
+    l{end+1,1}=['  '];
+    l{end+1,1}=['__ANIMALS removed (n='  num2str(v.Nanimalsremoved) ') __________'];
+    l=[l; v.animalsremoved];
+    % ===============================================
+    if 0
+        pwrite2excel(f2,{4 ['info ' ]},{'_INFO_' },[],l);
+        cprintf([1  0 1],'..DONE!\n');
+        showinfo2('..RESULTS',f2);
+    end
 end
 
