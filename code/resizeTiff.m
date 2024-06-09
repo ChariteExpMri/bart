@@ -78,17 +78,22 @@ p2=imresize(p1, p.resize);
 %———————————————————————————————————————————————
 %%   remove vertical stripe in Background
 %———————————————————————————————————————————————
-ncol=4;
-ps=mean(   p2(:,[1:ncol end-ncol+1])   ,2);
-if find(ps>220)
-    
-    imaxbord=find(ps==255);
-    % p2(imaxbord,:)=mean(ps);
-    
-    ME_bg=median(ps);
-    sb=(double(p2)-repmat(ps,[1   size(p2,2) ])) +ME_bg  ; %subtract background
-    p2=uint8(round(sb));
+if p.removestripes==1
+    ncol=4;
+    ps=mean(   p2(:,[1:ncol end-ncol+1])   ,2);
+    if find(ps>220)
+        
+        imaxbord=find(ps==255);
+        % p2(imaxbord,:)=mean(ps);
+        
+        ME_bg=median(ps);
+        sb=(double(p2)-repmat(ps,[1   size(p2,2) ])) +ME_bg  ; %subtract background
+        p2=uint8(round(sb));
+    end
+else
+    p2=uint8(255*mat2gray(double(p2)));
 end
+%  p2=uint8(double(p2));
 
 % ==============================================
 %%   masking approach
@@ -122,6 +127,9 @@ elseif p.method==3
             thresh=mean(p2(:));
         elseif strcmp(p.m3_TR, 'pct75')
             thresh=prctile(p2(:),75);
+        elseif ~isempty(regexpi(p.m3_TR,'^pct'))
+            threshval=str2num((regexprep(p.m3_TR,'^pct','')));
+            thresh=prctile(p2(:),threshval);
         end
     else
         thresh=p.m3_TR;
@@ -129,14 +137,32 @@ elseif p.method==3
     TR=0;
     v=p2>thresh;
     ms=imfill(imgaussfilt(double(v),[1])>0,'holes');
-    
     %     ms2=imerode(imopen(ms,strel('disk',7)),strel('disk',5));
     %     ms2=imfill(imdilate(ms2,strel('disk',5)),'holes');
     %     ms3=bwlabeln(ms2);
     %     fg,imagesc(ms3)
     % ===============================================
-    
-    
+ elseif p.method==4
+     %% ===============================================
+     %   entropy
+     % ===============================================
+%      p.m4_entropy_fltsize     =3    ; %disk-size to compute spatial entropy (default:3)
+%      p.m4_entropy_threshmax   =0.3  ;% keep values above threshold relativ to max entropy in image  ([1] is pixel with max entropy in image)
+%      
+     % ===============================================
+     a=imadjust(mat2gray(double(p2)));
+     w=strel('disk',p.m4_entropy_fltsize); %radius 5 --> strel('disk',5)
+     b=entropyfilt(p2,w.Neighborhood);
+     ms=b>(max(b(:))*p.m4_entropy_threshmax);
+     
+     
+     
+%      [m2,m3]=clean_data_function3(m1,100);
+     
+%      fg,imagesc(imfill(ms,'holes'))
+     
+     %% ===============================================
+     
 end
 
 % ==============================================
@@ -235,8 +261,8 @@ end
 % ==============================================
 %%  fuse mask
 % ===============================================
-
-[maskfile,brainfile]=clean_data_function2(img);
+[maskfile,brainfile]=clean_data_function3(img,p.mask_curvature);
+% [maskfile,brainfile]=clean_data_function2(img);
 fus=imfuse(brainfile,maskfile);
 
 if p.doplot==1

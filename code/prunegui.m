@@ -23,7 +23,14 @@ end
 % file='F:\data3\histo2\josefine\dat\14_000000000001F059\a2_002.mat'
 filelist=cellstr(filelist);
 file=filelist{1};
-s=load(file);s=s.s;
+
+[mdir, name, ext]=fileparts(file);
+if strcmp(ext,'.mat')
+    s=load(file);s=s.s;
+else
+    img=imread(file);
+    s.img=img;
+end
 
 u.file     = file;
 u.filelist = filelist;
@@ -115,6 +122,7 @@ hx=findobj(gcf,'tag','loadModImage');
 li=get(e,'string');
 va=get(e,'value');
 newfile=li{va};
+[pa name ext]   =fileparts(newfile);
 
 img=[];
 is_Loadmodfile =get(hx,'value');
@@ -126,7 +134,15 @@ if is_Loadmodfile==1
         u.ismodfile=1;
     end
 end
-s=load(newfile);s=s.s;
+
+
+if strcmp(ext,'.mat')
+    s=load(newfile);s=s.s;
+else
+    img=imread(newfile);
+    s.img=img;
+end
+
 
 if isempty(img)
     img=s.img;
@@ -1930,6 +1946,16 @@ disp(['  rotation    : ' num2str(s.rotationmod) ]);
 disp(['  add border  : ' num2str(s.bordermod)   ]);
 disp([hemistring]);
 
+% ==============================================
+%%   
+% ===============================================
+clear v
+v.im =him.CData;
+v.ms=v.im>0;
+v.im=uint8(v.ms).*v.im;
+
+s.imgmod=v.im;
+s.maskmod=uint8(v.ms);
 % ==============================================
 %%   save1
 % ===============================================

@@ -397,6 +397,17 @@ end
 % qw=preadfile2('cell2line.m')
 
 
+% same paramter adressed more than one
+if length(unique(qw(:,1)))~=length(qw(:,1))
+    
+    [D,~,X] = unique(qw(:,1));
+    y= hist(X,unique(X));
+%     disp(['double use of var(s): "' strjoin(D(y>1),'"|"' )  '"']);
+    cprintf('*[1 0 1]',[ ['ERROR: double use of var(s): "' strjoin(D(y>1),'"|"' )  '"']   '\n']);
+    error('input variable is used more than once');
+    
+end
+
 
 if size(qw,2)>1
     %     x=cell2struct(qw(:,2),qw(:,1),1 );

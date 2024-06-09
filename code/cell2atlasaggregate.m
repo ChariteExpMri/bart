@@ -66,18 +66,20 @@ for i=1:length(files)
         sliceName=strrep(sliceName,'_cellcountsRegion','');
         itab=find(strcmp(p.et(:,1),animal ) & strcmp(p.et(:,3), sliceName ));
         
-        %__CHECK IF SLICE IS EXCLUDES: [1]-TAG IN COLUMN-4: {'excludeSlice'}
-        %p.het: {'animal'}{'animalIndex'}{'slice'}{'excludeSlice'}{'flipSide'}{'comment________…'}
-        if ~isempty(strfind(num2str(p.et{itab,4}),'1'))
-            isexcluded=1;
-        end
-        %__CHECK IF SLICE IS FLIPPED [1]-TAG IN COLUMN-5 :{'flipSide'}
-        %[imgNum],[ID],[ccL],[ccR],[affNpixL],[affNpixR],[warpNpixL],[warpNpixR']
-        if ~isempty(strfind(num2str(p.et{itab,5}),'1'))
-            tf=v.t;
-            tf=tf(:,[1 2  [4 3] [6 5] [8 7] ]);
-            v.t=tf;
-            disp(['flipped: [' animal  ']: slice: ' sliceName ]);
+        if ~isempty(itab) % if IMAGE is not in Ecelfile...ignore flips/rejections...just include
+            %__CHECK IF SLICE IS EXCLUDES: [1]-TAG IN COLUMN-4: {'excludeSlice'}
+            %p.het: {'animal'}{'animalIndex'}{'slice'}{'excludeSlice'}{'flipSide'}{'comment________…'}
+            if ~isempty(strfind(num2str(p.et{itab,4}),'1'))
+                isexcluded=1;
+            end
+            %__CHECK IF SLICE IS FLIPPED [1]-TAG IN COLUMN-5 :{'flipSide'}
+            %[imgNum],[ID],[ccL],[ccR],[affNpixL],[affNpixR],[warpNpixL],[warpNpixR']
+            if ~isempty(strfind(num2str(p.et{itab,5}),'1'))
+                tf=v.t;
+                tf=tf(:,[1 2  [4 3] [6 5] [8 7] ]);
+                v.t=tf;
+                disp(['flipped: [' animal  ']: slice: ' sliceName ]);
+            end
         end
     end
     

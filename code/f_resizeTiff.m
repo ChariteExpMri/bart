@@ -26,6 +26,8 @@ if ~isfield(x,'files') || isempty(x.files)
     x.files=fidi;
 end
 
+if ~isfield(x,'isparallel') ; x.isparallel=0; end
+
 % ==============================================
 %%   struct
 % ===============================================
@@ -33,25 +35,37 @@ para={...
  
 'inf1'    'RESIZE TIFF-IMAGE FOR ATLAS-REGISTRATION'  ''  ''
 '' '' '' ''
-'method'                  3     'mask method: [1]DAPI-otsu; [2]WSL-otsu; [3]Threshold'                      {1,2,3}
+'method'                  4     'mask method: [1]DAPI-otsu; [2]WSL-otsu; [3]Threshold,[4]local entropy'                      {1,2,3,4}
 'chan'                    3       'RGB-chanel to use (DAPI: 3; WSL: 2)'                                   ''
 '' '' '' ''
+'' '' '' ''
+'removestripes'         0 'remove stripes in background'         'b'
+
+
 
 'inf22'    '__METHOD-2___WSL-ots_____________'  ''  ''
 
 'm2_flt'               [11 11] 'method-2 (WSL) ONLY: median filter order'         ''
 'm2_otsuclass'         [20]    'method-2 (WSL) ONLY: number of otsu-classes (higher..more sensitive)'         ''
 
-'inf44'    '__METHOD-3___THRESHOLD_____________'  ''  ''
-'m3_TR'               'pct75'      'threshold: range 0-255, 0 is background; other thresholds: "pct75":75th percentile, "mean"/"median" ' {'pct75','mean','median' [1],[50]}
+'inf33'    '__METHOD-3___THRESHOLD_____________'  ''  ''
+'m3_TR'               'pct50'      'threshold: range 0-255, 0 is background; other thresholds: "pct75":75th percentile, "mean"/"median" ' {'pct75','mean','median' [1],[50]}
 
+
+'inf44'    '__METHOD-4___LOCAL ENTROPY_____________'  ''  ''
+'m4_entropy_fltsize'     3    'disk-size to compute local entropy (default:3) ' {3:7}
+'m4_entropy_threshmax'   0.3  'keep values above threshold relativ to max entropy in image  ([1] is pixel with max entropy in image)' {.1:.1:.9}
+     
 '' '' '' ''
+
 
 'inf3'       '___OTHER INPUT_____________'  ''  ''
 
-
+'mask_curvature'   30    'curvature/detail of mask; default:30, larger value is more detailed',{30:20:200}
 'imadjust'  1   'adjust Adjust image intensity values {0,1}'   'b'
 'fastload'  1  'force tiff-fast-reading (if image size is >5000pix in width&high, read only each 2nd pixel)' 'b'
+
+
 
 'percentSurviveMaxCluster' 1    'percent clusterSize w.r.t largest cluster to survive'  ''
 'imcloseSizeStep'          10    'stepSize to iterative combine separate clusters'      ''

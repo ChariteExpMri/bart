@@ -17,6 +17,7 @@ addpath(genpath(fullfile(pabart,'slicedetection')));
 addpath(genpath(fullfile(pabart,'vlfeat-0.9.21\mex')));
 addpath(genpath(fullfile(pabart,'celldetection')));
 addpath(genpath(fullfile(pabart,'elastix2')));
+addpath(genpath(fullfile(pabart,'deepslice')));
 
 % end
 
@@ -51,10 +52,33 @@ set(hb,'position',[0 0 .5 .8],'max',1000,'fontsize',7,'fontname','courier');
 set(hb,'callback',@lb1_cb)
 lb1_defineContext(hb)
 
-hb=uicontrol('style','listbox','units','norm','tag','lb2','tooltipstring','functions');
-set(hb,'position',[0.5 .3 .5 .5],'max',1000);
+% ==============================================
+%%   
+% ===============================================
+
+tabgp = uitabgroup(gcf,'units','norm','Position',[0.5 .3 .5 .5],'tag','tabgroup');%,...
+%     'backgroundcolor','w');
+ht1 = uitab(tabgp,'Title','old pl'     ,'backgroundcolor','w','tag','tb_oldpipe');
+ht2 = uitab(tabgp,'Title','deepslice pl','backgroundcolor','w','tag','tb_deepslicepipe');
+
+set(tabgp,'SelectedTab',ht2);
+
+% ==============================================
+%%   LB-oldPipe
+% ===============================================
+hb=uicontrol(ht1,'style','listbox','units','norm','tag','lb2','tooltipstring','functions');
+set(hb,'position',[0 0 1 1],'max',1000);
 fcn=bart_fcn();
 set(hb,'string',cellfun(@(a,b){[b ' [' a ']']},fcn(:,1),fcn(:,2)))
+
+% ==============================================
+%%   deepslice-Pipe
+% ===============================================
+hb=uicontrol(ht2,'style','listbox','units','norm','tag','lb_deepslice','tooltipstring','functions');
+set(hb,'position',[0 0 1 1],'max',1000);
+fcn=deepslice_fcn();
+set(hb,'string',cellfun(@(a,b){[b ' [' a ']']},fcn(:,1),fcn(:,2)))
+
 % ==============================================
 %%   run
 % ===============================================
@@ -159,7 +183,9 @@ m2 = uimenu(m,'label','flip up-down original tiff','callback', @cb_flipTiffUD);
 m2 = uimenu(m,'label','prune tiffs','callback', @cb_pruneTiff);
 % ---------------------
 m = uimenu('label','CellDetection');
-m2 = uimenu(m,'label','cellDetection','callback', @cellDetecetion);
+m2 = uimenu(m,'label','<html><font color=blue>cellDetection','callback', @cellDetecetion);
+m2 = uimenu(m,'label','<html><font color=blue>cellDetection via Threshold','callback', @cellDetection_via_Threshold);
+
 m2 = uimenu(m,'label','assign cells to region','callback', @cell2regionAssign);
 m2 = uimenu(m,'label','cell-region to atlas','callback', @call_cellregion2atlas);
 m2 = uimenu(m,'label','make BIGtable','callback', @call_makeBIGtable);
@@ -572,7 +598,6 @@ bartcb('update');
 %%
 % ===============================================
 function cellDetecetion(e,e2)
-
 [sel]=bartcb('getsel');
 if isempty(sel); return; end
 fis=sel((strcmp(sel(:,2),'file')),1);
@@ -582,6 +607,15 @@ x.files=fis;
 f_celldetection(1,x);
 bartcb('update');
 
+function cellDetection_via_Threshold(e,e2)
+[sel]=bartcb('getsel');
+if isempty(sel); return; end
+fis=sel((strcmp(sel(:,2),'file')),1);
+fis=fis(existn(fis)==2); %check existence
+% disp(fis);
+x.files=fis;
+f_celldetectionThreshold(1,x);
+bartcb('update');
 
 function call_cellregion2atlas(e,e2)
 f_cell2atlasaggregate;
@@ -655,7 +689,21 @@ uimenu(cmenu, 'Label', '<html><b><font color =blue> show (cutted) Tif', 'Callbac
 % --------
 uimenu(cmenu, 'Label', '<html><b><font color =blue> show resized Tif and Mask', 'Callback', {@lb1_context, 'showTifandMask'},'separator','on');
 uimenu(cmenu, 'Label', '<html><b><font color =#0AAED6> show Parameter of a2_###.mat (mod-paramter)', 'Callback', {@lb1_context, 'showParamModfile'});
-% --------
+%% --------
+%% ===============================================
+
+uimenu(cmenu, 'Label', '<html><b><font color =fuchsia> show deepSlice result QA-1 (animated gif)'   , 'Callback', {@lb1_context, 'deepsliceResult_QA1'},'separator','on');
+uimenu(cmenu, 'Label', '<html><b><font color =fuchsia> show deepSlice result QA-2 (image)'          , 'Callback', {@lb1_context, 'deepsliceResult_QA2'},'separator','off');
+uimenu(cmenu, 'Label', '<html><b><font color =fuchsia> show manu-warped result (animated gif)'      , 'Callback', {@lb1_context, 'showmanuwarpedResult'},'separator','off');
+uimenu(cmenu, 'Label', '<html><b><font color =fuchsia> show post-warped result QA-1 (animated gif)' , 'Callback', {@lb1_context, 'showpostwarped_Q1'},'separator','off');
+uimenu(cmenu, 'Label', '<html><b><font color =fuchsia> show post-warped result QA-2 (animated gif)' ,'Callback', {@lb1_context, 'showpostwarped_Q2'},'separator','off');
+uimenu(cmenu, 'Label', '<html><b><font color =fuchsia> show post-warped result QA-3 (image)'        , 'Callback', {@lb1_context, 'showpostwarped_Q3'},'separator','off');
+
+uimenu(cmenu, 'Label', '<html><b><font color =fuchsia> show final result', 'Callback', {@lb1_context, 'show_finalResult'},'separator','off');
+%% ===============================================
+
+
+%----
 uimenu(cmenu, 'Label', '<html><b><font color =blue> show warped BestSlice', 'Callback', {@lb1_context, 'showWarpedBestSlice'},'separator','on');
 % --------
 uimenu(cmenu, 'Label', '<html><b><font color =blue> show final result', 'Callback', {@lb1_context, 'show_finalResult'},'separator','on');
@@ -771,6 +819,74 @@ elseif strcmp(task,'showTifandMask')
             disp(['could not open: ' fi]);
         end
     end
+%% ===============================================
+
+elseif strcmp(task,'deepsliceResult_QA1')
+    for i=1:length(files)
+        [pam name ext]=fileparts(files{i});
+        fi=fullfile(pam,[name '_deepsliceQA1.gif']);
+        fi=regexprep(files{i},{[filesep filesep 'a1_'], '.tif$'},{[filesep filesep 'a3_'],'_deepsliceQA1.gif'});
+        if exist(fi)==2
+            web(fi,'-new');
+        else
+            disp(['could not open: ' fi]);
+        end
+    end
+ elseif strcmp(task,'deepsliceResult_QA2')
+    for i=1:length(files)
+       % [pam name ext]=fileparts(files{i});
+        %fi=fullfile(pam,[name '_deepsliceQA2.jpg']);
+        fi=regexprep(files{i},{[filesep filesep 'a1_'], '.tif$'},{[filesep filesep 'a3_'],'_deepsliceQA2.jpg'});
+        if exist(fi)==2
+            web(fi,'-new');
+        else
+            disp(['could not open: ' fi]);
+        end
+    end   
+ elseif strcmp(task,'showmanuwarpedResult')
+    for i=1:length(files)
+        %[pam name ext]=fileparts(files{i});
+        fi=regexprep(files{i},{[filesep filesep 'a1_'], '.tif$'},{[filesep filesep 'a4_'],'_warpedQA.png'});
+        
+        if exist(fi)==2
+            web(fi,'-new');
+        else
+            disp(['could not open: ' fi]);
+        end
+    end
+    
+ elseif strcmp(task,'showpostwarped_Q1')
+    for i=1:length(files)
+        %[pam name ext]=fileparts(files{i});
+        fi=regexprep(files{i},{[filesep filesep 'a1_'], '.tif$'},{[filesep filesep 'a5_'],'_warpedQA1.png'});
+        if exist(fi)==2
+            web(fi,'-new');
+        else
+            disp(['could not open: ' fi]);
+        end
+    end    
+  elseif strcmp(task,'showpostwarped_Q2')
+    for i=1:length(files)
+        %[pam name ext]=fileparts(files{i});
+        fi=regexprep(files{i},{[filesep filesep 'a1_'], '.tif$'},{[filesep filesep 'a5_'],'_warpedQA2.png'});
+        if exist(fi)==2
+            web(fi,'-new');
+        else
+            disp(['could not open: ' fi]);
+        end
+    end
+  elseif strcmp(task,'showpostwarped_Q3')
+    for i=1:length(files)
+        %[pam name ext]=fileparts(files{i});
+        fi=regexprep(files{i},{[filesep filesep 'a1_'], '.tif$'},{[filesep filesep 'a5_'],'_warpedQA3.jpg'});
+        if exist(fi)==2
+            web(fi,'-new');
+        else
+            disp(['could not open: ' fi]);
+        end
+    end    
+%% ===============================================
+
 elseif strcmp(task,'showWarpedBestSlice')
     for i=1:length(files)
         fi=regexprep(files{i},{[filesep filesep 'a1_'], '.tif$'},{[filesep filesep 'bestslice_'],'.gif'});
@@ -1023,15 +1139,27 @@ end
 
 function runfcn(e,e2)
 addpath(genpath(fullfile(fileparts(which('bart.m')),'code'))); % override antx2-paramgui version
-% 'ak'
+%
+%% ======[ get tab]=========================================
 hf=findobj(0,'tag','bart');
-hb=findobj(hf,'tag','lb2');
+htabgrp=findobj(gcf,'tag','tabgroup');
+
+thistab=get(get(htabgrp,'SelectedTab'),'tag');
+if strcmp(thistab,'tb_oldpipe')
+    hb=findobj(hf,'tag','lb2');
+    fm=bart_fcn();
+elseif strcmp(thistab,'tb_deepslicepipe')
+    hb=findobj(hf,'tag','lb_deepslice');
+    fm=deepslice_fcn();
+end
+%% ===============================================
+
+
 hp=findobj(hf,'tag','isparallel');
 isparallelSet=get(hp,'value');
 % str=hb.String(hb.Value);
 
 
-fm=bart_fcn();
 idxfun=hb.Value;
 funs=fm(idxfun,1);
 funs=regexprep(funs,'\.m$','');

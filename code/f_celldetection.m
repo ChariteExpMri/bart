@@ -3,9 +3,9 @@ function varargout=f_celldetection(showgui,x )
 
 %source: snip_a4_test_celldetector3_largeTiff.m
 
-%———————————————————————————————————————————————
-%%   PARAMS
-%———————————————————————————————————————————————
+% ==============================================
+%%     PARAMS
+% ===============================================
 if exist('showgui')==0 || isempty(showgui) ;    showgui=1                   ;end
 if exist('x')==0                           ;    x=[]                        ;end
 
@@ -21,6 +21,9 @@ if exist('x')~=1;        x=[]; end
 
 templateDir=fullfile(fileparts(which('bart.m')),'templates');
 
+% if ~isfield(x,'approach')
+%     x.approach=1;
+% end
 
 % ==============================================
 %%   paramter
@@ -45,7 +48,7 @@ para={...
 'testimage'   [1:10] 'ONLY OF istest is 1, plot this test-image numbers ' ''
 
 'meth' 'TwoStage'  'method to use'  {'TwoStage' 'frst'}
-%p.meth='frst'
+
 % -----fdo 2nd sensitivyty
 'inf25' '___SENSITIVITY2 ("TwoStage" only)________' '___________________________________' ''
 'doHD'     0         'for "TwoStage" only, apply 2nd sensitivity for hippocampus.' 'b'
@@ -67,12 +70,11 @@ para={...
 'color'       'm' 'cell-detection color'  ''
 'isparallel'   0 'PARALLEL COMPUTIATION...might be faster'  'b'
 };
-% 'files'   ''  'select files here'   'mf'
 
 
 
 % ==============================================
-%%   GUI
+%   GUI
 % ===============================================
 p=paramadd(para,x);
 
@@ -95,6 +97,9 @@ if showgui==1 || showgui==2
 else
     z=param2struct(p);
 end
+% ==============================================
+%%   batch
+% ===============================================
 
 xmakebatch(z,p, mfilename); % ## BATCH
 

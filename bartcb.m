@@ -204,6 +204,10 @@ if usegui==1
 else
     projfile=arg{2};
     [pa fi ext]=fileparts(projfile);
+    if isempty(pa)
+       pa=pwd;
+       projfile=fullfile(pa,[ fi ext]);
+    end
     fi=[fi ext];
 end
     
@@ -540,6 +544,12 @@ t={...
     ['fin' filesep 's#_other*.gif'  ]    [0.6353    0.0784    0.1843]   'warped other images to histo-space'
     ['cellcounts_a1_#' filesep 'predfus.tif'] [0 0 0] 'cell-detection'
     ['fin' filesep 's#_cellcountsRegion.mat']      [.5 .5 .5]   'regionwise cellcounts/area calc'
+    
+    'a3_#_deepsliceQA2.jpg'   [ 1.0000    0.0745    0.6510]       'DeepSlice performed'
+    'a4_#_warped.png'         [  0.7725    0.6627    0.8392]      'manually warped'
+    'a5_#_warpedQA1.png'      [  0.4941    0.1843    0.5569]      'postwarped warped'
+    ['fin' filesep 's#_result.gif']  [0.2039    0.1294    0.2196] 'backtransformed to histo-space'
+
     };
 if exist('r')~=1
     % ==============================================
@@ -614,18 +624,19 @@ for i=1:length(slic)
     
     if ~isempty(st)
         ix=find(strcmp(st.fis(:,1), regexprep( slic{i} ,'.tif','')));
-        if st.fis{ix,2}==1              %ok
-          v2=[v2  '<font color=#22E80E>  &#9819'  ];
-        elseif st.fis{ix,2}==2         %work
-            v2=[v2    '<font color=#ff8c00>  &#9873'  ]; %work
-        elseif st.fis{ix,2}==-2         %issue
-            v2=[v2    '<font color=red>  &#9876'   ]; %clud:  &#9729
-        elseif st.fis{ix,2}==-1         %problematic
-            v2=[v2    '<font color=#A40D5A>  &#9762'   ];
-        
-          
-          %elseif st.fis{ix,2}>=11 && st.fis{ix,2}<=20         %number    
+        if ~isempty(ix)
+            if st.fis{ix,2}==1              %ok
+                v2=[v2  '<font color=#22E80E>  &#9819'  ];
+            elseif st.fis{ix,2}==2         %work
+                v2=[v2    '<font color=#ff8c00>  &#9873'  ]; %work
+            elseif st.fis{ix,2}==-2         %issue
+                v2=[v2    '<font color=red>  &#9876'   ]; %clud:  &#9729
+            elseif st.fis{ix,2}==-1         %problematic
+                v2=[v2    '<font color=#A40D5A>  &#9762'   ];
+                %elseif st.fis{ix,2}>=11 && st.fis{ix,2}<=20         %number
+            end
         end
+        
         %% add GROUP numer NUMBER_________ (HTML "1" is "g&#49;" we start with st.group==1 as '1')
         if 1
             %if isfield(st,'group')

@@ -142,6 +142,17 @@ end
 % ==============================================
 %%   cell-counts
 % ===============================================
+%----check image sizes
+sizstr={'cell' 'ANO' 'hemi'};
+siz=[size(c); size(an.v); size(he.v)];
+sumsizdiff=sum(sum((siz-repmat(siz(1,:),[size(siz,1) 1])).^2));
+if sumsizdiff~=0
+    disp('SIZE: mismatch beteewn images: ');
+    disp([sizstr(:) num2cell(siz)]);
+    error(['IMG-SIZE-MISMATCH: [' animal ']  - ' name]);
+end
+
+
 c2 =   c(:)>0;
 an2=an.v(:);
 he2=he.v(:);
