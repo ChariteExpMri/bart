@@ -27,14 +27,33 @@ if 0
    
 end
 
+% ==============================================
+%%   xmlfile
+% ===============================================
+
 imagepath=fileparts(xmlfile);
 
-% f2=fullfile(imagepath, 'est.xml');
-g=xml2struct(xmlfile);
-eval(regexprep(['&' g.Children(2).Attributes(1).Value ';'],'&',';r.'));
-imagename  =g.Children(2).Attributes(2).Value;
-histimage  =fullfile(imagepath, imagename);
+% ==============================================
+%%   xml2struct-bioinfo-tbx
+% ===============================================
 
+% f2=fullfile(imagepath, 'est.xml');
+if 0
+    g=xml2struct(xmlfile);
+    eval(regexprep(['&' g.Children(2).Attributes(1).Value ';'],'&',';r.'));
+    imagename  =g.Children(2).Attributes(2).Value;
+    histimage  =fullfile(imagepath, imagename);
+end
+
+
+% ==============================================
+%%   alternative
+% ===============================================
+g=xml2struct2(xmlfile);
+g=g.series;
+eval(regexprep(['&' g.slice.Attributes.anchoring ';'],'&',';r.'));
+imagename  = g.slice.Attributes.filename;
+histimage  =fullfile(imagepath, imagename);
 
 %% ======reasd histo image or get size==========================================
 
