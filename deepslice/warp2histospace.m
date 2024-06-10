@@ -136,10 +136,10 @@ end
 if size(p1,3)==3;       p1= rgb2gray(p1);     end
 %% ===============================================
 siz=[500 500]  ;
-ref=double(imadjust(mat2gray(imresize(p1,siz) ))) ;
+ref=double(imadjust(mat2gray(imresize(mat2gray(p1),siz) ))) ;
 %===============================================
-tx_warped=text2im('warped');
-tx_affine=text2im('affine');
+tx_warped=text2im('warped')*0.5;
+tx_affine=text2im('affine')*0.5;
 t1=[];
 t2=[];
 for i=1:2
@@ -182,7 +182,7 @@ sliceName=[slice,ext];
 tx_info=text2im([animal  ': ' sliceName   '  ' sprintf('(%dx%d)', c.size_histo  ) ]);
 tx_info=~tx_info;
 head=zeros(size(tx_info,1), size(t1,2));
-head(1:size(tx_info,1),1:size(tx_info,2))=tx_info;
+head(1:size(tx_info,1),1:size(tx_info,2))=tx_info*0.5;
 t1=[head;t1];
 t2=[head;t2];
 % fg,imagesc(t1)
