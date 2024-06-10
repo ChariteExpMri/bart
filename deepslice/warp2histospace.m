@@ -154,7 +154,7 @@ for i=1:2
                 d2=imresize(g{j,i},siz,'nearest');
                 d2=pseudocolor2D(d2);
             else
-                d2=imresize(g{j,i},siz);
+                d2=imresize(mat2gray(g{j,i}),siz);
             end
             fc=1;
         end
