@@ -40,7 +40,14 @@ a  = imread(file,s.frameNumber);
 try
     imwrite(a,fiout, 'tif','Compression',ha.Compression);
 catch
-    imwrite(a,fiout, 'tif','Compression','none');
+    try
+        imwrite(a,fiout, 'tif','Compression','none');
+    catch
+        % Writing single image data to a TIFF file is not supported with IMWRITE.
+        a=uint8(255 * mat2gray(a));
+        imwrite(a,fiout, 'tif','Compression','none');
+    end
+
 end
 
 % b=imread(fout);

@@ -251,10 +251,13 @@ if i==1
             p1= rgb2gray(p1);
         end
         v=p1;
+        if size(p1,3)>1
+            p1=p1(:,:,1);
+        end
         %if isa(v,'unit8')==0
-            v=uint8(255*imadjust(mat2gray(double(p1))));
+        v=uint8(255*imadjust(mat2gray(double(p1))));
         %else
-         %   end   
+        %   end
             
      
         outname=[ 's' imgNumstr '_REF' '.mat' ];
@@ -453,11 +456,15 @@ for j=1:length(w)
             if i==1 && j==1 %decide on first image
                 if R2>R1
                     c.addborder=1;
+                else
+                    c.addborder=0;
                 end
             end
-            if c.addborder==1
-                u2=u3;
-            end
+           % try
+                if c.addborder==1
+                    u2=u3;
+                end
+           % end
         end
     end
     % ==============================================

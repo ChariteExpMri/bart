@@ -204,9 +204,13 @@ m2 = uimenu(m,'label','statistic: left vs right density [f_statisticLR]','callba
 % ---------------------
 m = uimenu('label','Conversion');
 m2 = uimenu(m,'label','convert Histo-ATLAS(ANO)-slice(mat) to pseudocolor-TIF [f_ano_falsecolor2tif]','callback', @convetANO2pseudoTiff);
+% ---------------------
+m = uimenu('label','deepslice');
+m2 = uimenu(m,'label','set/edit deepslice defaults (conda+environment) ','callback', @setDeepsliceDefault);
 
 
 
+% ---------------------
 m  = uimenu('label','updates');
 m2 = uimenu(m,'label','      update','callback', {@check_updates,2});
 m2 = uimenu(m,'label','<html><font color =blue>force update','callback', {@check_updates,3});
@@ -313,6 +317,52 @@ if ~isempty(hs)
         disp(strjoin(hs,char(10)));
     end
 end
+
+% ==============================================
+%%   setDeepsliceDefault
+% ===============================================
+
+function setDeepsliceDefault(e,e2)
+
+global ak
+if isempty(ak)
+    disp('load project before...');
+    return
+end
+
+%% ===============================================
+% input('','s')
+
+tb={'my defaults'            'deepslice_defaults_home.m'
+    'win10-server-charite'   'deepslice_defaults_win10server.m'};
+
+cprintf('*[0 0 0]',[ ['SPECITY DEEPSLICE-DEFAULTS FOR THIS STUDY'] '\n']);
+cprintf('*[0 0 1]',[ ['  AVALIABLE DEEPSLICE-DEFAULTS'] '\n']);
+for i=1:size(tb,1)
+  disp([ '  [' num2str(i) ']: '  tb{i,1}   ' ("' tb{i,2} '")'])  ;
+end
+q=input('use one ove the above defaultSettings (enter number): ','s');
+if isempty(q); disp('...cancelled'); return; end
+
+
+idx=str2num(q);
+fi1=which(tb{idx,2});
+paout=fileparts(ak.dat);
+fo1=fullfile(paout,'deepslice_defaults.m');
+
+if exist(fo1)
+    q=input('"deepslice_defaults.m" already exist, overwrite (y,n)?: ','s');
+    if strcmp(q,'y')==0; 
+         disp('...cancelled');return;
+    end
+end
+
+copyfile(fi1,fo1,'f');
+edit(fo1);
+
+
+%% ===============================================
+
 
 % ==============================================
 %%   update tbx via button, no user-questions
