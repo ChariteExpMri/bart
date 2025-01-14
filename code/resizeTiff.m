@@ -258,13 +258,47 @@ if 0
     %------------
 end
 
+
+
+
 % ==============================================
 %%  fuse mask
 % ===============================================
 [maskfile,brainfile]=clean_data_function3(img,p.mask_curvature);
 % [maskfile,brainfile]=clean_data_function2(img);
-fus=imfuse(brainfile,maskfile);
 
+
+% ==============================================
+%%   stitching-artefact
+% ===============================================
+if isfield(p, 'del_stitchingartefact') && p.del_stitchingartefact==1
+
+        
+        g=double(brainfile).*maskfile;
+        v=mean(g,2);
+        vm=repmat(v,[1 size(g,2)  ]);
+        vd=g./vm;
+        vd(isnan(vd))=min(vd(:));
+        % fg,imagesc(g)
+        % fg,plot(vm)
+        
+        v=mean(g,1);
+        vm=repmat(v,[size(g,1) 1 ]);
+        vd=vd./vm;
+        vd(isnan(vd))=min(vd(:));
+        vd=imadjust(mat2gray(vd));
+%         fg,imagesc(vd)
+        vd=vd.*maskfile;
+    
+        brainfile=vd;
+    
+
+end
+
+% ==============================================
+%%   plot
+% ===============================================
+fus=imfuse(brainfile,maskfile);
 if p.doplot==1
     
     figure;

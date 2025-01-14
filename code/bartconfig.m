@@ -20,8 +20,13 @@ p={...
     'inf100'     '==================================='                          '' ''
     '' '' '' ''
     'dat'         fullfile(pwd,'dat')      'studie''s datapath, MUST BE be specified, and named "dat", such as "c:\b\study1\dat" '  'd'
-    'template'    'UNDEFINED'             'select the template path ("bart_template")'  'd'
+    'template'    'UNDEFINED'             'select the template path ("bart_template")'  {@gettemplate}
     %'vv.c'        'UNDEFINED'             'select the template path'  'd'
+    '' '' '' ''
+    'inf101'     '==================================='                          '' ''
+    'deepsliceconfig' 'UNDEFINED'             'select the deepslice-config (optional) '  {@getdeepsliceconfig}
+    
+    
     };
 % p2=p;
 
@@ -54,10 +59,62 @@ try
     varargout{2}=z;
 end
 
+function getdeepsliceconfig(e,e2)
+%% ===============================================
+cmd4ui_path='<select own deepslice-configuration>';
+dontuse='none';
+dlpath={...  
+    dontuse
+    which('deepslice_defaults_home.m')
+    which('deepslice_defaults_win10server.m');
+    
+
+    
+    cmd4ui_path};
+[idx,tf] = listdlg('PromptString',{ 'Select deepslice-configuration (file)',''},...
+    'SelectionMode','single','ListString',dlpath,'ListSize',[450,100]);
+if isempty(idx); return; end
+cpath=dlpath{idx};
+if strcmp(cpath,cmd4ui_path)
+       [fi, pa] = uigetfile('*.m', 'Select deepslice-configuration (file)');
+       if isnumeric(dn); return; end
+       cpath=fullfile(pa,fi);
+end
+paramgui('setdata','x.deepsliceconfig',cpath);
+return
+%% ===============================================
 
 
-
-
+function gettemplate(e,e2)
+%% ===============================================
+cmd4ui_path='<select own template>';
+templatepaths={...
+    'F:\tools\bart_template'
+    'D:\MATLAB\bart_templates'
+    cmd4ui_path};
+[idx,tf] = listdlg('PromptString',{ 'Select template (path of template) to use',''},...
+    'SelectionMode','single','ListString',templatepaths,'ListSize',[250,100]);
+if isempty(idx); return; end
+tpath=templatepaths{idx};
+if strcmp(tpath,cmd4ui_path)
+       dn = uigetdir(pwd, 'Select template (path of template) to use');
+       if isnumeric(dn); return; end
+       tpath=dn;
+end
+paramgui('setdata','x.template',tpath);
+return
+%% ===============================================
+% 
+% [ofi opa]=uiputfile(fullfile(pwd,'.xlsx'),'this');
+% if isnumeric(ofi); return; end
+% [~,fi,ext]=fileparts(ofi);
+% if isempty(fi); fi='dummy';end
+% ext='.xlsx';
+% fiout=fullfile(opa,[fi ext]);
+% 
+% %% ===============================================
+% 
+% paramgui('setdata','x.template',fiout);
 
 
 

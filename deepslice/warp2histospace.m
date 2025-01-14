@@ -122,6 +122,7 @@ make_summary(tb,g,c );
 
 
 
+
 % ==============================================
 %%   sub: [3] make summary
 % ===============================================
@@ -226,13 +227,64 @@ if exist(c.pafin)~=7;
     mkdir(c.pafin);
 end
 % ==============================================
-%%   get info from reference  Image
+%%   get SIZE from reference  Image
 % ===============================================
 % c.file=fullfile(c.pa,['a1' c.numberstr '.tif']);
 hi=imfinfo(c.file);
-
 c.size_histo= [hi.Height hi.Width]  ;%[ 16648       11146]
 imgNumstr=regexprep(c.numberstr,'_','');
+
+c.size_histo_inputimage=[ c.size_histo ];
+
+% ==============================================
+%   get alternative size from logfile
+%  get targetsize by logfile (c.finalsize==2)
+% ===============================================
+if c.finalsize==2 %
+    lfile=fullfile(c.pa, 'logmsg.txt');
+    if exist(lfile)==2
+        l=preadfile(lfile); l=l.all;
+        [xpa xname xext]= fileparts(c.file);
+        tifname_orig=[xname xext];
+        
+        iv=regexpi2(l,['#import_TIFF \[BART\].*' tifname_orig]);
+        iv_orig=iv-1;
+        raw_img={'F:\data5_histo\markus_Tet2_Batch1\raw\Tet2_m006_A_2_1_DAPI\Tet2_m006_A_2_1_DAPI.tif'};
+        [~,rawname,~]=fileparts2(raw_img);
+        if length(rawname)==1
+            rawname=[char(rawname) ,'.txt'  ];
+            configfile=fullfile(c.pa, rawname);
+            if exist(configfile)==2
+                k=preadfile(configfile); k=k.all;
+                iv=regexpi2(k,'^size:');
+                if ~isempty(iv)
+                    target_size=str2num(char(regexprep(k{iv},{'size:', 'x' },{'', ' '})));
+                    % --obtain correct order of WxH  
+                    inputsize=[hi.Height hi.Width];
+                    ratiosWH=[...
+                        target_size./inputsize; 
+                        fliplr(target_size)./inputsize];
+                    diffratiosWH=sqrt((ratiosWH(:,1)-ratiosWH(:,2)).^2);
+                    fliporder_WH=0;
+                    if min(find(diffratiosWH==min(diffratiosWH)))==2  % flip order : The Graphics' industry standard is width by height
+                        target_size=  target_size([2 1]);
+                    end
+                    c.size_histo_inputimage =[hi.Height hi.Width];
+                    c.size_histo            =target_size;
+                    disp([sprintf('image-SIZE: input: [%d x %d] , final: [%d x %d]',c.size_histo_inputimage,c.size_histo  )]);
+                    
+                end
+                
+            else
+                error(['configfile <' rawname  '>  not found in path']);
+            end
+            
+        else
+            error(['more than one raw-file found']);
+        end
+        
+    end
+end
 
 %% ===============================================
 if i==1
@@ -254,10 +306,29 @@ if i==1
         if size(p1,3)>1
             p1=p1(:,:,1);
         end
+        
+        %other targetsize
+        if sum(c.size_histo_inputimage==c.size_histo)~=2
+            p1=imresize(p1,[c.size_histo ]);
+            disp('resizing orig image');
+        end
+        
+        
+        
+        
         %if isa(v,'unit8')==0
         v=uint8(255*imadjust(mat2gray(double(p1))));
         %else
         %   end
+        %% save tif-image
+        if c.save_tif==1
+            outname=[ 's' imgNumstr '_REF' '.tif' ];
+            fo1=fullfile(c.pafin,outname);% 's001_REF.tif'
+            %pt = im2uint16(p1);
+            %pt = p1 * intmax('uint32'); %This can be written for uint32 also:
+            imwrite(v, fo1);
+        end
+        %% ===============================================
             
      
         outname=[ 's' imgNumstr '_REF' '.mat' ];
@@ -328,6 +399,31 @@ for j=1:length(w)  %loop over the warped and corresponding affine image
     if c.simulate==0
         save(fo1,'v','-v7.3');
         showinfo2('..saved',fo1);
+    end
+    
+    %% save tif-image
+    if c.save_tif==1
+        ftif=regexprep(fo1,'.mat$','.tif');
+        %pt = im2uint16(p1);
+        %pt = p1 * intmax('uint32'); %This can be written for uint32 also:
+        if strcmp(class(v),'single') % ANO, which is i==2
+            %vtif=im2uint16(double(v));
+%             vtif= double(v) * intmax('uint32');  unique(vtif)
+           vtif=uint16(v);
+           imwrite(vtif, ftif);
+           if 1  %TEST-WHETHER SAME VALUES are stored
+               qsd1=sum((double(unique(in))-double(unique(vtif))).^2); 
+               disp(['b-valsDiff: ' num2str(qsd1)     ]);
+               
+               q=imread(ftif); %CHECK IF OUTPUT-NUMBERS IS EQUAL TO 'b'-marix
+               qsd2=sum((double(unique(in))-double(unique(q))).^2);
+               disp(['saved-valsDiff: ' num2str(qsd2)     ]);
+           end
+        else
+           imwrite(v, ftif);
+        end
+        
+        showinfo2('saved tif',ftif);
     end
     
     %% =====[save thumbnail]==========================

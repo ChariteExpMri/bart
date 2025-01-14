@@ -35,7 +35,9 @@ para={...
 % '' '' '' ''
 % 'image'  1       '[1] use original input image, [0]use  lowresscreenshot(jpg) from original  {0|1} '  'b'
 
-
+'finalsize'    1  'determine final image-size:  [1] from input-image, [2] from logfile '  {1 2 3}   
+'' '' '' ''
+'save_tif'   1  'save also as tif-file'  'b'
 % 'savemat' 0  'debug-mode, {0|1}, if [1] create plots'  'b'
 'debug'   0     'debug-mode, {0|1}, if [1] create plots'  'b'
 'simulate'  1   'simulation-mode: {0|1} , if [1] do not save mat-file (create only thumbnails)'  'b'

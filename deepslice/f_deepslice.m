@@ -211,6 +211,46 @@ else
     
     %a=imread(p.file);
     a2=imresize(a,[1000 1000]);
+    
+    %% ===============================================
+    
+    if 0
+        disp(['test-tile-filter:' mfilename ]);
+        if p.imagesource==2
+            m=s.mask;
+        elseif p.imagesource==3
+            m=s.maskmod;
+        end
+        m=imresize(m,[1000 1000]);
+        m=double(m);
+        
+%         m=otsu(g,5)==1;
+%         m=imfill(imdilate(imcomplement(m),ones(5)),'holes');
+        g=double(a2).*m;
+        
+        v=mean(g,2);
+        vm=repmat(v,[1 size(g,2)  ]);
+        vd=g./vm;
+        vd(isnan(vd))=min(vd(:));
+        % fg,imagesc(g)
+        % fg,plot(vm)
+        
+        v=mean(g,1);
+        vm=repmat(v,[size(g,1) 1 ]);
+        vd=vd./vm;
+        vd(isnan(vd))=min(vd(:));
+        vd=imadjust(mat2gray(vd));
+        
+        fg,imagesc(vd)
+        
+    
+    end
+    %% ===============================================
+    
+    
+    
+    
+    
     file0=fullfile(pa0, [ newname '_deepsliceIN' ext]  );
     imwrite(a2,file0);
 end

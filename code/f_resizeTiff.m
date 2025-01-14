@@ -72,6 +72,12 @@ para={...
 'resize'             [2000 2000]  'size of the resized image'                           ''
 'doplot'                  0       'plot image to screen'                                'b'
 'isparallel'      x.isparallel    'use parallel processing {0,1}'              'b'
+
+'inf4'       '___stitching-artefact_____________'  ''  ''
+'del_stitchingartefact'  1  'remove stitching artefact' 'b'
+
+
+
 };
 % 'files'    {}          'histo-files'  'mf'
 

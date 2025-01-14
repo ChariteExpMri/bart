@@ -36,8 +36,35 @@ end
 % %     disp(['open folder with new project <a href="matlab: explorer('' ' pa '  '')">' pa '</a>']);% show h<perlink
 %      disp(['open folder with new project <a href="matlab: ' systemopen(fullfile(pwd,'t2.nii'),1)  '">' pa '</a>']);% show h<perlink
 % end
+% ==============================================
+%%   deepslice
+% ===============================================
+if ~isempty(strfind(z.deepsliceconfig, 'UNDEFINED')) || ...
+        ~isempty(strfind(z.deepsliceconfig, 'none'))
+else
+    %get  and copy config
+    f0=z.deepsliceconfig;
+    f1=fullfile(pa, 'deepslice_defaults.m' );
+    ovr=1;
+    if exist(f0)
+        if exist(f1)==2
+            qr= input(['overwrite local file <deepslice_defaults.m>,[0|1]? :'],'s');
+            if strcmp(qr,'0'); ovr=0; end
+            
+        end
+        if ovr==1
+            disp(['..copying deepslice-config file as [deepslice_defaults.m] in <' pa '>' ]);
+            copyfile(f0,f1,'f');
+        end
+    else
+        disp(['...deepslice-config not found <' f0 '>']);
+    end
+    
+end
 
 
+
+%% ===============================================
 
 %% questDLG
 dlgTitle    = '';
