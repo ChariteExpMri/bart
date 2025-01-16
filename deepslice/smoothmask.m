@@ -74,6 +74,8 @@ for i=1:length(boundaries)
     end
     xx=round(xx);
     yy=round(yy);
+    xx(find(xx==0))=1; yy(find(yy==0))=1;
+
     
     %      fg, hold on; plot(x,y,'b') ;   plot(xx,yy,'r')
     %
