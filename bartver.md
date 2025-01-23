@@ -7,7 +7,7 @@
     
 ------------------  
   &#x1F535;   <ins>**07 Nov 2022 (15:06:23)**</ins>  
-   __[f_statisticLR.m]__  ---modified: option to remove animals from statistic  
+   __[f_statisticLR.m]__  ---modified: option to remove animals from statistic   
 <!---->
   &#x1F535;   <ins>**17 Oct 2022 (15:34:09)**</ins>  
    __[f_statisticLR.m]__  -new function to statistically evaluate regionwise left-right differences in cell-density   
