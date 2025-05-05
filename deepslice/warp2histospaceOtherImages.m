@@ -1,6 +1,6 @@
 
 
-function warp2histospace(c)
+function warp2histospaceOtherImages(c)
 
 
 % disp(c)
@@ -17,38 +17,53 @@ sliceName     = [slice,ext];
 
 % ========MESSAGE =======================================
 try
-    cprintf('*[0 0 1]',[ [  'warp to histo-space: ' animal  ' ' char(8594) ' '  sliceName  ] '\n']);
+    cprintf('*[0 0 1]',[ [  'warp other images to histo-space: ' animal  ' ' char(8594) ' '  sliceName  ] '\n']);
 catch
-    disp([  'warp to histo-space: ' animal  ' ' char(8594) ' '  sliceName  ]);
+    disp([  'warp other images to histo-space: ' animal  ' ' char(8594) ' '  sliceName  ]);
 end
 %% ===============================================
 
-
-% return
-
-% keyboard
-%% ======[path]=========================================
-% file='F:\data5_histo\livia_test\dat\katharina\a1_001.tif' ;
-% c.debug     =0;
-% c.file=file;
 
 % ==============================================
 %%   MANDATORY FILES TO TRANSFORM
 % ===============================================
 % pa_template=strrep(which('bart.m'),'bart.m','templates');
 global ak
-pa_template=ak.template;
+pa_template  =ak.template;
+c.pa_template=pa_template;
 
-tb0={...%Name__________INterpol_____saveAFFINE___dtype
-    'AVGT.nii'          '1'           1          'uint8'
-    'ANO.nii'           '0'           1          'double'
-    'HISTOVOL.nii'      'auto'        0          'uint8'
-    'AVGThemi.nii'      '0'           1          'logical'
-    
-   
-    };
+% tb0={...%Name__________INterpol_____saveAFFINE___dtype
+%     'AVGT.nii'          '1'           1          'uint8'
+%     'ANO.nii'           '0'           1          'double'
+%     'HISTOVOL.nii'      'auto'        0          'uint8'
+%     'AVGThemi.nii'      '0'           1          'logical'
+%         };
+% tb=tb0;
+% tb(:,1)=stradd(tb0(:,1),[pa_template filesep],1); %fullpath
+
+
+tb0={};
+tb0(:,1)=c.niftis2warp(:);
+tb0(:,2)={'auto'};
+tb0(:,3)={0};
+tb0(:,4)={'double'};
+
 tb=tb0;
-tb(:,1)=stradd(tb0(:,1),[pa_template filesep],1); %fullpath
+tb(:,1)=stradd(tb0(:,1),[pa filesep],1); %fullpath
+
+%% ====[check existence of files]===========================================
+tb=check_filexeistence(tb);
+if isempty(tb)
+    disp(['files not found:  ' animal ]);
+    return
+end
+
+
+%% ===============================================
+
+   
+
+
 
 
 % ==============================================
@@ -110,17 +125,19 @@ if 1
     end
 end
 
+
+
+
+
+% ==============================================
+%%   subs
+% ===============================================
 %% ===============================================
-%%  [3] make summary
+%%  check_filexeistence
 %% ===============================================
-make_summary(tb,g,c );
-
-
-
-
-
-
-
+function tb=check_filexeistence(tb)
+%delete table-entry for nonxisting files
+tb(find(existn(tb(:,1))~=2),:)=[];
 
 
 % ==============================================
@@ -253,6 +270,7 @@ if c.finalsize==2 %
         raw_img=l{iv_orig};
         raw_img=regexprep(raw_img,'.*\[origin\]:\s+','');
         
+        
         [~,rawname,~]=fileparts2(raw_img);
         if length(rawname)==1
             rawname=[char(rawname) ,'.txt'  ];
@@ -329,7 +347,7 @@ if i==1
             fo1=fullfile(c.pafin,outname);% 's001_REF.tif'
             %pt = im2uint16(p1);
             %pt = p1 * intmax('uint32'); %This can be written for uint32 also:
-            imwrite(v, fo1);
+            %imwrite(v, fo1);
         end
         %% ===============================================
             
@@ -337,10 +355,10 @@ if i==1
         outname=[ 's' imgNumstr '_REF' '.mat' ];
         fo1=fullfile(c.pafin,outname);% 's001_REF.mat'
         %save(fo1,'v');
-        if c.simulate==0
-            save(fo1,'v','-v7.3');
-            showinfo2('..saved',fo1);
-        end
+%         if c.simulate==0
+%             save(fo1,'v','-v7.3');
+%             showinfo2('..saved',fo1);
+%         end
         
         if c.debug==1
             fg,imagesc(v);
@@ -349,8 +367,8 @@ if i==1
         
         %% =====[save thumbnail]==========================
         vt=imresize(v,[1000 1000],'nearest');
-        fo2=regexprep(fo1,'.mat$','.jpg');
-        imwrite(vt,fo2);
+%         fo2=regexprep(fo1,'.mat$','.jpg');
+%         imwrite(vt,fo2);
         c.ref_small=double(mat2gray(vt));  %  --> in struct
         %% ===============================================
     end
@@ -399,7 +417,7 @@ for j=1:length(w)  %loop over the warped and corresponding affine image
     end
     
     fo1       = fullfile(c.pafin,[ 's' imgNumstr '_' outname '.mat' ]);%  s001_AVGT.mat
-    if c.simulate==0
+    if c.save_mat==1
         save(fo1,'v','-v7.3');
         showinfo2('..saved',fo1);
     end
@@ -409,12 +427,12 @@ for j=1:length(w)  %loop over the warped and corresponding affine image
         ftif=regexprep(fo1,'.mat$','.tif');
         %pt = im2uint16(p1);
         %pt = p1 * intmax('uint32'); %This can be written for uint32 also:
-        if strcmp(class(v),'single') % ANO, which is i==2
+%         if strcmp(class(v),'single') % ANO, which is i==2
             %vtif=im2uint16(double(v));
 %             vtif= double(v) * intmax('uint32');  unique(vtif)
            vtif=uint16(v);
            imwrite(vtif, ftif);
-           if 1  %TEST-WHETHER SAME VALUES are stored
+           if 0  %TEST-WHETHER SAME VALUES are stored
                qsd1=sum((double(unique(in))-double(unique(vtif))).^2); 
                disp(['b-valsDiff: ' num2str(qsd1)     ]);
                
@@ -422,11 +440,11 @@ for j=1:length(w)  %loop over the warped and corresponding affine image
                qsd2=sum((double(unique(in))-double(unique(q))).^2);
                disp(['saved-valsDiff: ' num2str(qsd2)     ]);
            end
-        else
-           imwrite(v, ftif);
-        end
+%         else
+%            imwrite(v, ftif);
+%         end
         
-        showinfo2('saved tif',ftif);
+        showinfo2(' ..saved tif',ftif);
     end
     
     %% =====[save thumbnail]==========================
@@ -439,6 +457,34 @@ for j=1:length(w)  %loop over the warped and corresponding affine image
         fg,imagesc(v);
         title([ outname ' ['   num2str(class(v))  ']' ]);
     end
+    
+    
+    %% ======[save animated gif of warped file with reference ]=========================================
+    if j==1
+        ref_name=[ 's' imgNumstr '_REF' '.jpg' ];
+        [reffile ]=fullfile(c.pafin,ref_name);
+        if exist(reffile)==2
+            [rm cmap]=imread(reffile);
+            rm_size=size(rm);
+            bt2=imresize(bt, rm_size);
+            B1=[rm  bt2];
+            B2=[bt2 bt2];
+            %     fo3=regexprep(fo1,'.mat$','_with_REF.jpg');
+            %      imwrite(B1,fo3);
+            %      showinfo2('saved jpg',fo3);
+            fo3=regexprep(fo1,'.mat$','_with_REF_anim.gif');
+            
+            delayTime = 0.5;
+            cmap=gray;
+            imwrite(B1, cmap, fo3, 'gif', 'LoopCount', Inf,      'DelayTime', delayTime);
+            imwrite(B2, cmap, fo3, 'gif', 'WriteMode', 'append', 'DelayTime', delayTime);
+            showinfo2(' ..anim.gif',fo3);
+        end
+    end
+    %% ===============================================
+    
+    
+    
 end %j (over warped and i'ts affine image)
 
 
@@ -468,19 +514,42 @@ elseif strcmp(interpCode,'1')
 end
 
 % ==============================================
+%%   reslice to target, MRimage is much smaller than HISTO-AVGT-template
+% ===============================================
+ipol2=1;
+if  strcmp(interpCode,'auto')
+    [ha a]=rgetnii(fi3);
+    unival=unique(a(:));
+    if (sum(unival==round(unival)))<numel(unival) % --> higher order interpolation
+        ipol2=1;
+    else
+        ipol2=0;
+    end
+end
+template=fullfile(c.pa_template,'AVGT.nii');
+fi3Large=stradd(fi3,'___temp___',1);
+rreslice2target(fi3, template, fi3Large, ipol2);
+
+
+
+
+% ==============================================
 %%   get slice which is affine
 % ===============================================
 
-img1  = getslice_fromcords( fi3,c.co  ,  c.st.histo_size    ,ipol{2});   %get slice
+img1  = getslice_fromcords( fi3Large,c.co  ,  c.st.histo_size    ,ipol{2});   %get slice
 
 if  strcmp(interpCode,'auto')
     unival=unique(img1(:));
     if (sum(unival==round(unival)))<numel(unival) % --> higher order interpolation
         ipol=c.ipoltable(2,:);
-        img1  = getslice_fromcords( fi3,c.co  ,  c.st.histo_size    ,ipol{2});   %get slice
+        img1  = getslice_fromcords( fi3Large,c.co  ,  c.st.histo_size    ,ipol{2});   %get slice
     end
 end
 aff=img1;
+
+
+try; delete(fi3Large); end %DELETE LARGE FILE AGAIN
 
 % ==============================================
 %%   get manually warped deformation
