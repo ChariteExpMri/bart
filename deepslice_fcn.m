@@ -20,6 +20,11 @@ f={...
 
 'f_warp2histospace.m'     'trafo atlas to histospace '    1
 
+
+'f_warp2histospaceOtherImages'   'trafo NIFTIs to histospace'    1
+
+
+
 % 'f_cuttiffs.m'      'CUT large TIFF, The TIFF contains all slices '    1
 % 'f_resizeTiff.m'     'resize TIFF to register image'                   1
 % 

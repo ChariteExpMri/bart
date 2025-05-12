@@ -92,6 +92,8 @@
 % #ba 07 Nov 2022 (15:06:23)
 % #k [f_statisticLR.m] #n  ---modified: option to remove animals from statistic 
 % 
+% #ba 09 May 2025 (14:50:34)
+% misc updates
 % 
 % 
 

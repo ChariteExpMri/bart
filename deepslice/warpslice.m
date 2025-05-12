@@ -370,8 +370,9 @@ disp([char(parfile)]);
 
 twarp=tic;
 [wa,outs]= elastix2(  (mov), (fix),elxout,parfile(end),pa_el);
-
-
+if p.NumResolutions==0 % do no additonal warping
+    wa=mov;
+end
 wa =imresize(double(wa)     ,[imsizeinterim imsizeinterim],'nearest');
 
 
@@ -407,6 +408,11 @@ pano_bef= pseudocolor2D(w2);
 pawork =pwd;
 cd(fileparts(which('elastix.exe')));
 [msg,w3,log]=evalc('transformix(w2,elxout)');
+
+if p.NumResolutions==0 % do no additonal warping
+    w3=w2;
+end
+
 %imoverlay(w3,fix); title('transformed');
 cd(pawork)
 pano=pseudocolor2D(w3).*umask;
@@ -440,6 +446,9 @@ else
     pawork =pwd;
     cd(fileparts(which('elastix.exe')));
     [msg,w4,log]=evalc('transformix(w2,elxout)');
+    if p.NumResolutions==0 % do no additonal warping
+        w4=w2;
+    end
     cd(pawork)
     avgt2=(w4).*umask;
     %imoverlay(fix,avgt2)

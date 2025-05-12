@@ -497,6 +497,14 @@ w2 = img2;
 pawork =pwd;
 cd(fileparts(which('elastix.exe')));
 [msg,w3,log]=evalc('transformix(w2,c.elxout)');          % get post-hoc warped image
+try
+    parafile=fullfile(fileparts(c.trafofile2),'params' ,'a2_warping.txt');
+    number_resolution=get_ix(parafile ,'NumberOfResolutions');
+    if number_resolution==0
+        w3=w2;
+    end
+end
+
 %imoverlay(w3,fix); title('transformed');
 cd(pawork);
 

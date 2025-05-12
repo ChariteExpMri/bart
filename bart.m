@@ -187,6 +187,7 @@ m2 = uimenu(m,'label','<html><font color=blue>cellDetection','callback', @cellDe
 m2 = uimenu(m,'label','<html><font color=blue>cellDetection via Threshold','callback', @cellDetection_via_Threshold);
 
 m2 = uimenu(m,'label','assign cells to region','callback', @cell2regionAssign);
+m2 = uimenu(m,'label','<html><font color=fuchsia><b>assign cells to region from csv-file','callback', @cell2regionAssign_csvfile);
 m2 = uimenu(m,'label','cell-region to atlas','callback', @call_cellregion2atlas);
 m2 = uimenu(m,'label','make BIGtable','callback', @call_makeBIGtable);
 % ---------------------
@@ -685,6 +686,13 @@ fis=fis(existn(fis)==2); %check existence
 x.files=fis;
 f_cell2region(1,x);
 bartcb('update');
+
+
+function cell2regionAssign_csvfile(e,e2)
+[sel]=bartcb('getsel');
+if isempty(sel); return; end
+cell2region2(1);
+
 
 function selectBadImages_HTML(e,e2)
 makeSelection_HTML();

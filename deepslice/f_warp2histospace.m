@@ -37,10 +37,10 @@ para={...
 
 'finalsize'    1  'determine final image-size:  [1] from input-image, [2] from logfile '  {1 2 3}   
 '' '' '' ''
-'save_tif'   1  'save also as tif-file'  'b'
+'save_tif'   0  'save also as tif-file'  'b'
 % 'savemat' 0  'debug-mode, {0|1}, if [1] create plots'  'b'
 'debug'   0     'debug-mode, {0|1}, if [1] create plots'  'b'
-'simulate'  1   'simulation-mode: {0|1} , if [1] do not save mat-file (create only thumbnails)'  'b'
+'simulate'  0   'simulation-mode: {0|1} , if [1] do not save mat-file (create only thumbnails)'  'b'
 % 'useModFile'     1              'use modFile "a2_XXXmod.tif" if exist'               'b'
 % 'defaultsfile'  defaultsfile   'fullfile name to "deepslice_defaults.m"'  'f'
 % 'pythonscript' 'runDeepslice_single.py'       'deepslice script' {'runDeepslice_single.py'}

@@ -43,6 +43,8 @@ sx(:,3)=ha.dim(2)-sx(:,3)+1;%+13.0250;
 % sx(:,2)=ha.dim(3)-sx(:,2);
 sx(:,1)=sx(:,1);%-0.0250;
 
+sx(:,1) = (ha.dim(3) + 1) - sx(:,1);  %LEFT-RIGHT FLIP such that hemimask id 1==left, and 2==right
+
 q=spm_sample_vol(ha,sx(:,2)',sx(:,3)',sx(:,1)',interp);
 q2=reshape(q, imagesize);
 img=permute(q2,[2 1]);
