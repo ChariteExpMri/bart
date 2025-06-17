@@ -157,12 +157,13 @@ function file=getCordfiles(tbc, htbc)
 file='';
 %  {@selector2,tbc,htbc,'out','list','selection','multi','position','auto','info','select cellcounts-file(s)'}
 try
- %ix=selector2(tbc,htbc);
- ix=selector2(fi2,{'maskFile'},'selection','multi','position','auto','info','select cellcounts-file(s)');
-  if ix(1)==-1; return; end
- file=tbc(ix,1);
+    %  %ix=selector2(tbc,htbc);
+    % ix=selector2(fi2,{'maskFile'},'selection','multi','position','auto','info','select cellcounts-file(s)');
+    ix=selector2(tbc, htbc,'selection','multi','position','auto','info','select cellcounts-file(s)');
+    if ix(1)==-1; return; end
+    file=tbc(ix,1);
 end
- 
+
 function file=getmaskfile
 %% ===============================================
 file='';
@@ -544,15 +545,21 @@ nameout=[  z.save_prefix   cellcountNameIn masknameTag '.xlsx'];
 Fo1=fullfile(pafin,nameout );
 
 % image for JPG, and to show
-f3=fullfile(pafin,[z.fin_prefix 'REF.mat']);
-r=load(f3);
+imgsize=[2000 2000];
 if isempty(z.mask)
-    br=imfuse(r.v,          imdilate(d,ones(3)));
+    br=imfuse(   imresize(r.v,imgsize)  ,  imresize(imdilate(d,ones(3)),imgsize,'nearest')    );
 else    
-    br=imfuse(r.v,  mask.v.*imdilate(d,ones(3))); 
+    br=imfuse(   imresize(r.v,imgsize)  ,  imresize(mask.v.*imdilate(d,ones(3)),imgsize,'nearest')    );
 end
-br=imresize(br,[2000 2000]);
+% br=imresize(br,[2000 2000]);
+% % % % if isempty(z.mask)
+% % % %     br=imfuse(r.v,          imdilate(d,ones(3)));
+% % % % else    
+% % % %     br=imfuse(r.v,  mask.v.*imdilate(d,ones(3))); 
+% % % % end
+% % % % br=imresize(br,[2000 2000]);
 % fg,imagesc(br)
+
 
 
 % bt=imfuse(b.v,imdilate(d,ones(4)));
