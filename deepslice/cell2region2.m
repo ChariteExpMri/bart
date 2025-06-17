@@ -545,6 +545,8 @@ nameout=[  z.save_prefix   cellcountNameIn masknameTag '.xlsx'];
 Fo1=fullfile(pafin,nameout );
 
 % image for JPG, and to show
+f3=fullfile(pafin,[z.fin_prefix 'REF.mat']);
+r=load(f3);
 imgsize=[2000 2000];
 if isempty(z.mask)
     br=imfuse(   imresize(r.v,imgsize)  ,  imresize(imdilate(d,ones(3)),imgsize,'nearest')    );
