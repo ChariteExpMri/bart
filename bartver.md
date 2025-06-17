@@ -1,13 +1,17 @@
 ## **BART Modifications**
- &#x1F535; last modification:   09 May 2025 (14:50:34)  
+ &#x1F535; last modification:   17 Jun 2025 (13:16:44)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/bart">https://github.com/ChariteExpMri/bart</a>  
     
     
     
 ------------------  
+  &#x1F535;   <ins>**17 Jun 2025 (13:16:44)**</ins>  
+   __[cell2region2.m]__  new, read cellcounts-file (csv) and calc. regionwise density  
+<!---->
   &#x1F535;   <ins>**09 May 2025 (14:50:34)**</ins>  
   misc updates  
+    
 <!---->
   &#x1F535;   <ins>**07 Nov 2022 (15:06:23)**</ins>  
    __[f_statisticLR.m]__  ---modified: option to remove animals from statistic   

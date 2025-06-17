@@ -95,7 +95,13 @@
 % #ba 09 May 2025 (14:50:34)
 % misc updates
 % 
+% #ba 17 Jun 2025 (13:16:44)
+% #k [cell2region2.m] #n  new, read cellcounts-file (csv) and calc. regionwise density
 % 
+% 
+% 
+% 
+
 
 %----- EOF
 % make bartver.md for GIT: bartver('makebartver')
