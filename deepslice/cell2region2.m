@@ -370,8 +370,17 @@ end
 %% ===============================================
 co3=round(co2);
 % co3=co3(randi(size(co3,1),  10, 1),:)
+try
 ind = sub2ind(size(b.v),co3(:,1),co3(:,2));
-% d=zeros( numel(b.v),1);
+catch
+   idel= find(co3(:,1)>size(b.v,1));
+   co3(idel,:)=[];
+    idel= find(co3(:,2)>size(b.v,2));
+   co3(idel,:)=[];
+   ind = sub2ind(size(b.v),co3(:,1),co3(:,2));
+   cprintf('*[1 0 1]',[ ' ..MISMATCH. CELL-CORDINATE-LOCATION AND HISTO-IMAGE-sIZE  '   '\n']);
+   disp([ '---cells outside histoImage-size revoved!!!!...check this  ']);
+end
 d=zeros( size(b.v));
 d(ind)=1;
 if 0
