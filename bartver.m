@@ -98,6 +98,8 @@
 % #ba 17 Jun 2025 (13:16:44)
 % #k [cell2region2.m] #n  new, read cellcounts-file (csv) and calc. regionwise density
 % 
+% #ba 05 Nov 2025 (19:42:43)
+% #k [warp2histospace.m] #n updated... now allows manual warping and or more robust bspline-trafo
 % 
 % 
 % 

@@ -38,6 +38,11 @@ p.enableRotation             =1                                ; % enable rotati
 %-------------------
 p=catstruct(p,p0);
 
+if strcmp(p.filesTP{1,1},p.refImg)==0
+    p.filesTP{1,1}=p.refImg;
+end
+
+
 % ==============================================
 %%   UNPACK SOME STUFF
 % ===============================================
@@ -267,8 +272,10 @@ if 0 %  for apporach-5
 end
 
 
+if strcmp(p.metric,'usedefault')==0
+    set_ix3(parfile{1},'Metric',p.metric);
+end
 
-set_ix(parfile{1},'Metric',p.metric);
 if ~isempty(p.NumResolutions)
     set_ix(parfile{1},'NumberOfResolutions',p.NumResolutions);
 end
@@ -390,12 +397,24 @@ fprintf(['Done. (t_registration: '  sprintf('%2.2fs',toc(twarp) ) ')\n']);
 
 %     keyboard
 fprintf(['Done. (t_registration: '  sprintf('%2.2fs',toc(time_warp) ) ')\n']);
+
+
+% check if o_trasn exist (i.e. manwarp was used )
+is_manualwarp=1;
+if exist('O_trans')~=1
+    is_manualwarp=0;
+end
+
+
 % ==============================================
 %%  ANO
 % ===============================================
+
 fi3=tb{3,1};
 img2 =getslice_fromcords(fi3,co,  st.histo_size,0);
-img2=bspline_transform(O_trans,img2,Spacing,-1);
+if is_manualwarp==1
+    img2=bspline_transform(O_trans,img2,Spacing,-1);
+end
 img2    =imresize(double(img2),[imsizeinterim imsizeinterim],'nearest');
 trafofile2=fullfile(elxout,'TransformParameters.0.txt');
 set_ix(trafofile2,'FinalBSplineInterpolationOrder',0);
@@ -431,7 +450,9 @@ if ~exist(fi4)
 else
     
     img2 =getslice_fromcords(fi4,co,  st.histo_size,3);
-    img2=bspline_transform(O_trans,img2,Spacing,3);
+    if is_manualwarp==1
+        img2=bspline_transform(O_trans,img2,Spacing,3);
+    end
     img2    =imresize(double(img2),[imsizeinterim imsizeinterim],'bilinear');
     trafofile2=fullfile(elxout,'TransformParameters.0.txt');
     set_ix(trafofile2,'FinalBSplineInterpolationOrder',3);

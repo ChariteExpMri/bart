@@ -1,0 +1,75 @@
+// Elastix parameter file for 2D histological image registration
+// Strong local deformation version (B-spline)
+
+// Image types
+(FixedInternalImagePixelType "float")
+(MovingInternalImagePixelType "float")
+(FixedImageDimension 2)
+(MovingImageDimension 2)
+(UseDirectionCosines "true")
+
+// Registration framework
+(Registration "MultiResolutionRegistration")
+(FixedImagePyramid "FixedRecursiveImagePyramid")
+(MovingImagePyramid "MovingRecursiveImagePyramid")
+
+// Interpolators
+(Interpolator "BSplineInterpolator")
+(ResampleInterpolator "FinalBSplineInterpolator")
+(Resampler "DefaultResampler")
+
+// Similarity metric
+(Metric "AdvancedMattesMutualInformation")
+// For identical stains, you may switch to:
+// (Metric "AdvancedNormalizedCorrelation")
+
+// Optimizer
+(Optimizer "AdaptiveStochasticGradientDescent")
+
+// Transform model
+(Transform "BSplineTransform")
+(BSplineTransformSplineOrder 3)
+(BSplineTransformRegularizationOrder 2)
+
+// Strong deformation grid spacing (smaller = more flexible)
+(FinalGridSpacingInPhysicalUnits 10.0)
+
+// Multi-resolution pyramid (finer scale levels)
+(NumberOfResolutions 5)
+(ImagePyramidSchedule 16 16  8 8  4 4  2 2  1 1)
+
+// Optimizer settings
+(MaximumNumberOfIterations 4000)
+(NumberOfSpatialSamples 4000)
+(NewSamplesEveryIteration "true")
+(AutomaticParameterEstimation "false")
+(AutomaticScalesEstimation "true")
+(MaximumStepLength 2.0)
+(MinimumStepLength 0.0001)
+
+// Image sampling
+(ImageSampler "RandomCoordinate")
+(CheckNumberOfSamples "true")
+
+// Similarity measure
+(NumberOfHistogramBins 32)
+
+// Optional: add gentle bending penalty to keep deformation smooth
+(Metric0Weight 1.0)
+(Metric1 "TransformBendingEnergyPenalty")
+(Metric1Weight 0.05)
+
+// Output settings
+(WriteResultImage "true")
+(ResultImagePixelType "float")
+(ResultImageFormat "mhd")
+
+// Initialization
+(AutomaticTransformInitialization "true")
+(AutomaticTransformInitializationMethod "GeometricalCenter")
+
+// Random seed (for reproducibility)
+(RandomSeed 121212)
+
+// Verbosity
+(ShowExactMetricValue "false")

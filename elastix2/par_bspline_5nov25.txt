@@ -1,0 +1,67 @@
+// Elastix parameter file for 2D histological image registration
+// Rigid + nonrigid B-spline registration
+
+// Image types
+(FixedInternalImagePixelType "float")
+(MovingInternalImagePixelType "float")
+(FixedImageDimension 2)
+(MovingImageDimension 2)
+(UseDirectionCosines "true")
+
+// Registration type
+(Registration "MultiResolutionRegistration")
+(FixedImagePyramid "FixedRecursiveImagePyramid")
+(MovingImagePyramid "MovingRecursiveImagePyramid")
+
+(Interpolator "BSplineInterpolator")
+(ResampleInterpolator "FinalBSplineInterpolator")
+(Resampler "DefaultResampler")
+
+// Metric — Mutual Information or Correlation
+(Metric "AdvancedMattesMutualInformation")
+// Alternative for very similar staining: (Metric "AdvancedNormalizedCorrelation")
+//(Metric "AdvancedNormalizedCorrelation")
+
+(Optimizer "AdaptiveStochasticGradientDescent")
+(Transform "BSplineTransform")
+
+// Multi-resolution strategy
+(NumberOfResolutions 4)
+//(ImagePyramidSchedule  8 8  4 4  2 2  1 1)
+
+// Control point grid spacing (mm or pixels depending on header)
+(FinalGridSpacingInPhysicalUnits 40.0)
+//(FinalGridSpacingInPhysicalUnits 25.0)
+
+// Optimizer settings
+(MaximumNumberOfIterations 2000)
+(NumberOfSpatialSamples 2000)
+(NewSamplesEveryIteration "true")
+(AutomaticParameterEstimation "true")
+(AutomaticScalesEstimation "true")
+(MaximumStepLength 1.0)
+(MinimumStepLength 0.0001)
+
+// Image sampling
+(ImageSampler "RandomCoordinate")
+(CheckNumberOfSamples "true")
+
+// Similarity measure settings
+(NumberOfHistogramBins 32)
+
+// Smoothing and pyramid
+(FixedImagePyramidSchedule  8 8  4 4  2 2  1 1)
+(MovingImagePyramidSchedule 8 8  4 4  2 2  1 1)
+
+// Output settings
+(WriteResultImage "true")
+(ResultImagePixelType "float")
+(ResultImageFormat "mhd")
+
+// Random seed (for reproducibility)
+(RandomSeed 121212)
+
+// Verbosity
+(ShowExactMetricValue "false")
+(AutomaticTransformInitialization "true")
+(AutomaticTransformInitializationMethod "GeometricalCenter")

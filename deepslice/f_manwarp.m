@@ -23,6 +23,7 @@ tb0={...%Name__________INterpol
     'ANO.nii'           '0'
     };
 tb=tb0;
+% tb{1,1}='HISTOVOL.nii';
 tb(:,1)=stradd(tb0(:,1),[pa_template filesep],1); %fullpath
 
 
@@ -49,7 +50,9 @@ para={...
 % '' '' '' ''
 % 'image'  1       '[1] use original input image, [0]use  lowresscreenshot(jpg) from original  {0|1} '  'b'
 % 'dummy'   'dummy'  'dummyvariable'  'w'
-'useModFile'     1              'use modFile "a2_XXXmod.tif" if exist'               'b'
+'useModFile'     1    'use modFile "a2_XXXmod.tif" if exist'               'b'
+'template'            'HISTOVOL.nii' 'used template: "AVGT.nii" or "HISTOVOL.nii") '  {'AVGT.nii' 'HISTOVOL.nii' }
+
 'defaultsfile'  defaultsfile   'fullfile name to "deepslice_defaults.m"'  'f'
 % 'pythonscript' 'runDeepslice_single.py'       'deepslice script' {'runDeepslice_single.py'}
 
@@ -160,21 +163,28 @@ function manwarp(p)
 
 %% ======[path]=========================================
 [mdir name ext]=fileparts(p.file);
-nametagDS=regexprep(name,'a1_','a3_')
+nametagDS=regexprep(name,'a1_','a3_');
 imagepath=fullfile(mdir,[ 'deepsl_' nametagDS  ]);
 
 
-outtag=regexprep(name,'a1_','a4_')
+outtag=regexprep(name,'a1_','a4_');
 
 % strrep(name,'_deepsliceIN','');
 
 
 %% ===============================================
 outdir   =mdir;
-f1      =fullfile(p.templatepath,'AVGT.nii');
+f1s      =fullfile(p.templatepath,'AVGT.nii');
+f1=f1s;
+if isfield(p,'template')
+    f1      =fullfile(p.templatepath,p.template);
+    if exist(f1)~=2;    f1=f1s; end 
+end
+   
+
 f2      =fullfile(p.templatepath,'ANO.nii' );
 f3     =fullfile(imagepath,'est.xml');
-outname=[outtag   '_warped']
+outname=[outtag   '_warped'];
 f4    =fullfile(outdir,[ outname '.txt']);
 if exist(f4)~=2
     f4=[];

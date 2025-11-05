@@ -690,6 +690,12 @@ end
 hx=findobj(gcf,'tag','base');
 x=get(hx,'userdata');
 
+if isempty(pos)
+    delete(filenameFP);
+    disp(['delete pointsfile if exist: ' filenameFP]);
+    return
+end
+
 Xmoving=pos(:,3:4);
 Xstatic=pos(:,1:2);
 

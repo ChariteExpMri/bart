@@ -83,10 +83,16 @@ file_xml    = fullfile(file_dlest,'est.xml');
 %% ========[get manu-warp controlpoints, spacing]================
 nametag_manwarp       = regexprep(name,'a1_','a4_');
 file_manuwarped       = fullfile(pa,[nametag_manwarp '_warped.txt']);
-d                     = preadfile(file_manuwarped);
-pos                   = str2num(char(d.all));
-Xmoving               = pos(:,3:4);
-Xstatic               = pos(:,1:2);
+
+if exist(file_manuwarped)==2
+    d                     = preadfile(file_manuwarped);
+    pos                   = str2num(char(d.all));
+    Xmoving               = pos(:,3:4);
+    Xstatic               = pos(:,1:2);
+else
+    Xmoving=[0 0];
+    Xstatic=[0 0];
+end
 [c.O_trans,c.Spacing] = point_registration(c.st.histo_size,Xmoving,Xstatic);
 
 % ==============================================

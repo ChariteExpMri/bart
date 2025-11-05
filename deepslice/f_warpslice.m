@@ -43,15 +43,19 @@ tb(:,1)=stradd(tb0(:,1),[pa_template filesep],1); %fullpath
 % templateDir=fullfile(fileparts(which('bart.m')),'templates');
 
 % 
-% refimage=fullfile(pa_template,'HISTOVOL.nii');
-refimage=fullfile(pa_template,'AVGT.nii');
+refimage=fullfile(pa_template,'HISTOVOL.nii');
+% refimage=fullfile(pa_template,'AVGT.nii');
 %% =============================================== elastix-paramter
 pa_el=strrep(which('bart.m'),'bart.m','elastix2');
+% parfile0={...
+% %         fullfile(pa_el, 'a1_affine.txt')
+%         fullfile(pa_el, 'a2_warping.txt')
+%         };
 parfile0={...
-%         fullfile(pa_el, 'a1_affine.txt')
-        fullfile(pa_el, 'a2_warping.txt')
+        fullfile(pa_el, 'par_bspline_5nov25.txt')
         };
-
+    
+    
 % refimage=tb{1,1} ;
 % ==============================================
 %%   struct
@@ -66,8 +70,8 @@ para={...
 'inf4'     '_____ ELASTIX PARAMETER _________________________' '' ''
 'parameterFiles'                parfile0      'Elastix paramter files (bspline)'    {@getElestixfiles}
 
-'metric'                        'AdvancedNormalizedCorrelation'      'used metric for registration'  {    'AdvancedNormalizedCorrelation'  'AdvancedMattesMutualInformation'}
-'NumResolutions'                [5]  'number of resolutions for  bspline transformation; leave empty for default'   {1:7}
+'metric'                        'usedefault'      'used metric for registration'  {    'AdvancedNormalizedCorrelation'  'AdvancedMattesMutualInformation' 'usedefault'}
+'NumResolutions'                [4]  'number of resolutions for  bspline transformation; leave empty for default'   {1:7}
 'MaximumNumberOfIterations'     [2000]   'number of iterations within each resolution bspline transformation; leave empty for default' {500 1000:1000:6000}
 '' '' '' ''
 'inf5'     '_____ Ventricles/CSF _________________________' '' ''
