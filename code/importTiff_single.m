@@ -18,8 +18,8 @@ outDir=regexprep(outDir0,{'\.', '\s+' ,'#'},{'_' ,'_',''});
 fpoutDir=fullfile(s.dat ,outDir);
 mkdir(fpoutDir);
 % fiout=fullfile(fpoutDir, [outDir ext])
-fiout=fullfile(fpoutDir, ['a1_' pnum(1,3) ext]);
-disp(['copying....[' fi ext ']' ]);
+fiout=fullfile(fpoutDir, ['a1_' pnum(1,3) '.tif']);
+disp(['copying/creating....[' fi '.tif' ']' ]);
 
 
 % ==============================================
@@ -34,7 +34,19 @@ end
 % ===============================================
 ha = imfinfo(file);
 ha = ha(s.frameNumber);
-a  = imread(file,s.frameNumber);
+
+if ~isempty(strfind(lower(ext),'tif'))  %tif
+    a  = imread(file,s.frameNumber);
+else  %all other images
+    a  = imread(file);
+end
+
+if ~isnan(s.channel)
+    if s.channel<=size(a,3)
+        a=a(:,:,s.channel);
+    end 
+end
+
 
 % % % % % % fout=fullfile(pwd,'a1.tif');
 try
@@ -64,6 +76,7 @@ a2=uint8(round(255.*a2 ));
 F2=fullfile(fpoutDir, ['a1_' pnum(1,3) '.jpg']);
 imwrite(a2,F2);
 
+showinfo2('thumbnail',F2);
 
 
 %% ===============================================

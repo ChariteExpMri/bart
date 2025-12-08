@@ -809,7 +809,7 @@ files =sel(strcmp(sel(:,2),'file'),1);
 dirs  =sel(strcmp(sel(:,2),'dir'),1);
 
 if strcmp(task,'opdenDIR')
-    mix=[dirs; files]
+    mix=[dirs; files];
     for i=1:length(mix)
         if isdir(mix{i})
             explorer((mix{i})) ;
@@ -847,7 +847,7 @@ elseif strcmp(task,'showCuttingImage')
     
 elseif strcmp(task,'showresizedTif')
     for i=1:length(files)
-        fi=regexprep(files{i},{[filesep filesep 'a1_'], '.tif$'},{[filesep filesep 'a1_'],'.jpg'});
+        fi=regexprep(files{i},{[filesep filesep 'a1_0'], '.tif$'},{[filesep filesep 'a1_0'],'.jpg'});
         if exist(fi)==2
             web(fi,'-new');
         else
@@ -856,7 +856,7 @@ elseif strcmp(task,'showresizedTif')
     end
 elseif strcmp(task,'showParamModfile')
     for i=1:length(files)
-        fi=regexprep(files{i},{[filesep filesep 'a1_'], '.tif$'},{[filesep filesep 'a2_'],'.mat'});
+        fi=regexprep(files{i},{[filesep filesep 'a1_0'], '.tif$'},{[filesep filesep 'a2_0'],'.mat'});
         if exist(fi)==2
             s=load(fi);s=s.s;
             cprintf([0 .1 1],[repmat('_',[1 length(fi)]) '\n']);
@@ -870,7 +870,7 @@ elseif strcmp(task,'showParamModfile')
     
 elseif strcmp(task,'showTifandMask')
     for i=1:length(files)
-        fi=regexprep(files{i},{[filesep filesep 'a1_'], '.tif$'},{[filesep filesep 'a2_'],'.jpg'});
+        fi=regexprep(files{i},{[filesep filesep 'a1_0'], '.tif$'},{[filesep filesep 'a2_0'],'.jpg'});
         if exist(fi)==2
             web(fi,'-new');
         else
@@ -883,7 +883,7 @@ elseif strcmp(task,'deepsliceResult_QA1')
     for i=1:length(files)
         [pam name ext]=fileparts(files{i});
         fi=fullfile(pam,[name '_deepsliceQA1.gif']);
-        fi=regexprep(files{i},{[filesep filesep 'a1_'], '.tif$'},{[filesep filesep 'a3_'],'_deepsliceQA1.gif'});
+        fi=regexprep(files{i},{[filesep filesep 'a1_0'], '.tif$'},{[filesep filesep 'a3_0'],'_deepsliceQA1.gif'});
         if exist(fi)==2
             web(fi,'-new');
         else
@@ -894,7 +894,7 @@ elseif strcmp(task,'deepsliceResult_QA1')
     for i=1:length(files)
        % [pam name ext]=fileparts(files{i});
         %fi=fullfile(pam,[name '_deepsliceQA2.jpg']);
-        fi=regexprep(files{i},{[filesep filesep 'a1_'], '.tif$'},{[filesep filesep 'a3_'],'_deepsliceQA2.jpg'});
+        fi=regexprep(files{i},{[filesep filesep 'a1_0'], '.tif$'},{[filesep filesep 'a3_0'],'_deepsliceQA2.jpg'});
         if exist(fi)==2
             web(fi,'-new');
         else
@@ -904,7 +904,7 @@ elseif strcmp(task,'deepsliceResult_QA1')
  elseif strcmp(task,'showmanuwarpedResult')
     for i=1:length(files)
         %[pam name ext]=fileparts(files{i});
-        fi=regexprep(files{i},{[filesep filesep 'a1_'], '.tif$'},{[filesep filesep 'a4_'],'_warpedQA.png'});
+        fi=regexprep(files{i},{[filesep filesep 'a1_0'], '.tif$'},{[filesep filesep 'a4_0'],'_warpedQA.png'});
         
         if exist(fi)==2
             web(fi,'-new');
@@ -916,7 +916,7 @@ elseif strcmp(task,'deepsliceResult_QA1')
  elseif strcmp(task,'showpostwarped_Q1')
     for i=1:length(files)
         %[pam name ext]=fileparts(files{i});
-        fi=regexprep(files{i},{[filesep filesep 'a1_'], '.tif$'},{[filesep filesep 'a5_'],'_warpedQA1.png'});
+        fi=regexprep(files{i},{[filesep filesep 'a1_0'], '.tif$'},{[filesep filesep 'a5_0'],'_warpedQA1.png'});
         if exist(fi)==2
             web(fi,'-new');
         else
@@ -926,7 +926,7 @@ elseif strcmp(task,'deepsliceResult_QA1')
   elseif strcmp(task,'showpostwarped_Q2')
     for i=1:length(files)
         %[pam name ext]=fileparts(files{i});
-        fi=regexprep(files{i},{[filesep filesep 'a1_'], '.tif$'},{[filesep filesep 'a5_'],'_warpedQA2.png'});
+        fi=regexprep(files{i},{[filesep filesep 'a1_0'], '.tif$'},{[filesep filesep 'a5_0'],'_warpedQA2.png'});
         if exist(fi)==2
             web(fi,'-new');
         else
@@ -936,7 +936,7 @@ elseif strcmp(task,'deepsliceResult_QA1')
   elseif strcmp(task,'showpostwarped_Q3')
     for i=1:length(files)
         %[pam name ext]=fileparts(files{i});
-        fi=regexprep(files{i},{[filesep filesep 'a1_'], '.tif$'},{[filesep filesep 'a5_'],'_warpedQA3.jpg'});
+        fi=regexprep(files{i},{[filesep filesep 'a1_0'], '.tif$'},{[filesep filesep 'a5_0'],'_warpedQA3.jpg'});
         if exist(fi)==2
             web(fi,'-new');
         else
@@ -947,7 +947,7 @@ elseif strcmp(task,'deepsliceResult_QA1')
 
 elseif strcmp(task,'showWarpedBestSlice')
     for i=1:length(files)
-        fi=regexprep(files{i},{[filesep filesep 'a1_'], '.tif$'},{[filesep filesep 'bestslice_'],'.gif'});
+        fi=regexprep(files{i},{[filesep filesep 'a1_0'], '.tif$'},{[filesep filesep 'bestslice_0'],'.gif'});
         if exist(fi)==2
             web(fi,'-new');
         else
@@ -957,8 +957,8 @@ elseif strcmp(task,'showWarpedBestSlice')
     
 elseif strcmp(task,'show_finalResult')
     for i=1:length(files)
-        fi=regexprep(files{i},{[filesep filesep 'a1_'], '.tif$'},...
-            {[filesep filesep 'fin'  filesep filesep 's'],'_result.gif'});
+        fi=regexprep(files{i},{[filesep filesep 'a1_0'], '.tif$'},...
+            {[filesep filesep 'fin'  filesep filesep 's0'],'_result.gif'});
         if exist(fi)==2
             web(fi,'-new');
         else
@@ -969,7 +969,7 @@ elseif strcmp(task,'show_finalParameter')
     cprintf('*[0 .1 1]',['*** FINAL_PARAMETER (slice,pitch,yaw)***' '\n']);
     tb={};
     for i=1:length(files)
-        fi=regexprep(files{i},{[filesep filesep 'a1_'], '.tif$'},{[filesep filesep 'bestslice_'],'.mat'});
+        fi=regexprep(files{i},{[filesep filesep 'a1_0'], '.tif$'},{[filesep filesep 'bestslice_0'],'.mat'});
         %if exist(fi)==2
         
         cprintf([0 .1 1],[repmat('_',[1 length(fi)]) '\n']);

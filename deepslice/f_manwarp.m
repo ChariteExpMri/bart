@@ -113,7 +113,7 @@ if showgui==-1
 end
 
 
-cprintf([0 0 1],[' running deepslice... '  '\n']);
+cprintf([0 0 1],[' running manual warping... '  '\n']);
 
 % ==============================================
 %%   files

@@ -18,9 +18,8 @@
 (Resampler "DefaultResampler")
 
 // Metric — Mutual Information or Correlation
-(Metric "AdvancedMattesMutualInformation")
-// Alternative for very similar staining: (Metric "AdvancedNormalizedCorrelation")
 //(Metric "AdvancedNormalizedCorrelation")
+(Metric "AdvancedMattesMutualInformation")
 
 (Optimizer "AdaptiveStochasticGradientDescent")
 (Transform "BSplineTransform")

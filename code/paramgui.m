@@ -878,6 +878,13 @@ set(gcf,'position',[posx(1:3) posx(4)+.001]);
 
 set(gcf,'visible','on');
 highlightSelectedIcon();
+
+
+hb=findobj(gcf,'tag','pb1');
+set(hb,'KeyPressFcn', @okbutton_key);
+
+uicontrol(hb); %focus on 'OK'-BTN
+
 % ==============================================
 %%   uiwait
 % ===============================================
@@ -976,6 +983,17 @@ if get(hb,'value')==1
     
 else
     delete(findobj(gcf,'tag','moremenu'));
+end
+
+function okbutton_key(e,e2)
+if strcmp(e2.Key,'return') || strcmp(e2.Key,'enter')
+    hb=findobj(gcf,'tag','pb1');
+    jButton = findjobj(hb);     % from Yair Altman’s "findjobj"
+    jButton.doClick();               % simulates a click
+elseif strcmp(e2.Key,'escape')
+    hb=findobj(gcf,'tag','pb6');
+    jButton = findjobj(hb);     % from Yair Altman’s "findjobj"
+    jButton.doClick();               % simulates a click
 end
 
 

@@ -74,7 +74,7 @@ para={...
 'isparallel'      x.isparallel    'use parallel processing {0,1}'              'b'
 
 'inf4'       '___stitching-artefact_____________'  ''  ''
-'del_stitchingartefact'  1  'remove stitching artefact' 'b'
+'del_stitchingartefact'  0  'remove stitching artefact, NOTE: this may introduce inhomogenities!' 'b'
 
 
 

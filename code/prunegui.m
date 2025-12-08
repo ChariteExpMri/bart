@@ -620,11 +620,12 @@ cp=round(cp);
 him=findobj(gcf,'tag','him');
 d=get(him,'Cdata');
 % d=medfilt2(d,[11 11]);
-o=otsu(d,3);
+o=otsu(d,10);
 val=o(cp(2),cp(1));
 os=o==val;
 cl=bwlabeln(os);
 sel=cl==cl(cp(2),cp(1));
+sel=imdilate(sel,ones(11));
 dx=d.*cast(imcomplement(sel),'like',d);
 % -----------------------;
 u=get(gcf,'userdata');
@@ -672,7 +673,26 @@ if hb.Value==0
 else
     m2=m;
 end
-d(m2)=50;
+
+vals=d((imdilate(m2,ones(10,10))-m2)==1);
+vals(vals==0)=[];
+%mev=mean(vals);
+ mev=median(vals);
+try
+    idx = randi(numel(vals), sum(m2(:)), 1);
+    selected = vals(idx);
+    d(m2)=selected;
+catch
+    if isempty(mev) || mev<50;
+        mev=50;
+    end
+    d(m2)=mev;%50;
+end
+
+
+
+
+
 % #####################
 u=get(gcf,'userdata');
 u.stepnum=u.stepnum+1;

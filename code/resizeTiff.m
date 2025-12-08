@@ -155,11 +155,10 @@ elseif p.method==3
      b=entropyfilt(p2,w.Neighborhood);
      ms=b>(max(b(:))*p.m4_entropy_threshmax);
      
-     
-     
-%      [m2,m3]=clean_data_function3(m1,100);
-     
-%      fg,imagesc(imfill(ms,'holes'))
+  elseif p.method==0    
+     %do nothing
+  a=imadjust(mat2gray(double(p2)));
+  ms=ones(size(a));
      
      %% ===============================================
      

@@ -111,10 +111,12 @@ if exist(p.xmlfile)==2
 else
     x.fiximg_file=p.fixfile;
     x.movimg_file =p.warpfile;
-    [a ]=imread(p.fixfile);
+    
+    if isnumeric(p.fixfile);        a=p.fixfile;    else        [a ]=imread(p.fixfile);end
     if size(a,3)==3;  a=rgb2gray(a); end
     
-    [b]=imread(p.warpfile);
+    if isnumeric(p.warpfile);        b=p.warpfile;   else        [b ]=imread(p.warpfile);end
+    %[b]=imread(p.warpfile);
     if size(b,3)==3;  b=rgb2gray(b); end  
 end
 
@@ -143,9 +145,14 @@ x.movimg_orig=uint8(round(255*imadjust(mat2gray(double(x.movimg_orig)))));
 % ===============================================
 
 if ~isempty(p.warpfile2)
-    anoimg      =getslice_fromcords(p.warpfile2,co,  st.histo_size,0);
-    x.anoimg_orig=anoimg;
-    x.anoimg_file=p.warpfile2;
+    if isnumeric(p.warpfile2)
+        anoimg=p.warpfile2;
+        x.anoimg_orig=anoimg;
+    else
+        anoimg      =getslice_fromcords(p.warpfile2,co,  st.histo_size,0);
+        x.anoimg_orig=anoimg;
+        x.anoimg_file=p.warpfile2;
+    end
     [anoimg]=pseudocolor2D(anoimg);
 end
 
@@ -204,9 +211,43 @@ setimage_call();
 % ==============================================
 %%   read poinsfile ..if exist
 % ===============================================
+
+%% ===============================================
+% Assume your binary mask is called 'mask'
+
+% % 1Get the boundary
+% B = bwboundaries(u.fiximg);
+% boundary = B{1};    % Extract the main boundary (Nx2 array: [row, col])
+% % 2️⃣ Convert to x,y coordinates
+% y = boundary(:,2);
+% x = boundary(:,1);
+% % 3️⃣ Compute cumulative distance along the boundary
+% d = [0; cumsum(sqrt(diff(x).^2 + diff(y).^2))];
+% % 4️⃣ Interpolate 50 equally spaced points
+% numPoints = 30;
+% dUniform = linspace(0, d(end), numPoints);
+% x_eq = interp1(d, x, dUniform);
+% y_eq = interp1(d, y, dUniform);
+% 
+% % 5️⃣ Visualize the result
+% % figure;
+% % imshow(u.fiximg);
+% % hold on;
+% % plot(y, x, 'b-', 'LineWidth', 1);       % Original boundary
+% % plot(y_eq, x_eq, 'ro', 'MarkerFaceColor', 'r');  % Equidistant points
+% % title('50 Equidistant Points Along Boundary');
+% % Xmoving=[Xmoving ;[x_eq(:) y_eq(:)]];
+% % Xstatic=[Xstatic ;[x_eq(:) y_eq(:)]];
+% % size(Xmoving)
+% d2=[ x_eq(:) y_eq(:) ];
+
+%% ===============================================
+
+
 if exist(u.pntfile)==2
     d=preadfile(u.pntfile);
     d=str2num(char(d.all));
+    %d=[ d; [ d2(:,1)  d2(:,2)  d2(:,1)  d2(:,2)   ] ];
     
     hx=findobj(gcf,'tag','base');
     x=get(hx,'userdata');
@@ -214,6 +255,7 @@ if exist(u.pntfile)==2
     set(hx,'userdata',x);
     
     d=d./u.downsamplefactor;
+    size(d)
     for i=1:size(d)
         co    =d(i,[4 3]);
         co_ref=d(i,[2 1]);
@@ -302,49 +344,23 @@ set(hb,'position',[0.007064 0.21411 0.1 0.03]);
 %% ====[fixpounts-outputname]===========================================
 hb=uicontrol('style','edit','string',u.pnt_out,'tag','ed_outname',...
     'units','norm');
-set(hb,'position',[[0.87849 0.56182 0.1 0.025]],'horizontalalignment','left','backgroundcolor','w');
-set(hb,'visible','off');
+set(hb,'position',[0.87335 0.18857 0.1 0.025],'horizontalalignment','left','backgroundcolor','w');
 % ----------
 hb=uicontrol('style','text','units','norm','string','outfile', 'horizontalalignment','right',...
     'backgroundcolor','w');
-set(hb,'position',[0.83222 0.56182 0.04 0.025]);
-set(hb,'visible','off');
+set(hb,'position',[0.82708 0.18857 0.04 0.025]);
 % ------------
 
 
 %% ====[save points]===========================================
 hb=uicontrol('style','push','string','save points','tag','savepoints',...
     'callback', @savepoints,'units','norm');
-set(hb,'position',[0.83608 0.47146 0.08 0.025]);
-set(hb,'tooltipstring','save warped (mouse-shifted) points   ')
-
-
-%% ====[save matchedpoints]===========================================
-hb=uicontrol('style','push','string','save matched points','tag','saveMatchedpoints',...
-    'callback', @savematchedmatchedpoints,'units','norm');
-set(hb,'position',[0.83865 0.21214 0.13 0.025]);
-set(hb,'tooltipstring','save matching points from "pointwise selection"  ');
-set(hb,'BackgroundColor',[1 1 0]);
-
-%% ====[load matchedpoints]===========================================
-hb=uicontrol('style','push','string','load matched points','tag','loadMatchedpoints',...
-    'callback', @loadmatchedmatchedpoints,'units','norm');
-set(hb,'position',[0.83736 0.16893 0.13 0.025]);
-set(hb,'tooltipstring','load matching points for "pointwise selection" from file  ');
-set(hb,'BackgroundColor',[1 1 1]);
-
-%% ====[delete matchedpointsfile]===========================================
-hb=uicontrol('style','push','string','delete matched pointsFile','tag','deleteMatchedpointsFile',...
-    'callback', @deleteMatchedpointsFile,'units','norm');
-set(hb,'position',[0.83 0.049092 0.17 0.025]);
-set(hb,'tooltipstring','delete matching points file (created via "pointwise selection"  ');
-set(hb,'BackgroundColor',[1 1 1]);
-
+set(hb,'position',[0.82837 0.15517 0.08 0.025]);
 
 %% ====[radio save warpe image]===========================================
 hb=uicontrol('style','radio','string','save warpimage','tag','savewarpimage',...
     'units','norm','backgroundcolor','w');
-set(hb,'position',[[0.83865 0.50485 0.12 0.025]]);
+set(hb,'position',[0.82841 0.222 0.12 0.025]);
 set(hb,'value',u.savewarpimage)
 
 
@@ -362,21 +378,10 @@ set(hb,'position',[0.82969 0.79961 0.08 0.035]);
 
 
 
-%% ====[uipanel]===========================================
-% set(hb,'position',[0.83865 0.27697 0.12 0.025]);
-hb=uipanel;
-set(hb,'position',[0.825 0 0.18 .33],'title','Matched-Points approach');
-set(hb,'backgroundcolor',[0.9176    0.9294    0.7529]);
-
-uistack(hb,'bottom');
-
-
-
 %% ====[pointwise select]===========================================
 hb=uicontrol('style','push','string','pointwiseselect','tag','pointwiseselect',...
-    'callback', @pointwiseselect,'units','norm','backgroundcolor','w','fontweight','bold');
-set(hb,'position',[0.83865 0.27697 0.12 0.025]);
-set(hb,'tooltipstring','open GUI for Matched-Points approach');
+    'callback', @pointwiseselect,'units','norm');
+set(hb,'position',[0.007064 0.47735 0.12 0.025]);
 
 
 
@@ -458,28 +463,14 @@ function menubarCB(e,e2,task)
  
 
 function pointwiseselect(e,e2)
+
 %% ===============================================
+
+
 u =get(gcf,'userdata');
-pos=[];
-for i=1:(u.ndot)
-    hr=findobj(gcf,'tag','refdot','-and','userdata' ,i);
-    if ~isempty(hr)
-        hm=findobj(gcf,'tag','dot','-and','userdata' ,i);
-        pos(end+1,:)=[hr.YData hr.XData  hm.Position([2 1])];  % !!!!!!!!!!!!!!!!!
-    end
-end
-if isempty(pos)
-    % cpselect(MOVING,FIXED)
-    [movp fixp]=cpselect(u.movimg,u.fiximg,'wait',true);
-else
-    
-    % pos=pos.*u.downsamplefactor;
-    pmov=[ pos(:,[2 1]) ];
-    pfix=[ pos(:,[4 3]) ];
-    [movp fixp]=cpselect(u.movimg,u.fiximg,pmov,pfix,'wait',true);
-end
 
-
+% cpselect(MOVING,FIXED) 
+[movp fixp]=cpselect(u.movimg,u.fiximg,'wait',true);
 
 
 % movp=[  544.1250  319.8750
@@ -496,8 +487,7 @@ end
 %   454.7500  322.7500
 %   574.7500  317.7500]
 % 
-d=[movp fixp ];
-clearallpoints();
+d=[movp fixp ]
 
 for i=1:size(d)
         co    =d(i,[3 4]);
@@ -696,119 +686,18 @@ if hr.Value==0; axis image;
 else          ; axis normal;
 end
 
-
-function deleteMatchedpointsFile(e,e2)
-%% ===============================================
-
-u=get(gcf,'userdata');
-outdir=u.outdir;
-outtag=u.pnt_out;
-Oname=strrep(outtag,'_warped','_matchedpoints');
-filenameFP=fullfile(outdir,[Oname '.txt']);
-
-if exist(filenameFP)==2
-   
-    que={['Delete matched pointFile "' Oname '.txt"']; ['path:' outdir]};
-    choice = questdlg(strjoin(que,char(10)), 'Confirmation', 'Yes', 'No', 'No');
-    if strcmp(choice,'Yes')
-        disp(['deleting file "' Oname '.txt " .. ' filenameFP ]);
-        delete(filenameFP);
-    end
-    
-else
-    msgbox(['can''t delete file "' Oname '.txt" ..file not found']);
-    
-end
-
-
-
-
-%% ===============================================
-
-function loadmatchedmatchedpoints(e,e2)
-
-%% ===============================================
-
-u=get(gcf,'userdata');
-outdir=u.outdir;
-outtag=u.pnt_out;
-Oname=strrep(outtag,'_warped','_matchedpoints');
-filenameFP=fullfile(outdir,[Oname '.txt']);
-if exist(filenameFP)==2
-    % 
-    pos=  preadfile(filenameFP);
-    pos=pos.all;
-    pos=str2num(char(pos));
-    pos=pos./u.downsamplefactor;
-    
-    pmov=[ pos(:,[2 1]) ];
-    pfix=[ pos(:,[4 3]) ];
-    d=[pmov pfix ];
-    clearallpoints();
-    
-    for i=1:size(d)
-        co    =d(i,[3 4]);
-        co_ref=d(i,[1 2]);
-        plotdots(co,co_ref);
-    end
-    move();
-    
-    
-end
-
-
-%% ===============================================
-
-
-function savematchedmatchedpoints(e,e2)
-%% ===============================================
-hx=findobj(gcf,'tag','base');
-x=get(hx,'userdata');
-[mdir name ext]=fileparts(x.fiximg_file);
-%% ===============================================
-hsave=findobj(gcf,'tag','saveMatchedpoints');
-bgcol=get(hsave,'backgroundcolor');
-set(hsave,'backgroundcolor',[1 0 1]); drawnow;
-% outname=get(findobj(gcf,'tag','ed_outname'),'string');
-u=get(gcf,'userdata');
-pos=[];
-for i=1:(u.ndot)
-    hr=findobj(gcf,'tag','refdot','-and','userdata' ,i);
-    if ~isempty(hr)
-        hm=findobj(gcf,'tag','dot','-and','userdata' ,i);
-        pos(end+1,:)=[hr.YData hr.XData  hm.Position([2 1])];  % !!!!!!!!!!!!!!!!!
-    end
-end
-
-if isempty(u.outdir)
-    outdir=pwd;
-else
-    outdir=u.outdir;
-end
-% Oname=[outtag  u.oname_suffix ];
-%outtag=strrep(name,'_deepsliceIN','');
-outtag=u.pnt_out;
-Oname=strrep(outtag,'_warped','_matchedpoints');
-filenameFP=fullfile(outdir,[Oname '.txt']);
-pos=pos.*u.downsamplefactor;
-if ~isempty(pos)
-    pwrite2file(filenameFP,pos);
-    showinfo2('saved  matching points',filenameFP);
-else
-    disp('could not store matching points...no points found');
-end
-
-
-%% ===============================================
-
-
-
-
 function savepoints(e,e2)
 %% ===============================================
 hx=findobj(gcf,'tag','base');
+p=get(gcf,'userdata');
 x=get(hx,'userdata');
-[mdir name ext]=fileparts(x.fiximg_file);
+if isnumeric(x.fiximg_file)
+    [mdir name ext]=fileparts(p.pntfile);
+else
+    [mdir name ext]=fileparts(x.fiximg_file);
+end
+
+
 %% ===============================================
 hsave=findobj(gcf,'tag','savepoints');
 bgcol=get(hsave,'backgroundcolor');
@@ -818,7 +707,9 @@ u=get(gcf,'userdata');
 pos=[];
 for i=1:(u.ndot)
     hr=findobj(gcf,'tag','refdot','-and','userdata' ,i);
+    
     if ~isempty(hr)
+        
         hm=findobj(gcf,'tag','dot','-and','userdata' ,i);
         pos(end+1,:)=[hr.YData hr.XData  hm.Position([2 1])];  % !!!!!!!!!!!!!!!!!
     end
@@ -846,11 +737,16 @@ end
 hx=findobj(gcf,'tag','base');
 x=get(hx,'userdata');
 
+
+
+
 if isempty(pos)
     delete(filenameFP);
     disp(['delete pointsfile if exist: ' filenameFP]);
     return
 end
+
+
 
 Xmoving=pos(:,3:4);
 Xstatic=pos(:,1:2);
@@ -871,6 +767,11 @@ filenameFP=fullfile(outdir,[Oname '.png']);
 imwrite(img,filenameFP);
 showinfo2('saved warpedImage',filenameFP);
 %% ===============================================
+
+
+
+
+% ==============================================
 %%   anim-gif
 % ===============================================
 % img2=imread(x.fiximg_file);
@@ -890,15 +791,188 @@ if sizdim3(1)~=sizdim3(2)
     if sizdim3(1)==3; img =rgb2gray(img); end
     if sizdim3(2)==3; img2=rgb2gray(img2); end
 end
+
+
 imwrite(img,c_map,[filenameFP],'gif','LoopCount',loops,'DelayTime',delay)
 imwrite(img2,c_map,[filenameFP],'gif','WriteMode','append','DelayTime',delay)
 showinfo2('saved warpedImage',filenameFP);
+
+
+
+
+
+
+make_animGifs(pos);
+
 %% ===============================================
 
 set(hsave,'backgroundcolor',bgcol); drawnow;
 
 %% ===============================================
 
+
+
+
+function make_animGifs(pos)
+
+
+%% get data ===============================================
+hf=findobj(0,'tag','manwarp2d');
+p=get(hf,'userdata');
+if length(p)>1; p=p{1}; end
+[pa name ext]=fileparts(p.pntfile);
+imgnumStr=regexprep(name,{'a6_','_warped'},{'',''});
+numberstr=[ '_' imgnumStr];
+container=fullfile(pa,  ['a5_' imgnumStr '.mat'] );
+o=load(container); o=o.w;
+% trafo moving data ===============================================
+Xmoving=pos(:,3:4);
+Xstatic=pos(:,1:2);
+fn=fieldnames(o);
+w=o;
+size_img=size(o.fix);
+
+fn2trafo=setdiff(fn, {'fix', 'mov'});
+[O_trans,Spacing,Xreg]=point_registration(size_img,Xmoving,Xstatic);
+for i=1:length(fn2trafo)
+    %[O_trans,Spacing,Xreg]=point_registration(size(x.movimg),Xmoving,Xstatic);
+    img0=getfield(o,fn2trafo{i});
+    img=bspline_transform(O_trans,img0,Spacing,3);
+    if all(unique(img(:))==round(unique(img(:))))==0
+        img=round(mat2gray(double(img))*255);
+    end
+    if strcmp(class(img),'unit8')==0; img=uint8(img); end
+    w=setfield(w,fn2trafo{i}, img );
+end
+
+%% ===============================================
+% [O_trans,Spacing,Xreg]=point_registration(size(x.movimg),Xmoving,Xstatic);
+% img=bspline_transform(O_trans,x.movimg_orig,Spacing,3);
+% if all(unique(img(:))==round(unique(img(:))))==0
+%     img=round(mat2gray(double(img))*255);
+% end
+% if strcmp(class(img),'unit8')==0; img=uint8(img); end
+
+
+w.fix   =mat2gray(w.fix);
+w.wa    =mat2gray(w.wa);
+w.avgt2 =mat2gray(w.avgt2);
+w.pano  =mat2gray(w.pano);
+w.mov   =mat2gray(w.mov);
+
+% ==============================================
+%%   anim-gif-1
+% ===============================================
+
+smov=w.mov;
+tx=~imresize(text2im('before'),1)*.5;
+smov(1:size(tx,1),1:size(tx,2))=tx;
+swa=w.wa;
+tx=~imresize(text2im('post-man.warping'),1)*.5;
+swa(1:size(tx,1),1:size(tx,2))=tx;
+
+t1=[w.fix   w.fix         ];
+t2=[smov    swa          ];
+
+%grid
+gridpix=50;
+valc=.5;
+t1(1:gridpix:end,:)=valc;   t1(:,1:gridpix:end)=valc;
+t2(1:gridpix:end,:)=valc;   t2(:,1:gridpix:end)=valc;
+
+t1=uint8(round(255*t1));
+t2=uint8(round(255*t2));
+% imoverlay(t1,t2)
+Oname='a6';
+%===============================================
+loops=65535;
+delay=.6;
+filenameFP=fullfile(pa,[Oname numberstr  '_warpedQA1.png']);
+c_map=gray;
+imwrite(t1,c_map,[filenameFP],'gif','LoopCount',loops,'DelayTime',delay);
+imwrite(t2,c_map,[filenameFP],'gif','WriteMode','append','DelayTime',delay);
+showinfo2('saved warpedImage',filenameFP);
+
+
+
+% ==============================================
+%%   anim-gif-2
+% ===============================================
+% w.fix    =mat2gray(fix);
+% w.wa     =mat2gray(wa);
+% w.avgt2  =mat2gray(avgt2);
+% w.pano   =mat2gray(pano);
+% w.mov   =mat2gray(mov);
+w.pano_bef =mat2gray(o.pano);
+w.avgt2_bef =mat2gray(o.avgt2);
+
+smov=w.mov;
+tx=imresize(text2im('before'),2)*.5;
+smov(1:size(tx,1),1:size(tx,2))=tx;
+
+swa=w.wa;
+tx=imresize(text2im('post-warping'),2)*.5;
+swa(1:size(tx,1),1:size(tx,2))=tx;
+
+t1=[smov   w.fix.*0    w.fix          w.fix   ;...
+    smov   w.fix       w.fix          w.fix  ];
+
+t2=[smov   w.fix*0     w.avgt2_bef    w.pano_bef  ;...
+    swa    w.wa        w.avgt2        w.pano       ];
+
+
+
+
+
+t1(1:gridpix:end,:)=valc;   t1(:,1:gridpix:end)=valc;
+t2(1:gridpix:end,:)=valc;   t2(:,1:gridpix:end)=valc;
+
+t1=uint8(round(255*t1));
+t2=uint8(round(255*t2));
+% imoverlay(t1,t2)
+% % % Oname='a5';
+%===============================================
+loops=65535;
+delay=.6;
+% filenameFP=fullfile(outdir,[u.oname_suffix, '.gif']);
+filenameFP=fullfile(pa,[Oname numberstr  '_warpedQA2.png']);
+c_map=gray;
+
+imwrite(t1,c_map,[filenameFP],'gif','LoopCount',loops,'DelayTime',delay)
+imwrite(t2,c_map,[filenameFP],'gif','WriteMode','append','DelayTime',delay)
+showinfo2('saved warpedImage',filenameFP);
+
+% ==============================================
+%% QA-3 static image[side-by Side]
+% ===============================================
+np=1;
+pw=ones(np);
+% siz=[size(mov,1) size(mov,2)];
+siz=[1000 1000];
+check=repmat([ [pw pw-1]; [ pw-1 pw]  ],round(siz./(2*np)+1));
+check=check(1:siz(1),1:siz(2));
+fus2=check.*double(mat2gray(w.wa))+~check.*double(mat2gray(w.fix));
+fus2=round((fus2*255));
+%fg,image(fus2)
+% ===============================================
+fus1=imfuse(w.wa,w.fix ,'falsecolor');
+fx=uint8(255*imadjust(mat2gray(double(w.fix))));
+mv=uint8(255*imadjust(mat2gray(double(w.wa))));
+
+fus2=check.*double(mv)+~check.*double(fx);
+%fg,image(fus2)
+fus1=imfuse(mv,fx ,'falsecolor');
+t1=[ind2rgb(fx,gray)*255  ind2rgb(mv,gray)*255 ;  fus1 ind2rgb(fus2,jet)*255 ];
+t1(1:gridpix:end,:)=200;   t1(:,1:gridpix:end)=200;
+%fg,image(t1)
+% =======[write template-slice]========================================
+filenameFP=fullfile(pa,[Oname numberstr  '_warpedQA3.jpg']);
+
+imwrite(t1,filenameFP);
+showinfo2('saved QA-3',filenameFP);
+
+
+%% ===============================================
 
 
 
@@ -1353,11 +1427,47 @@ Xstatic=pos(:,1:2);
 
 hl=findobj(gcf,'tag','setimage');
 
+%% ===============================================
+% Assume your binary mask is called 'mask'
+
+% 1Get the boundary
+% B = bwboundaries(u.fiximg);
+% boundary = B{1};    % Extract the main boundary (Nx2 array: [row, col])
+% % 2️⃣ Convert to x,y coordinates
+% y = boundary(:,2);
+% x = boundary(:,1);
+% % 3️⃣ Compute cumulative distance along the boundary
+% d = [0; cumsum(sqrt(diff(x).^2 + diff(y).^2))];
+% % 4️⃣ Interpolate 50 equally spaced points
+% numPoints = 100;
+% dUniform = linspace(0, d(end), numPoints);
+% x_eq = interp1(d, x, dUniform);
+% y_eq = interp1(d, y, dUniform);
+
+% 5️⃣ Visualize the result
+% figure;
+% imshow(u.fiximg);
+% hold on;
+% plot(y, x, 'b-', 'LineWidth', 1);       % Original boundary
+% plot(y_eq, x_eq, 'ro', 'MarkerFaceColor', 'r');  % Equidistant points
+% title('50 Equidistant Points Along Boundary');
+% 
+% 
+% 
+% Xmoving=[Xmoving ;[x_eq(:) y_eq(:)]];
+% Xstatic=[Xstatic ;[x_eq(:) y_eq(:)]];
+% size(Xmoving)
+
+%% ===============================================
+
+
+
 
 Options.MaxRef=1;
  [O_trans,Spacing,Xreg]=point_registration(size(u.movimg),Xmoving,Xstatic,Options);
 %[O_trans,Spacing,Xreg]=point_registration(size(u.movimg),Xmoving,Xstatic);
-% [O_trans,Spacing,Xreg]=point_registration(size(u.movimg),Xmoving,Xstatic);
+% Spacing
+% Spacing=[8 8 ];
 % Transform the 2D image
 % Ireg=bspline_transform(O_trans,u.movimg,Spacing,3);
 % fus=imfuse(u.fiximg,uint8(255*mat2gray(Ireg)),'falsecolor','Scaling','joint','ColorChannels',[1 2 0]);

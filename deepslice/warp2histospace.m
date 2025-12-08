@@ -44,11 +44,14 @@ tb0={...%Name__________INterpol_____saveAFFINE___dtype
     'ANO.nii'           '0'           1          'double'
     'HISTOVOL.nii'      'auto'        0          'uint8'
     'AVGThemi.nii'      '0'           1          'logical'
-    
-   
     };
+if exist(fullfile(pa_template,tb0{3,1}))~=2
+    tb0(3,:)=tb0(1,:);
+    disp(['..HISTOVOL.nii does not exist...' ])
+end
 tb=tb0;
 tb(:,1)=stradd(tb0(:,1),[pa_template filesep],1); %fullpath
+
 
 
 % ==============================================

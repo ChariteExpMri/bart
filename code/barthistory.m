@@ -179,6 +179,67 @@ save(fhist,'h');
 
 % uhelp(plog([],[h.hhistory;h.history ],0))
 
+function autoResizeColumns(t)
+% Auto-resizes uitable column widths based on cell content (MATLAB 2016)
+
+data = t.Data;
+colNames = t.ColumnName;
+
+hTemp = uicontrol('Style','text','Visible','off', ...
+                  'Units','pixels', ...
+                  'FontName', t.FontName, ...
+                  'FontSize', t.FontSize);
+
+nCols = size(data,2);
+colWidths = zeros(1,nCols);
+
+for c = 1:nCols
+    maxWidth = 0;
+
+    % check header
+    set(hTemp,'String',colNames{c});
+    ext = get(hTemp,'Extent');
+    maxWidth = max(maxWidth, ext(3));
+
+    % check each cell
+    for r = 1:size(data,1)
+        val = data{r,c};
+        if isnumeric(val), val = num2str(val); end
+        if islogical(val), val = char(string(val)); end
+
+        val = stripHTML(val);   % <-- remove HTML and extract visible text
+        set(hTemp,'String',val);
+        ext = get(hTemp,'Extent');
+        maxWidth = max(maxWidth, ext(3));
+    end
+
+    colWidths(c) = maxWidth + 1;   % small padding
+end
+
+delete(hTemp);
+t.ColumnWidth = num2cell(colWidths);
+
+function out = stripHTML(s)
+% Remove HTML tags and extract visible content
+
+if ~ischar(s)
+    out = s;
+    return;
+end
+
+% If content inside <TD>...</TD>, extract only that
+td = regexp(s, '<td[^>]*>(.*?)</td>', 'tokens', 'ignorecase');
+if ~isempty(td)
+    out = td{1}{1};
+    out = strtrim(out);
+    return;
+end
+
+% Otherwise remove all HTML tags <...>
+out = regexprep(s, '<[^>]*>', '');
+out = strtrim(out);
+
+
 % ==============================================
 %%   select
 % ===============================================
@@ -277,6 +338,7 @@ ColumnEditable= repmat(false,[1 length(h.hhistory)]);
 
 
 % Create the uitable
+ncols = size(d,2);
 t = uitable('Data', d,... 
             'ColumnName', columnname,...
             'ColumnFormat', columnformat,...
@@ -289,9 +351,11 @@ t = uitable('Data', d,...
 t.Position(3) = t.Extent(3);
 t.Position(4) = t.Extent(4);
 
+autoResizeColumns(t);
+
 jScroll = findjobj(t);
 jTable = jScroll.getViewport.getView;
-jTable.setAutoResizeMode(jTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
+% jTable.setAutoResizeMode(jTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
 % 
 % jscrollpane = javaObjectEDT(findjobj(ht));
 % viewport    = javaObjectEDT(jscrollpane.getViewport);
@@ -823,8 +887,10 @@ if 1
     if length(unipath)<3
         col=cbrewer('qual', 'Pastel1', 3);
     else
-        col=cbrewer('qual', 'Pastel1', length(unipath));;% fg,imagesc(permute(CT,[3 1 2 ]))
+        col=cbrewer('qual', 'Pastel1', length(unipath));% fg,imagesc(permute(CT,[3 1 2 ]))
+        
     end
+    col=min(col,1);
     dpa=d(:,2);
     for i=1:length(unipath)
         is=find(strcmp(d(:,2),unipath{i} ));

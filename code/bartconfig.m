@@ -19,12 +19,11 @@ p={...
     'inf99'      '*** CONFIGURATION PARAMETERS   ***              '                         '' ''
     'inf100'     '==================================='                          '' ''
     '' '' '' ''
-    'dat'         fullfile(pwd,'dat')      'studie''s datapath, MUST BE be specified, and named "dat", such as "c:\b\study1\dat" '  'd'
-    'template'    'UNDEFINED'             'select the template path ("bart_template")'  {@gettemplate}
-    %'vv.c'        'UNDEFINED'             'select the template path'  'd'
+    'dat'         fullfile(pwd,'dat')    'studie''s datapath, MUST BE be specified, and named "dat", such as "c:\b\study1\dat" '  'd'
+    'template'    'UNDEFINED'            'select the template path ("bart_template"); see "deepslice_defaults_home.m"'  {@gettemplate}
     '' '' '' ''
     'inf101'     '==================================='                          '' ''
-    'deepsliceconfig' 'UNDEFINED'             'select the deepslice-config (optional) '  {@getdeepsliceconfig}
+    'deepsliceconfig' 'UNDEFINED'         'select the deepslice-config (optional), (see: "deepslice_defaults_home.m") '  {@getdeepsliceconfig}
     
     
     };
@@ -33,7 +32,7 @@ p={...
 p2=paramadd(p,p0);%add/replace parameter
 
 % x.main     =  'F:\data3\histo2\josefine';	% select main folder for data analysis to <required to fill>
-% x.dat     =  'F:\data3\histo2\josefine\dat'; % data-folder
+% x.dat     =  'F:\data3\histo2\josefine\dat';    % data-folder
 % x.template =  'F:\data3\histo2\bart\templates';	% select main template folder <required to fill>
 
 % ==============================================
@@ -62,22 +61,22 @@ end
 function getdeepsliceconfig(e,e2)
 %% ===============================================
 cmd4ui_path='<select own deepslice-configuration>';
-dontuse='none';
-dlpath={...  
-    dontuse
-    which('deepslice_defaults_home.m')
-    which('deepslice_defaults_win10server.m');
-    
+% dlpath={...  
+%     'none'
+%     which('deepslice_defaults_home.m')
+%     which('deepslice_defaults_win10server.m');
+%     cmd4ui_path};
 
-    
-    cmd4ui_path};
+o=bartconfig_parameter;
+dlpath=[o.deepslice_default(:); cmd4ui_path ];
+
 [idx,tf] = listdlg('PromptString',{ 'Select deepslice-configuration (file)',''},...
     'SelectionMode','single','ListString',dlpath,'ListSize',[450,100]);
 if isempty(idx); return; end
 cpath=dlpath{idx};
 if strcmp(cpath,cmd4ui_path)
        [fi, pa] = uigetfile('*.m', 'Select deepslice-configuration (file)');
-       if isnumeric(dn); return; end
+       if isnumeric(fi); return; end
        cpath=fullfile(pa,fi);
 end
 paramgui('setdata','x.deepsliceconfig',cpath);
@@ -88,12 +87,16 @@ return
 function gettemplate(e,e2)
 %% ===============================================
 cmd4ui_path='<select own template>';
-templatepaths={...
-    'F:\tools\bart_template'
-    'D:\MATLAB\bart_templates'
-    cmd4ui_path};
-[idx,tf] = listdlg('PromptString',{ 'Select template (path of template) to use',''},...
-    'SelectionMode','single','ListString',templatepaths,'ListSize',[250,100]);
+% templatepaths={...
+%     'F:\tools\bart_template'
+%     'D:\MATLAB\bart_templates'
+%     cmd4ui_path};
+o=bartconfig_parameter();
+templatepaths=o.templates(:);
+templatepaths=[templatepaths; cmd4ui_path];
+
+[idx,tf] = listdlg('PromptString',{ 'Select template (path of template) to use (or use own)',''},...
+    'SelectionMode','single','ListString',templatepaths,'ListSize',[450,100]);
 if isempty(idx); return; end
 tpath=templatepaths{idx};
 if strcmp(tpath,cmd4ui_path)

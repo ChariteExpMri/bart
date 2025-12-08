@@ -35,6 +35,7 @@ para={...
     'inf100'     '==================================='                          '' ''
     'files'                  ''              'select TIFF-file(s); '  'mf'
     'frameNumber'            1               'select the frame number (default is 1) if TIFF contains more than 1 image' {1 2 3 4 5}
+    'channel'                nan             'select chanel{1,2,3,nan},nan: keep channels ' {1 2 3 nan}
     'copyfoldercontent'      0               'copy the folder content (all files) from original tif-folder'  'b'
     'isparallel'             0               'use parallel computing (0,1)'  'b'
     };
@@ -54,7 +55,7 @@ else
     z=param2struct(p);
 end
 
-
+z.files=cellstr(z.files);
 
 
 cprintf([0 0 1],[' import Tiffs... '  '\n']);

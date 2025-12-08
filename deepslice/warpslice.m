@@ -90,8 +90,13 @@ use_manualWarp         =1 ;% PARAMETER
 % ===============================================
 disp('use slice from deepslice');
 [co st]=getestimation_xml(file_xml,'loadhistoimage',1); %get histoImage
-fi1=p.filesTP{1,1}  ;%fullfile(p.templatepath,'AVGT.nii');
 % fi1  =fullfile(pa_template,'HISTOVOL.nii');
+if exist(p.filesTP{1,1})~=2
+    p.filesTP{1,1}=[fullfile(fileparts(p.filesTP{1,1}),'AVGT.nii') ];
+    disp('..Histvol not available..');
+end
+fi1=p.filesTP{1,1}  ;%fullfile(p.templatepath,'AVGT.nii');
+
 
 g.atlas =getslice_fromcords(fi1,co,  st.histo_size,1);
 if max(g.atlas(:))<10  % when using the real HISTO-template (this is normed 0-1--> error in elastix)
@@ -127,11 +132,13 @@ if use_manualWarp==1
         % ========get image =======================================
         Xmoving=pos(:,3:4);
         Xstatic=pos(:,1:2);
-        [O_trans,Spacing,Xreg]=point_registration(size(g.atlas),Xmoving,Xstatic);
-        g.atlas=bspline_transform(O_trans,g.atlas,Spacing,3);
-        
-        g.atlasmask=bspline_transform(O_trans,g.atlasmask,Spacing,-1);
-        g.atlasmask(g.atlasmask>=.9)=1; g.atlasmask(g.atlasmask<.9)=0;
+        if 1 % check #### uncheck this ####
+            [O_trans,Spacing,Xreg]=point_registration(size(g.atlas),Xmoving,Xstatic);
+            g.atlas=bspline_transform(O_trans,g.atlas,Spacing,3);
+            
+            g.atlasmask=bspline_transform(O_trans,g.atlasmask,Spacing,-1);
+            g.atlasmask(g.atlasmask>=.9)=1; g.atlasmask(g.atlasmask<.9)=0;
+        end
         %% ===============================================
     end
 end
@@ -236,7 +243,7 @@ end
 %%   register+warp
 % ===============================================
 time_warp=tic;
-fprintf('..warping...');
+% fprintf('..warping...');
 %     if 0
 %         set_ix(parfile{1},'NumberOfResolutions',p.NumResolutions(1)); %default:2
 %         set_ix(parfile{2},'NumberOfResolutions',p.NumResolutions(2)); %default:6
@@ -273,7 +280,21 @@ end
 
 
 if strcmp(p.metric,'usedefault')==0
-    set_ix3(parfile{1},'Metric',p.metric);
+    if strcmp(p.metric, 'autodetect')
+        %% ===============================================
+         if ~isempty(strfind(fi1,'HISTOVOL.nii')) %"HISTOVOL.nii" was selected--> choose correlation
+            %use--> 'AdvancedNormalizedCorrelation'
+            set_ix3(parfile{1},'Metric','AdvancedNormalizedCorrelation');
+         else %use 'AdvancedMattesMutualInformation'
+             set_ix3(parfile{1},'Metric','AdvancedMattesMutualInformation');
+         end
+        
+        %% ===============================================
+        
+        
+    else
+        set_ix3(parfile{1},'Metric',p.metric);
+    end
 end
 
 if ~isempty(p.NumResolutions)
@@ -287,6 +308,10 @@ end
 % rm_ix2(parfile{1},'ImagePyramidSchedule')
 % old_PyramidSchedule=get_ix(parfile{1},'ImagePyramidSchedule');
 % [8     8     4     4     2     2     1     1]
+
+
+
+
 
 % ==============================================
 %%  WARPING
@@ -302,6 +327,8 @@ end
 
 % ===============================================
 % mask
+% ==============================================
+%%   intersection mask
 % ===============================================
 umask=histomask.*atlasmask;
 umask=imfill(umask,'holes');
@@ -323,11 +350,20 @@ umask=reshape(tmp,size(histomask));
 % ==============================================
 %%   ventricle mask
 % ===============================================
-mov   =atlas.*umask;
-fix   =histo.*umask;
+%mov   =atlas; %est 20.11.25
+
+if p.intersectMasks==1 %intersection-Mask
+    mov   =atlas.*umask;
+    fix   =histo.*umask;
+else    
+    mov   =atlas.*atlasmask;
+    fix   =histo.*histomask;
+end
+disp(['   - intersectMasks: ' num2str(p.intersectMasks) ]);
 
 
-if p.ventricle_method>0
+disp('..  VENTRICLE METHOD: has to be refurbished...not executed...');
+if p.ventricle_method==-1 %  >0
     if p.ventricle_method==1
         %  ===============================================
         % [A] PRESERVE VENTRICLE IF PAINTED via prunegui
@@ -365,40 +401,155 @@ if p.ventricle_method>0
     fix   =fix.*fixmask;
     
 end
-
-
-%% ===============================================
-
 % ==============================================
-% elastix
+%% ELASTIX
+%%   test the controlpoints-approach
 % ===============================================
 delete(fullfile(elxout,'*'));
-disp([char(parfile)]);
-
+file_matchedpoints=fullfile(pa,[nametag_manwarp '_matchedpoints.txt']);
 twarp=tic;
-[wa,outs]= elastix2(  (mov), (fix),elxout,parfile(end),pa_el);
+if exist(file_matchedpoints)==2
+     % __POINTSMATCH-APPROACH____
+    % ========read manu-warp cordinated =======================================
+    d=preadfile(file_matchedpoints);
+    pos2=str2num(char(d.all));
+    Xmoving2=pos2(:,3:4);
+    Xstatic2=pos2(:,1:2);
+    pfix =Xmoving2;
+    pmov =Xstatic2;
+    xmov =round( [ pmov(:,2), pmov(:,1)  ]);
+    xfix =round( [ pfix(:,2), pfix(:,1)  ]);
+    
+    F_points2=fullfile(path_paramfile, 'FixedPoints.pts');
+    F_points1=fullfile(path_paramfile, 'MovingPoints.pts');
+    
+    fid = fopen(F_points1,'w');
+    fprintf(fid, 'index\n');
+    fprintf(fid, '%d\n', size(xfix,1));
+    fprintf(fid, '%d %d\n', xfix');
+    fclose(fid);
+    
+    fid = fopen(F_points2,'w');
+    fprintf(fid, 'index\n');
+    fprintf(fid, '%d\n', size(xmov,1));
+    fprintf(fid, '%d %d\n', xmov');
+    fclose(fid);
+    % ===============================================
+    gg=preadfile(parfile{1}); gg=gg.all;
+    gg=[gg; {''; '// changes ######## '}];
+    gg(regexpi2(gg,'(Registration'))=[];
+    gg=[gg; '(Registration "MultiMetricMultiResolutionRegistration")' ];
+    
+    token = regexp(gg(regexpi2(gg,'^(Metric')), '"([^"]+)"', 'tokens', 'once');
+    metric = char(token{1});
+    gg(regexpi2(gg,'^(Metric '))=[];
+
+    %gg=[gg; '(Metric "AdvancedMattesMutualInformation" "CorrespondingPointsEuclideanDistanceMetric")'  ];
+    %gg=[gg; '(Metric "AdvancedNormalizedCorrelation" "CorrespondingPointsEuclideanDistanceMetric")'  ];
+    gg=[gg; ['(Metric "' metric '" "CorrespondingPointsEuclideanDistanceMetric")']  ];
+    
+    gg(regexpi2(gg,'^(Metric0Weight'))=[];
+    gg=[gg; '(Metric0Weight '  num2str(1.0)  ')'  ];
+    gg(regexpi2(gg,'^(Metric1Weight'))=[];
+    gg=[gg; '(Metric1Weight '  num2str(0.15)   ')' ];
+    gg(regexpi2(gg,'^(FinalGridSpacingInPhysicalUnits'))=[]; %40 before
+    gg=[gg; '(FinalGridSpacingInPhysicalUnits '  num2str(8)   ')' ];
+    %disp(char(gg));
+    pwrite2file(parfile{1}, gg);
+    
+    % ===============================================
+    cprintf('*[0 0 1]',['  [APPROACH: ELASTIX-MATCHPOINTS+BSPLINE] \n']);
+    cprintf([0 0 1],['  [elastix-parameter]: \n']);
+    disp(['   - ' char(gg(regexpi2(gg,'^(Metric ')))]);
+    disp(['   - ' char(gg(regexpi2(gg,'^(NumberOfResolutions ')))]);
+    disp(['   - ' char(gg(regexpi2(gg,'^(MaximumNumberOfIterations ')))]);
+    disp(['   - ' char(gg(regexpi2(gg,'^(FinalGridSpacingInPhysicalUnits ')))]);
+    % ===============================================
+    
+    
+    % ===============================================
+    %varargout=elastix3(movingImage,fixedImage,outputDir,paramFile,elxpath,movpntfile,fixpntfile,
+    disp(['..approach: ELASTIX-MATCHPOINTS+BSPLINE']);
+    [wa,outs]= elastix3(  mov, fix,elxout,parfile(end),pa_el, F_points2,F_points1);
+    %[wa,outs]= elastix3(  (mov), (fix),elxout,parfile(end),pa_el);
+    %imoverlay(wa,fix);  title('template'); drawnow
+    
+    check_pointsfilereading=outs.log(regexpi2(outs.log,'reading landmark file'));
+    if isempty(check_pointsfilereading)
+        disp('  ..pointsFile were NOT used!');
+    else
+        disp('  ..pointsFile were used!');
+    end
+    
+    %disp(char(outs.log(regexpi2(outs.log,'reading landmark file'))))
+    %% ===============================================
+    %     rm_ix(parfile{1},'Registration')
+    %     set_ix3(parfile{1},'Registration', 'MultiMetricMultiResolutionRegistration');
+    %     set_ix3(parfile{1},'Metric', 'AdvancedMattesMutualInformation" "CorrespondingPointsEuclideanDistanceMetric');
+    %     set_ix(parfile{1},'Metric0Weight',1.0)
+    %     set_ix(parfile{1},'Metric1Weight',5.0)
+    % (Metric "AdvancedMattesMutualInformation" "CorrespondingPointsEuclideanDistanceMetric")
+    % (Metric0Weight 1.0)   // weight for first metric
+    % (Metric1Weight 5.0)   // weight for second metric
+    % %% ===============================================
+    if 0
+        fg; imagesc(fix)
+        hold on;
+        for i=1:size(Xmoving2,1)
+            plot(Xmoving2(i,2),Xmoving2(i,1),'r*')
+        end
+        fg; imagesc(mov)
+        hold on;
+        for i=1:size(Xstatic2,1)
+            plot(Xstatic2(i,2),Xstatic2(i,1),'r*')
+        end
+    end
+    %     if 0
+    %         % ===check============================================
+    %         w.mov=mov;
+    %         w.fix=fix;
+    %         w.elxout=elxout
+    %         w.parfile=parfile;
+    %         w.pa_el  =pa_el
+    %         w.F_points1=F_points1;
+    %         w.F_points2=F_points2;
+    %         w
+    %         assignin('base' ,'w',w)
+    %         % ===============================================
+    %     end
+else
+    % __STANDARD-APPROACH____
+    gg=preadfile(parfile{1}); gg=gg.all;
+%     
+%     gg(regexpi2(gg,'^(FinalGridSpacingInPhysicalUnits'))=[]; %40 before
+%     gg=[gg; '(FinalGridSpacingInPhysicalUnits '  num2str(30)   ')' ];
+%     pwrite2file(parfile{1}, gg);
+    
+    % ===============================================
+    cprintf('*[0 0 1]',['  [APPROACH: ELASTIX-STANDARD] \n']);
+    cprintf([0 0 1],['  [elastix-parameter]: \n']);
+    disp(['   - ' char(gg(regexpi2(gg,'^(Metric ')))]);
+    disp(['   - ' char(gg(regexpi2(gg,'^(NumberOfResolutions ')))]);
+    disp(['   - ' char(gg(regexpi2(gg,'^(MaximumNumberOfIterations ')))]);
+    disp(['   - ' char(gg(regexpi2(gg,'^(FinalGridSpacingInPhysicalUnits ')))]);
+    % ===============================================
+    [wa,outs]= elastix2(  (mov), (fix),elxout,parfile(end),pa_el);
+end
+
+
+
 if p.NumResolutions==0 % do no additonal warping
     wa=mov;
 end
 wa =imresize(double(wa)     ,[imsizeinterim imsizeinterim],'nearest');
+if p.debug==1;     imoverlay(wa,fix);  title('template'); drawnow; end
+
+fprintf(['.. t-registration: '  sprintf('%2.2fs',toc(twarp) ) '\n']);
 
 
-if p.debug==1
-    imoverlay(wa,fix);  title('template'); drawnow
-end
-
-if 0
-    fg,imagesc(wa)
-end
-fprintf(['Done. (t_registration: '  sprintf('%2.2fs',toc(twarp) ) ')\n']);
-
+%% ==============================================
+%% OTHER SLICES
 %% ===============================================
-
-
-%     keyboard
-fprintf(['Done. (t_registration: '  sprintf('%2.2fs',toc(time_warp) ) ')\n']);
-
-
 % check if o_trasn exist (i.e. manwarp was used )
 is_manualwarp=1;
 if exist('O_trans')~=1
@@ -409,7 +560,6 @@ end
 % ==============================================
 %%  ANO
 % ===============================================
-
 fi3=tb{3,1};
 img2 =getslice_fromcords(fi3,co,  st.histo_size,0);
 if is_manualwarp==1
@@ -447,7 +597,9 @@ else                   ;   fi4=fullfile(pas,'AVGT.nii');
 end
 if ~exist(fi4)
     avgt2=zeros(size(pano));
-else
+    fi4=fullfile(pas,'AVGT.nii');
+end
+% else
     
     img2 =getslice_fromcords(fi4,co,  st.histo_size,3);
     if is_manualwarp==1
@@ -474,7 +626,22 @@ else
     avgt2=(w4).*umask;
     %imoverlay(fix,avgt2)
     
-end
+% end
+
+% ==============================================
+%%   save for posthoc manual warping
+% ===============================================
+w.fix  =mat2gray(fix);
+w.wa  =mat2gray(wa);
+w.avgt2 =mat2gray(avgt2);
+w.pano =mat2gray(pano);
+w.mov =mat2gray(mov);
+
+Filepost=fullfile(pa, [ 'a5' numberstr  '.mat' ]);
+save( Filepost,  'w');
+
+
+
 
 % ==============================================
 %%   anim-gif-1
@@ -535,14 +702,38 @@ swa=w.wa;
 tx=imresize(text2im('post-warping'),2)*.5;
 swa(1:size(tx,1),1:size(tx,2))=tx;
 
+% t1=[ smov   w.fix.*0    w.fix          w.fix   ;...
+%     smov   w.fix       w.fix          w.fix  ];
+% 
+% t2=[ smov   w.fix*0     w.avgt2_bef    w.pano_bef  ;...
+%     swa    w.wa        w.avgt2        w.pano       ];
+%% ===============================================
+
+imfix   =w.fix;
+imwarped=w.wa ;
+bo=5;
+
+imfixmaxval=max(imfix(:));
+imfix([1:bo  end-bo+1:end],:)=imfixmaxval;
+imfix(: ,[1:bo  end-bo+1:end])=imfixmaxval;
+tx=imresize(text2im('histo'),1.5,'nearest');
+tx= (1-(tx- min(tx(:))) ./ (max(tx(:)) - min(tx(:)))).*imfixmaxval;
+imfix(bo+1:size(tx,1)+bo,bo+1:size(tx,2)+bo)=tx;
+
+imwarpedval=max(imwarped(:));
+
+imwarped([1:bo  end-bo+1:end],:)=imwarpedval;
+imwarped(: ,[1:bo  end-bo+1:end])=imwarpedval;
+tx=imresize(text2im('template'),1.5,'nearest');
+tx= (1-(tx- min(tx(:))) ./ (max(tx(:)) - min(tx(:)))).*imwarpedval;
+imwarped(bo+1:size(tx,1)+bo,bo+1:size(tx,2)+bo)=tx;
+
+
 t1=[ smov   w.fix.*0    w.fix          w.fix   ;...
-    smov   w.fix       w.fix          w.fix  ];
+    smov   imfix       w.fix          w.fix  ];
 
-t2=[ smov   w.fix*0     w.avgt2_bef    w.pano_bef  ;...
-    swa    w.wa        w.avgt2        w.pano       ];
-
-
-
+t2=[ smov   w.fix*0    w.avgt2_bef    w.pano_bef  ;...
+    swa    imwarped        w.avgt2        w.pano       ];
 
 
 t1(1:gridpix:end,:)=valc;   t1(:,1:gridpix:end)=valc;
@@ -550,6 +741,8 @@ t2(1:gridpix:end,:)=valc;   t2(:,1:gridpix:end)=valc;
 
 t1=uint8(round(255*t1));
 t2=uint8(round(255*t2));
+%===============================================
+
 % imoverlay(t1,t2)
 
 Oname='a5';

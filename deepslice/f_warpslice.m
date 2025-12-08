@@ -70,12 +70,16 @@ para={...
 'inf4'     '_____ ELASTIX PARAMETER _________________________' '' ''
 'parameterFiles'                parfile0      'Elastix paramter files (bspline)'    {@getElestixfiles}
 
-'metric'                        'usedefault'      'used metric for registration'  {    'AdvancedNormalizedCorrelation'  'AdvancedMattesMutualInformation' 'usedefault'}
+'metric'                        'autodetect'      'used metric for registration'  {    'AdvancedNormalizedCorrelation'  'AdvancedMattesMutualInformation' 'usedefault' 'autodetect'}
 'NumResolutions'                [4]  'number of resolutions for  bspline transformation; leave empty for default'   {1:7}
 'MaximumNumberOfIterations'     [2000]   'number of iterations within each resolution bspline transformation; leave empty for default' {500 1000:1000:6000}
 '' '' '' ''
+
+
+'intersectMasks'     [1]   'use intersection of templateMask and histoMask (carefull, might cut boundaries)' 'b'
+'' '' '' ''
 'inf5'     '_____ Ventricles/CSF _________________________' '' ''
-'ventricle_method'     1        'ventricele method: {0,1,2}, [0] none, [1] via prunegui-"deletion", [2] otsu-method'  {0,1,2}
+'ventricle_method'     0        'ventricele method: {0,1,2}, [0] none, [1] via prunegui-"deletion", [2] otsu-method'  {0,1,2}
 'otsu_ventriclecolor'  'black'  'color of ventricles in tiff-image'  {'black','white' }
 'otsu_nclasses'        10       'number of otsu-classes'   {5:15}
 'otsu_noisethresh'     0.005    'clusters with clustersize (percent wrt. uniun-brain mask) considerd as noise  '   { 0.005 0.001 0.01 0.005}
