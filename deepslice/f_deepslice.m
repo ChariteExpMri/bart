@@ -217,7 +217,17 @@ else
         try
             a=s.imgmod;
             cprintf([0 .5 0],['  using modified file   \n']);
-
+            %% ===============================================
+              
+            if 0
+                disp('invert background');
+                msk=imfill(s.maskmod,'holes');
+                a(msk==0)=50;%max(a(:));
+%                 a=imcomplement(a);
+                'aa'
+            end
+            %% ===============================================
+            
         catch
             cprintf([1 0 1],['  file "imgmod" in struct not fount ...using "downsampled version"  \n']);
             a=s.img;

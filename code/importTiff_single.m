@@ -14,6 +14,9 @@ disp(['*** prosessing:' file]);
 [~ , outdirShort ]=fileparts(pa);
 
 outDir0=outdirShort;
+if ~isempty(char(s.addFolderSuffix))
+    outDir0=[ outDir0 char(s.addFolderSuffix) ];
+end
 outDir=regexprep(outDir0,{'\.', '\s+' ,'#'},{'_' ,'_',''});
 fpoutDir=fullfile(s.dat ,outDir);
 mkdir(fpoutDir);

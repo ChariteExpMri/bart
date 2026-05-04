@@ -222,7 +222,8 @@ p3(p3>255)=1;
 
 img=mat2gray(p3).*ms4;
 
-img=medfilt2(img,[5 5]);
+% img=medfilt2(img,[5 5]);
+
 if p.imadjust==1
     img=imadjust(img);
 end
@@ -258,14 +259,18 @@ if 0
 end
 
 
-
-
 % ==============================================
 %%  fuse mask
 % ===============================================
 [maskfile,brainfile]=clean_data_function3(img,p.mask_curvature);
 % [maskfile,brainfile]=clean_data_function2(img);
 
+%% ===============================================
+% if p.imadjust==1
+%     %val=brainfile(maskfile==1);
+%     brainfile=imadjust(mat2gray(brainfile),[.8 1]);
+%     
+% end
 
 % ==============================================
 %%   stitching-artefact
